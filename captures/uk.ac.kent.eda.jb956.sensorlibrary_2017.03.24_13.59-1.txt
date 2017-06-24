@@ -1,0 +1,13 @@
+Applications Graphics Acceleration Info:
+Uptime: 165610807 Realtime: 165610808
+
+** Graphics info for pid 32266 [uk.ac.kent.eda.jb956.sensorlibrary] **
+Profile data in ms:
+
+View hierarchy:
+
+
+Total ViewRootImpl: 0
+Total Views:        0
+Total DisplayList:  0.00 kB
+

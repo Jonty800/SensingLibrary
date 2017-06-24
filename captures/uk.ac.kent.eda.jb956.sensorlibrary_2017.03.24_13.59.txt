@@ -1,0 +1,49 @@
+Applications Memory Usage (in Kilobytes):
+Uptime: 165597121 Realtime: 165597121
+
+** MEMINFO in pid 32266 [uk.ac.kent.eda.jb956.sensorlibrary] **
+                   Pss  Private  Private     Swap     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------
+  Native Heap     1160     1108        0        0     3584     2508     1075
+  Dalvik Heap     1048      904        0        0     9374     7031     2343
+ Dalvik Other      213      212        0        0                           
+        Stack       92       92        0        0                           
+    Other dev        4        0        4        0                           
+     .so mmap      371       68      112        0                           
+    .apk mmap      260        0        4        0                           
+    .dex mmap      968        4      964        0                           
+    .oat mmap      243        0        0        0                           
+    .art mmap      546      268        0        0                           
+   Other mmap        7        4        0        0                           
+      Unknown      407      404        0        0                           
+        TOTAL     5319     3064     1084        0    12958     9539     3418
+ 
+ App Summary
+                       Pss(KB)
+                        ------
+           Java Heap:     1172
+         Native Heap:     1108
+                Code:     1152
+               Stack:       92
+            Graphics:        0
+       Private Other:      624
+              System:     1171
+ 
+               TOTAL:     5319      TOTAL SWAP (KB):        0
+ 
+ Objects
+               Views:        0         ViewRootImpl:        0
+         AppContexts:        3           Activities:        0
+              Assets:        2        AssetManagers:        2
+       Local Binders:        3        Proxy Binders:        9
+       Parcel memory:        2         Parcel count:       10
+    Death Recipients:        0      OpenSSL Sockets:        0
+ 
+ SQL
+         MEMORY_USED:      173
+  PAGECACHE_OVERFLOW:       93          MALLOC_SIZE:       62
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b)          cache  Dbname
+                                        1313/16/4  /data/user/0/uk.ac.kent.eda.jb956.sensorlibrary/databases/SensingLibraryDB
