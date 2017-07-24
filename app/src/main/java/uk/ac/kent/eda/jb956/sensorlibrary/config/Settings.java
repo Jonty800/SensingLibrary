@@ -58,7 +58,6 @@ public class Settings {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.USE_FINGERPRINT,
             Manifest.permission.CAMERA
     };
 }

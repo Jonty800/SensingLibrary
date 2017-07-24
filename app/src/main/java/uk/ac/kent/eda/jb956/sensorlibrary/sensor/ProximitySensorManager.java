@@ -4,7 +4,11 @@ import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ProximitySensorData;
@@ -65,7 +69,7 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
             return;
         try {
             if (Settings.PROXIMITY_ENABLED) {
-                androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_PROXIMITY_MICRO);
+                androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
                 sensing = true;
             } else
                 Log.i(TAG, "PROXIMITY_ENABLED=false, ignoring Proximity collection");
@@ -98,6 +102,7 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
 
     private long lastUpdate = 0;
     private SensorData lastEntry = null;
+    public List<ProximitySensorData> history = new ArrayList<>();
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -115,8 +120,17 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
                     pd.timestamp = System.currentTimeMillis();
                     lastEntry = pd;
                     MySQLiteHelper.getInstance(context).addToProximity(pd);
+                    history.add(pd);
                     Log.i(TAG, "proximity: " + proximity);
+                    List<ProximitySensorData> temp = new ArrayList<>();
+                    for (ProximitySensorData data : history) {
+                        if (data.timestamp > (System.currentTimeMillis() - 4000))
+                            temp.add(data);
+                    }
+                    history = new ArrayList<>(temp);
                 }
+                // System.out.println(""+(System.currentTimeMillis() - lastTimeCheckedHistory));
+
             }
         }
     }

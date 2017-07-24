@@ -73,7 +73,7 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
             return;
         try {
             if (Settings.LIGHT_ENABLED) {
-                androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL, uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getmSensorHandler());
+                androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
                 sensing = true;
             } else
                 Log.i(TAG, "LIGHT_ENABLED=false, ignoring light collection");
@@ -81,7 +81,7 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
             e.printStackTrace();
         }
         Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
-        //startRepeatingTask();
+        startRepeatingTask();
     }
 
     @Override
@@ -96,7 +96,7 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
         }
         sensing = false;
         Log.i(TAG, "Sensor stopped");
-        //stopRepeatingTask();
+        stopRepeatingTask();
     }
 
     private boolean sensing = false;
@@ -108,7 +108,7 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
 
     private long lastUpdate = 0;
     private SensorData lastEntry = null;
-    //public List<LightSensorData> history = new ArrayList<>();
+    public List<LightSensorData> history = new ArrayList<>();
     private long lastTimeCheckedHistory = System.currentTimeMillis();
 
     @Override
@@ -126,21 +126,21 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
                     ld.illuminance = lx;
                     ld.timestamp = System.currentTimeMillis();
                     lastEntry = ld;
-                    //history.add(ld);
+                    history.add(ld);
                     MySQLiteHelper.getInstance(context).addToLight(ld);
-                   // Log.i(TAG, "Lx: " + lx);
+                    Log.i(TAG, "Lx: " + lx);
                     List<LightSensorData> temp = new ArrayList<>();
-                    //for (LightSensorData data : history) {
-                        //if (data.timestamp > (System.currentTimeMillis() - 4000))
-                           //temp.add(data);
-                   // }
-                    //history = new ArrayList<>(temp);
+                    for (LightSensorData data : history) {
+                        if (data.timestamp > (System.currentTimeMillis() - 4000))
+                            temp.add(data);
+                    }
+                    history = new ArrayList<>(temp);
                 }
             }
         }
     }
 
-    /*private Runnable mStatusChecker = new Runnable() {
+    private Runnable mStatusChecker = new Runnable() {
         @Override
         public void run() {
             try {
@@ -167,15 +167,15 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
                 mHandler.postDelayed(mStatusChecker, 4000);
             }
         }
-    };*/
+    };
 
-   // private void startRepeatingTask() {
-       // mStatusChecker.run();
-    //}
+    private void startRepeatingTask() {
+        mStatusChecker.run();
+    }
 
-    //private void stopRepeatingTask() {
-      //  mHandler.removeCallbacks(mStatusChecker);
-   // }
+    private void stopRepeatingTask() {
+        mHandler.removeCallbacks(mStatusChecker);
+    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
