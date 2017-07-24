@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.RequiresApi;
@@ -189,17 +190,56 @@ public class CamRecorderActivity extends Activity {
     }
 
     void stopAllStuff(boolean finish){
-        if(stopAllRunnable!=null)
-            stopAllRunnable.cancel();
-        if(service!=null && !service.isShutdown())
-            service.shutdown();
-        finishAnimation =true;
         // BEGIN_INCLUDE(stop_release_media_recorder)
 
         // stop recording and release camera
         try {
             System.out.println("mMediaRecorder.stop()");
+            finishAnimation =true;
             mMediaRecorder.stop();
+            long end = System.currentTimeMillis();
+            releaseMediaRecorder(); // release the MediaRecorder object
+            if(stopAllRunnable!=null)
+                stopAllRunnable.cancel();
+            if(service!=null && !service.isShutdown())
+                service.shutdown();
+            if(running)
+                stopRecordingScreen();
+            //mCamera.lock();         // take camera access back from MediaRecorder
+
+            File dir = new File(Settings.SAVE_PATH + "/" + startTime +"/SensorLibraryCamera/");
+            dir.mkdirs();
+
+            String newFileNameCamera = String.format(Locale.ENGLISH, "camera_%d.mp4", actualStartTime);
+            String screenFileLocation = String.format(Locale.ENGLISH, "screen_%d.webm", startTime);
+            String newFileNameScreen = String.format(Locale.ENGLISH, "screen_%d.webm", actualStartTime);
+            File to = new File(dir,newFileNameCamera);
+            File screenFile = new File(dir,screenFileLocation);
+            if(outFile.exists())
+                outFile.renameTo(to);
+            refreshGallery(to);
+            to = new File(dir,newFileNameScreen);
+            if(screenFile.exists())
+                screenFile.renameTo(to);
+            refreshGallery(to);
+
+            File oldfolder = new File(Settings.SAVE_PATH + "/" + startTime);
+            File newfolder = new File(Settings.SAVE_PATH + "/" + actualStartTime);
+            if(oldfolder.exists())
+                oldfolder.renameTo(newfolder);
+            dir = new File(Settings.SAVE_PATH + "/" + actualStartTime +"/SensorLibraryCamera/");
+            File toRefresh = new File(dir,newFileNameScreen);
+            refreshGallery(toRefresh);
+            toRefresh = new File(dir,newFileNameCamera);
+            refreshGallery(toRefresh);
+
+            if(startTime>0) {
+                MySQLiteHelper.getInstance(getApplication()).exportAccDBWithRange(actualStartTime, end);
+                MySQLiteHelper.getInstance(getApplication()).exportGyroDBWithRange(actualStartTime, end);
+                MySQLiteHelper.getInstance(getApplication()).exportLightDBWithRange(actualStartTime, end);
+                MySQLiteHelper.getInstance(getApplication()).exportPositionsDBWithRange(actualStartTime, end);
+                startTime = 0;
+            }
         } catch (RuntimeException e) {
             // RuntimeException is thrown when stop() is called immediately after start().
             // In this case the output file is not properly constructed ans should be deleted.
@@ -208,15 +248,11 @@ public class CamRecorderActivity extends Activity {
             //noinspection ResultOfMethodCallIgnored
             //mOutputFile.delete();
         }
-        releaseMediaRecorder(); // release the MediaRecorder object
-        //mCamera.lock();         // take camera access back from MediaRecorder
 
         // inform the user that recording has stopped
         setCaptureButtonText("Start");
         isRecording = false;
         releaseCamera();
-        if(running)
-            stopRecordingScreen();
 
         if(finish)
             finish();
@@ -233,7 +269,7 @@ public class CamRecorderActivity extends Activity {
         dir.mkdirs();
         String fileName = String.format(Locale.ENGLISH, "screen_%d.webm", startTime);
         screenFile = new File(dir,fileName);
-        recordingInfo = getRecordingInfo();
+
         Log.d(TAG, String.format("Recording: %s x %s @ %s", recordingInfo.width, recordingInfo.height,
                 recordingInfo.density));
 
@@ -318,15 +354,6 @@ public class CamRecorderActivity extends Activity {
             mCamera.lock();
         if (outFile != null)
             refreshGallery(outFile);
-
-        long end = System.currentTimeMillis() / 1000;
-        if(startTime>0) {
-            MySQLiteHelper.getInstance(getApplication()).exportAccDBWithRange(startTime, end);
-            MySQLiteHelper.getInstance(getApplication()).exportGyroDBWithRange(startTime, end);
-            MySQLiteHelper.getInstance(getApplication()).exportLightDBWithRange(startTime, end);
-            MySQLiteHelper.getInstance(getApplication()).exportPositionsDBWithRange(startTime, end);
-            startTime = 0;
-        }
     }
 
     private int getRotation() {
@@ -440,12 +467,7 @@ public class CamRecorderActivity extends Activity {
         if (mOutputFile == null) {
             return false;
         }
-        File dir = new File(Settings.SAVE_PATH + "/" + startTime +"/SensorLibraryCamera/");
-        dir.mkdirs();
-        String fileName = String.format(Locale.ENGLISH, "camera_%d.mp4", startTime);
 
-        outFile = new File(dir, fileName);
-        mMediaRecorder.setOutputFile(outFile.getPath());
 
         // END_INCLUDE (configure_media_recorder)
 
@@ -470,7 +492,7 @@ public class CamRecorderActivity extends Activity {
                 data.Y = movingTextView.getY();
                 MySQLiteHelper.getInstance(getApplicationContext()).addToPositions(data);
             }
-        }, 100, 100, TimeUnit.MILLISECONDS);
+        }, 0, 100, TimeUnit.MILLISECONDS);
 
         return true;
     }
@@ -552,6 +574,7 @@ public class CamRecorderActivity extends Activity {
         super.onStop();
     }*/
 
+    public long actualStartTime = 0L;
     /**
      * Asynchronous task for preparing the {@link MediaRecorder} since it's a long blocking
      * operation.
@@ -561,12 +584,21 @@ public class CamRecorderActivity extends Activity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             //init screen recording
-            startRecordingScreen();
             // initialize video camera
+            startTime = System.currentTimeMillis()/1000;
+            File dir = new File(Settings.SAVE_PATH + "/" + startTime +"/SensorLibraryCamera/");
+            dir.mkdirs();
+            String fileName = String.format(Locale.ENGLISH, "camera_%d.mp4", startTime);
+
+            outFile = new File(dir, fileName);
+            mMediaRecorder.setOutputFile(outFile.getPath());
+            recordingInfo = getRecordingInfo();
             if (prepareVideoRecorder()) {
                 // Camera is available and unlocked, MediaRecorder is prepared,
                 // now you can start recording
+                startRecordingScreen();
                 mMediaRecorder.start();
+                actualStartTime = System.currentTimeMillis();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

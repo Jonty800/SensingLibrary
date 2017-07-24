@@ -227,8 +227,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             long start_ts = timestampAInSeconds;
             long end_ts = timestampBInSeconds;
-            start_ts*=1000;
-            end_ts*=1000;
             Cursor curCSV = db.rawQuery("SELECT * FROM acc where timestamp >=" + start_ts +" and timestamp <=" + end_ts, null);
             csvWrite.writeNext(curCSV.getColumnNames());
             while (curCSV.moveToNext()) {
@@ -257,8 +255,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             long start_ts = timestampAInSeconds;
             long end_ts = timestampBInSeconds;
-            start_ts*=1000;
-            end_ts*=1000;
             Cursor curCSV = db.rawQuery("SELECT * FROM gyro where timestamp >=" + start_ts +" and timestamp <=" + end_ts, null);
             csvWrite.writeNext(curCSV.getColumnNames());
             while (curCSV.moveToNext()) {
@@ -287,8 +283,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             long start_ts = timestampAInSeconds;
             long end_ts = timestampBInSeconds;
-            start_ts*=1000;
-            end_ts*=1000;
             Cursor curCSV = db.rawQuery("SELECT * FROM light where timestamp >=" + start_ts +" and timestamp <=" + end_ts, null);
             csvWrite.writeNext(curCSV.getColumnNames());
             while (curCSV.moveToNext()) {
@@ -317,8 +311,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             long start_ts = timestampAInSeconds;
             long end_ts = timestampBInSeconds;
-            start_ts*=1000;
-            end_ts*=1000;
             Cursor curCSV = db.rawQuery("SELECT * FROM positions where timestamp >=" + start_ts +" and timestamp <=" + end_ts, null);
             csvWrite.writeNext(curCSV.getColumnNames());
             while (curCSV.moveToNext()) {
