@@ -29,7 +29,9 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AccelerometerManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AudioManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.GyroscopeManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.HumiditySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.LightSensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.PressureAltitudeSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ProximitySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.ActivityRecognizedService;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.SensingService;
@@ -55,6 +57,8 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
     private final GyroscopeManager gyroscopeManager;
     private final ProximitySensorManager proximityManager;
     private final LightSensorManager lightSensorManager;
+    private final HumiditySensorManager humiditySensorManager;
+    private final PressureAltitudeSensorManager pressureSensorManager;
     private final List<WifiData> rawHistoricData = new ArrayList<>();
 
     private HandlerThread mSensorThread;
@@ -82,6 +86,8 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
         gyroscopeManager = GyroscopeManager.getInstance(context);
         proximityManager = ProximitySensorManager.getInstance(context);
         lightSensorManager = LightSensorManager.getInstance(context);
+        humiditySensorManager = HumiditySensorManager.getInstance(context);
+        pressureSensorManager = PressureAltitudeSensorManager.getInstance(context);
         //client = new OkHttpClient();
 
         if (Settings.ACTIVITY_ENABLED) {
@@ -154,6 +160,8 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
         accelerometerManager.startSensing();
         proximityManager.startSensing();
         lightSensorManager.startSensing();
+        humiditySensorManager.startSensing();
+        pressureSensorManager.startSensing();
         if (Settings.WIFI_ENABLED) {
             Log.i(TAG, "Starting Wi-Fi Fingerprinting Service");
             Intent fingerprintingAlarm = new Intent(context.getApplicationContext(), AlarmReceiver.class);

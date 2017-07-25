@@ -1,7 +1,5 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,8 +13,8 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.InPocketContext;
 
 public class InPocketDetectionHelper {
 
-    private double d_th1 = 0.25;
-    private double d_th2 = 0.5;
+    private double th_pocket = 1.50;
+    private double th_bag = 2;
     private double i_dark = 50; //below 50
     public List<Double> lightValues = new ArrayList<>();
     public List<Double> proximityValues = new ArrayList<>();
@@ -40,30 +38,31 @@ public class InPocketDetectionHelper {
         double m_proximity = arrayAverage(proximityValues);
         double m_light = arrayAverage(lightValues);
 
-       // System.out.println(m_proximity + " - " + d_th2 + " - " + m_light + " - " + i_dark);
+       // System.out.println(m_proximity + " - " + th_bag + " - " + m_light + " - " + i_dark);
 
-        if (m_proximity < d_th2 && m_light < i_dark) {
+        if (m_proximity < th_bag && m_light < i_dark) {
             int numClose = 0;
             int numNear = 0;
             int numFar = 0;
-            for (int i = 0; i < proximityValues.size(); i++) {
-                double v = proximityValues.get(i);
-                if (v < d_th1)
+            /*for (int i = 0; i < proximityValues.size(); i++) {
+                double proximity = proximityValues.get(i);
+                if (proximity < th_pocket)
                     numClose++;
-                else if (d_th1 <= v && v < d_th2)
+                else if (th_pocket <= proximity && proximity < th_bag)
                     numNear++;
-                else if (v >= d_th2)
+                else if (proximity >= th_bag)
                     numFar++;
             }
             double p_close = numClose / proximityValues.size();
             double p_near = numNear / proximityValues.size();
-            double p_far = numFar / proximityValues.size();
-            double[] pocketArr = new double[]{1, 0, 0};
-            double[] bagArr = new double[]{0, 1, 0};
-            double[] f = new double[]{p_close, p_near, p_far};
-            double mDistancePocket = manhattanDistance(pocketArr, f);
-            double mDistancBag = manhattanDistance(bagArr, f);
-            if (mDistancePocket <= mDistancBag) {
+            double p_far = numFar / proximityValues.size();*/
+            //double[] pocketArr = new double[]{1, 0, 0};
+            //double[] bagArr = new double[]{0, 1, 0};
+            //double[] f = new double[]{p_close, p_near, p_far};
+            //double mDistancePocket = manhattanDistance(pocketArr, f);
+            //double mDistancBag = manhattanDistance(bagArr, f);
+
+            if (m_proximity <= th_pocket) {
                 return InPocketContext.IN_POCKET;
             } else {
                 return InPocketContext.IN_BAG;

@@ -25,6 +25,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.GyroSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.InPocketContext;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.LightSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PositionsData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ProximitySensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 
@@ -141,6 +142,18 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 "context INT NOT NULL, " +
                 "timestamp BIGINT NOT NULL)";
         db.execSQL(CREATE_TABLE_POCKET);
+
+        String CREATE_TABLE_HUMIDITY = "CREATE TABLE humidity ( " +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "millibars_of_pressure FLOAT NOT NULL, " +
+                "timestamp BIGINT NOT NULL)";
+        db.execSQL(CREATE_TABLE_HUMIDITY);
+
+        String CREATE_TABLE_PRESSURE = "CREATE TABLE pressure ( " +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "pressure FLOAT NOT NULL, " +
+                "timestamp BIGINT NOT NULL)";
+        db.execSQL(CREATE_TABLE_PRESSURE);
     }
 
     public void exportWifiDB() {
@@ -159,6 +172,58 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             while (curCSV.moveToNext()) {
                 //Which column you want to export
                 String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3),curCSV.getString(4) };
+                csvWrite.writeNext(arrStr);
+            }
+            csvWrite.close();
+            curCSV.close();
+            refreshFiles(file);
+        } catch (Exception sqlEx) {
+            Log.e("MySQLHelper", sqlEx.getMessage(), sqlEx);
+        }
+    }
+
+    public void exportPressureiDB() {
+        File exportDir = new File(Settings.SAVE_PATH);
+        if (!exportDir.exists()) {
+            exportDir.mkdirs();
+        }
+
+        File file = new File(exportDir, "exportPressureDB"+System.currentTimeMillis()+".csv");
+        try {
+            file.createNewFile();
+            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor curCSV = db.rawQuery("SELECT * FROM pressure", null);
+            csvWrite.writeNext(curCSV.getColumnNames());
+            while (curCSV.moveToNext()) {
+                //Which column you want to export
+                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2) };
+                csvWrite.writeNext(arrStr);
+            }
+            csvWrite.close();
+            curCSV.close();
+            refreshFiles(file);
+        } catch (Exception sqlEx) {
+            Log.e("MySQLHelper", sqlEx.getMessage(), sqlEx);
+        }
+    }
+
+    public void exportHumidityDB() {
+        File exportDir = new File(Settings.SAVE_PATH);
+        if (!exportDir.exists()) {
+            exportDir.mkdirs();
+        }
+
+        File file = new File(exportDir, "exportHumidityDB"+System.currentTimeMillis()+".csv");
+        try {
+            file.createNewFile();
+            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor curCSV = db.rawQuery("SELECT * FROM humidity", null);
+            csvWrite.writeNext(curCSV.getColumnNames());
+            while (curCSV.moveToNext()) {
+                //Which column you want to export
+                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3) };
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -275,6 +340,34 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void exportHumidityDBWithRange(long timestampAInSeconds, long timestampBInSeconds) {
+        File exportDir = new File(Settings.SAVE_PATH +"/" + timestampAInSeconds + "/sensorDataCSV/");
+        if (!exportDir.exists()) {
+            exportDir.mkdirs();
+        }
+
+        File file = new File(exportDir, "exportHumidityDBWithRange-"+timestampAInSeconds+".csv");
+        try {
+            file.createNewFile();
+            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            SQLiteDatabase db = this.getReadableDatabase();
+            long start_ts = timestampAInSeconds;
+            long end_ts = timestampBInSeconds;
+            Cursor curCSV = db.rawQuery("SELECT * FROM humidity where timestamp >=" + start_ts +" and timestamp <=" + end_ts, null);
+            csvWrite.writeNext(curCSV.getColumnNames());
+            while (curCSV.moveToNext()) {
+                //Which column you want to export
+                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2)};
+                csvWrite.writeNext(arrStr);
+            }
+            csvWrite.close();
+            curCSV.close();
+            refreshFiles(file);
+        } catch (Exception sqlEx) {
+            Log.e("MySQLHelper", sqlEx.getMessage(), sqlEx);
+        }
+    }
+
     public void exportPocketDBWithRange(long timestampAInSeconds, long timestampBInSeconds) {
         File exportDir = new File(Settings.SAVE_PATH +"/" + timestampAInSeconds + "/sensorDataCSV/");
         if (!exportDir.exists()) {
@@ -292,7 +385,35 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             csvWrite.writeNext(curCSV.getColumnNames());
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
+                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2)};
+                csvWrite.writeNext(arrStr);
+            }
+            csvWrite.close();
+            curCSV.close();
+            refreshFiles(file);
+        } catch (Exception sqlEx) {
+            Log.e("MySQLHelper", sqlEx.getMessage(), sqlEx);
+        }
+    }
+
+    public void exportPressureDBWithRange(long timestampAInSeconds, long timestampBInSeconds) {
+        File exportDir = new File(Settings.SAVE_PATH +"/" + timestampAInSeconds + "/sensorDataCSV/");
+        if (!exportDir.exists()) {
+            exportDir.mkdirs();
+        }
+
+        File file = new File(exportDir, "exportPressureDetectionDBWithRange-"+timestampAInSeconds+".csv");
+        try {
+            file.createNewFile();
+            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            SQLiteDatabase db = this.getReadableDatabase();
+            long start_ts = timestampAInSeconds;
+            long end_ts = timestampBInSeconds;
+            Cursor curCSV = db.rawQuery("SELECT * FROM pressure where timestamp >=" + start_ts +" and timestamp <=" + end_ts, null);
+            csvWrite.writeNext(curCSV.getColumnNames());
+            while (curCSV.moveToNext()) {
+                //Which column you want to export
+                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -450,6 +571,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Log.i("MySQLiteHelper", "Database size after delete (clearGyroDatabase): " + getSize());
     }
 
+    public void clearHumidityDatabase(int limit) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        Log.i("MySQLiteHelper", "Database size before delete (clearHumidityDatabase): " + getSize());
+        if (limit == -1)
+            database.execSQL("DELETE FROM humidity");
+        else
+            database.execSQL("DELETE FROM humidity WHERE id IN(SELECT id FROM humidity ORDER BY id ASC LIMIT " + limit + ")");
+
+        Log.i("MySQLiteHelper", "Database size after delete (clearHumidityDatabase): " + getSize());
+    }
+
     public void clearPocketDatabase(int limit) {
         SQLiteDatabase database = this.getWritableDatabase();
         Log.i("MySQLiteHelper", "Database size before delete (clearPocketDatabase): " + getSize());
@@ -492,6 +624,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.execSQL("DELETE FROM proximity");
         database.execSQL("DELETE FROM pocket");
         database.execSQL("DELETE FROM light");
+        database.execSQL("DELETE FROM humidity");
         File dir = new File(Settings.SAVE_PATH);
         DeleteRecursive(dir);
     }
@@ -571,6 +704,37 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         }
         // db.close();
     }
+
+    public void addToHumidity(PressureSensorData data) {
+        if (Settings.SAVE_HUMIDITY_TO_DATABASE) {
+            try {
+                SQLiteDatabase db = this.getWritableDatabase();
+                ContentValues values = new ContentValues();
+                values.put("millibars_of_pressure", data.pressure);
+                values.put("timestamp", data.timestamp);
+                db.insert("humidity", null, values);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // db.close();
+    }
+
+    public void addToPressure(PressureSensorData data) {
+        if (Settings.SAVE_PRESSURE_TO_DATABASE) {
+            try {
+                SQLiteDatabase db = this.getWritableDatabase();
+                ContentValues values = new ContentValues();
+                values.put("pressure", data.pressure);
+                values.put("timestamp", data.timestamp);
+                db.insert("pressure", null, values);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // db.close();
+    }
+
 
     public void addToActivity(ActivityData data) {
         if (Settings.SAVE_ACTIVITY_TO_DATABASE) {
@@ -666,6 +830,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS light");
         db.execSQL("DROP TABLE IF EXISTS positions");
         db.execSQL("DROP TABLE IF EXISTS pocket");
+        db.execSQL("DROP TABLE IF EXISTS humidity");
         // create fresh table
         this.onCreate(db);
     }
