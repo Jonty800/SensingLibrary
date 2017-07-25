@@ -22,6 +22,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.AccelerometerSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ActivityData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.GyroSensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.InPocketContext;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.LightSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PositionsData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ProximitySensorData;
@@ -134,6 +135,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 "illuminance FLOAT NOT NULL, " +
                 "timestamp BIGINT NOT NULL)";
         db.execSQL(CREATE_TABLE_LIGHT);
+
+        String CREATE_TABLE_POCKET = "CREATE TABLE pocket ( " +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "context INT NOT NULL, " +
+                "timestamp BIGINT NOT NULL)";
+        db.execSQL(CREATE_TABLE_POCKET);
     }
 
     public void exportWifiDB() {
@@ -152,6 +159,32 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             while (curCSV.moveToNext()) {
                 //Which column you want to export
                 String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3),curCSV.getString(4) };
+                csvWrite.writeNext(arrStr);
+            }
+            csvWrite.close();
+            curCSV.close();
+            refreshFiles(file);
+        } catch (Exception sqlEx) {
+            Log.e("MySQLHelper", sqlEx.getMessage(), sqlEx);
+        }
+    }
+
+    public void exportPocketDB() {
+        File exportDir = new File(Settings.SAVE_PATH);
+        if (!exportDir.exists()) {
+            exportDir.mkdirs();
+        }
+
+        File file = new File(exportDir, "exportPocketDetectionDB"+System.currentTimeMillis()+".csv");
+        try {
+            file.createNewFile();
+            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor curCSV = db.rawQuery("SELECT * FROM pocket", null);
+            csvWrite.writeNext(curCSV.getColumnNames());
+            while (curCSV.moveToNext()) {
+                //Which column you want to export
+                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -228,6 +261,34 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             long start_ts = timestampAInSeconds;
             long end_ts = timestampBInSeconds;
             Cursor curCSV = db.rawQuery("SELECT * FROM acc where timestamp >=" + start_ts +" and timestamp <=" + end_ts, null);
+            csvWrite.writeNext(curCSV.getColumnNames());
+            while (curCSV.moveToNext()) {
+                //Which column you want to export
+                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
+                csvWrite.writeNext(arrStr);
+            }
+            csvWrite.close();
+            curCSV.close();
+            refreshFiles(file);
+        } catch (Exception sqlEx) {
+            Log.e("MySQLHelper", sqlEx.getMessage(), sqlEx);
+        }
+    }
+
+    public void exportPocketDBWithRange(long timestampAInSeconds, long timestampBInSeconds) {
+        File exportDir = new File(Settings.SAVE_PATH +"/" + timestampAInSeconds + "/sensorDataCSV/");
+        if (!exportDir.exists()) {
+            exportDir.mkdirs();
+        }
+
+        File file = new File(exportDir, "exportPocketDetectionDBWithRange-"+timestampAInSeconds+".csv");
+        try {
+            file.createNewFile();
+            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            SQLiteDatabase db = this.getReadableDatabase();
+            long start_ts = timestampAInSeconds;
+            long end_ts = timestampBInSeconds;
+            Cursor curCSV = db.rawQuery("SELECT * FROM pocket where timestamp >=" + start_ts +" and timestamp <=" + end_ts, null);
             csvWrite.writeNext(curCSV.getColumnNames());
             while (curCSV.moveToNext()) {
                 //Which column you want to export
@@ -389,6 +450,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Log.i("MySQLiteHelper", "Database size after delete (clearGyroDatabase): " + getSize());
     }
 
+    public void clearPocketDatabase(int limit) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        Log.i("MySQLiteHelper", "Database size before delete (clearPocketDatabase): " + getSize());
+        if (limit == -1)
+            database.execSQL("DELETE FROM pocket");
+        else
+            database.execSQL("DELETE FROM pocket WHERE id IN(SELECT id FROM pocket ORDER BY id ASC LIMIT " + limit + ")");
+
+        Log.i("MySQLiteHelper", "Database size after delete (clearPocketDatabase): " + getSize());
+    }
+
     public void clearAccDatabase(int limit) {
         SQLiteDatabase database = this.getWritableDatabase();
         Log.i("MySQLiteHelper", "Database size before delete (clearAccDatabase): " + getSize());
@@ -418,6 +490,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.execSQL("DELETE FROM wifi");
         database.execSQL("DELETE FROM positions");
         database.execSQL("DELETE FROM proximity");
+        database.execSQL("DELETE FROM pocket");
+        database.execSQL("DELETE FROM light");
         File dir = new File(Settings.SAVE_PATH);
         DeleteRecursive(dir);
     }
@@ -460,6 +534,21 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 values.put("illuminance", data.illuminance);
                 values.put("timestamp", data.timestamp);
                 db.insert("light", null, values);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // db.close();
+        }
+    }
+
+    public void addToPocket(InPocketContext context, long ts) {
+        if (Settings.SAVE_LIGHT_TO_DATABASE) {
+            try {
+                SQLiteDatabase db = this.getWritableDatabase();
+                ContentValues values = new ContentValues();
+                values.put("context", context.getId());
+                values.put("timestamp", ts);
+                db.insert("pocket", null, values);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -576,6 +665,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS wifi");
         db.execSQL("DROP TABLE IF EXISTS light");
         db.execSQL("DROP TABLE IF EXISTS positions");
+        db.execSQL("DROP TABLE IF EXISTS pocket");
         // create fresh table
         this.onCreate(db);
     }

@@ -73,15 +73,25 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
             return;
         try {
             if (Settings.LIGHT_ENABLED) {
+                Log.i(TAG, "Registering listener...");
                 androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
                 sensing = true;
-            } else
-                Log.i(TAG, "LIGHT_ENABLED=false, ignoring light collection");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
-        startRepeatingTask();
+        if(Settings.POCKET_ENABLED) {
+            if(!Settings.PROXIMITY_ENABLED) {
+                Log.i(TAG, "PROXIMITY_ENABLED=false, ignoring pocket detection");
+                return;
+            }
+            if(!Settings.LIGHT_ENABLED) {
+                Log.i(TAG, "LIGHT_ENABLED=false, ignoring pocket detection");
+                return;
+            }
+            startRepeatingTask();
+        }
     }
 
     @Override
@@ -144,26 +154,31 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
         @Override
         public void run() {
             try {
-                if ((System.currentTimeMillis()) - lastTimeCheckedHistory > 4000) {
-                    //System.out.println("4 secs");
-                    InPocketDetectionManager inPocketDetectionManager = InPocketDetectionManager.getInstance(context);
+                if ((System.currentTimeMillis()) - lastTimeCheckedHistory > 4000
+                        && ProximitySensorManager.getInstance(context).history.size() > 0
+                        && LightSensorManager.getInstance(context).history.size() > 0) {
+                    InPocketDetectionHelper inPocketDetectionHelper = InPocketDetectionHelper.getInstance();
                     List<Double> temp = new ArrayList<>();
-                    for (ProximitySensorData pd : ProximitySensorManager.getInstance(context).history) {
-                        temp.add(pd.proximity);
-                    }
-                    inPocketDetectionManager.proximityValues = new ArrayList<>(temp);
+                    temp.add( ProximitySensorManager.getInstance(context).history.get( ProximitySensorManager.getInstance(context).history.size()-1).proximity);
+                   // for (ProximitySensorData pd : ProximitySensorManager.getInstance(context).history) {
+                       // temp.add(pd.proximity);
+                    //}
+                    inPocketDetectionHelper.proximityValues = new ArrayList<>(temp);
 
                     temp = new ArrayList<>();
-                    for (LightSensorData pd : LightSensorManager.getInstance(context).history) {
-                        temp.add(pd.illuminance);
-                    }
-                    inPocketDetectionManager.lightValues = new ArrayList<>(temp);
-                    System.out.println(inPocketDetectionManager.getDetectionResult());
+                    temp.add(LightSensorManager.getInstance(context).history.get(LightSensorManager.getInstance(context).history.size()-1).illuminance);
+                    //for (LightSensorData pd : LightSensorManager.getInstance(context).history) {
+                       // temp.add(pd.illuminance);
+                   // }
+                    inPocketDetectionHelper.lightValues = new ArrayList<>(temp);
+                    if(Settings.SAVE_POCKET_TO_DATABASE)
+                        MySQLiteHelper.getInstance(context).addToPocket(inPocketDetectionHelper.getDetectionResult(), System.currentTimeMillis());
+                    Log.i(TAG,"PocketDetectionResult: " + inPocketDetectionHelper.getDetectionResult().toString());
                     lastTimeCheckedHistory = System.currentTimeMillis();
+                    ProximitySensorManager.getInstance(context).history.clear();
+                    LightSensorManager.getInstance(context).history.clear();
                 }
             } finally {
-                // 100% guarantee that this always happens, even if
-                // your update method throws an exception
                 mHandler.postDelayed(mStatusChecker, 4000);
             }
         }

@@ -66,10 +66,10 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
             return;
         try {
             if (Settings.ACC_ENABLED) {
+                Log.i(TAG, "Registering listener...");
                 androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
                 sensing = true;
-            } else
-                Log.i(TAG, "ACC_ENABLED=false, ignoring Accelerometer collection");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

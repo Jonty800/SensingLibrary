@@ -5,8 +5,16 @@ package uk.ac.kent.eda.jb956.sensorlibrary.data;
  * School of Engineering and Digital Arts, University of Kent
  */
 public enum InPocketContext {
-    UNKNOWN,
-    IN_BAG,
-    IN_POCKET,
-    OUTSIDE_POCKET_BAG
-};
+    UNKNOWN(-1),
+    IN_BAG(0),
+    IN_POCKET(1),
+    OUTSIDE_POCKET_BAG(2);
+
+    private final int id;
+
+    InPocketContext(int i){
+        id = i;
+    }
+
+    public int getId() { return id; }
+}

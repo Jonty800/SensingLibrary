@@ -19,7 +19,7 @@ public class Settings {
     /**
      * The database version
      */
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     /*
      * Sensor toggles
@@ -29,7 +29,8 @@ public class Settings {
     public static final boolean WIFI_ENABLED = false;
     public static final boolean ACTIVITY_ENABLED = false;
     public static final boolean LIGHT_ENABLED = true;
-    public static final boolean PROXIMITY_ENABLED = false;
+    public static final boolean PROXIMITY_ENABLED = true;
+    public static final boolean POCKET_ENABLED = true;
     public static boolean GPS_ENABLED = false; //TODO implement GPS
 
     /*
@@ -48,6 +49,7 @@ public class Settings {
     public static final boolean SAVE_LIGHT_TO_DATABASE = true;
     public static final boolean SAVE_PROXIMITY_TO_DATABASE = true;
     public static final boolean SAVE_POSITIONS_TO_DATABASE = true;
+    public static final boolean SAVE_POCKET_TO_DATABASE = true;
     public static final String SAVE_PATH = Environment.getExternalStorageDirectory().getPath() + "/" + appName;
 
     /*
