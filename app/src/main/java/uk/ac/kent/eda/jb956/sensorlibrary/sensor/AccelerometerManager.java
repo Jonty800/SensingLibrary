@@ -8,8 +8,8 @@ import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.AccelerometerSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 
 /**
@@ -46,7 +46,7 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
     }
 
     @Override
-    public SensorData getSingleEntry() {
+    public SensorData getLastEntry() {
         return lastEntry;
     }
 
@@ -117,7 +117,7 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
                     float x = event.values[0];
                     float y = event.values[1];
                     float z = event.values[2];
-                    AccelerometerSensorData ad = new AccelerometerSensorData();
+                    XYZSensorData ad = new XYZSensorData();
                     ad.X = x;
                     ad.Y = y;
                     ad.Z = z;

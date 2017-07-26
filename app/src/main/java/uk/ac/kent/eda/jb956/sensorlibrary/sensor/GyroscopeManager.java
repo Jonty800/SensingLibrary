@@ -8,8 +8,8 @@ import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.GyroSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 
 /**
@@ -57,7 +57,7 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
     }
 
     @Override
-    public SensorData getSingleEntry() {
+    public SensorData getLastEntry() {
         return lastEntry;
     }
 
@@ -118,7 +118,7 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
                     float x = event.values[0];
                     float y = event.values[1];
                     float z = event.values[2];
-                    GyroSensorData gd = new GyroSensorData();
+                    XYZSensorData gd = new XYZSensorData();
                     gd.X = x;
                     gd.Y = y;
                     gd.Z = z;

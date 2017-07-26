@@ -52,7 +52,7 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
     }
 
     @Override
-    public SensorData getSingleEntry() {
+    public SensorData getLastEntry() {
         return lastEntry;
     }
 
@@ -141,7 +141,7 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
                     lastEntry = ld;
                     history.add(ld);
                     MySQLiteHelper.getInstance(context).addToLight(ld);
-                    Log.i(TAG, "Lx: " + lx);
+                   // Log.i(TAG, "Lx: " + lx);
                     List<LightSensorData> temp = new ArrayList<>();
                     for (LightSensorData data : history) {
                         if (data.timestamp > (System.currentTimeMillis() - 4000))

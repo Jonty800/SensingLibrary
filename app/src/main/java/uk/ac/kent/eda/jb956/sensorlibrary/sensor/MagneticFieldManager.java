@@ -8,8 +8,8 @@ import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 
 /**
@@ -17,25 +17,25 @@ import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class HumiditySensorManager implements SensingInterface, SensorEventListener {
+public class MagneticFieldManager implements SensingInterface, SensorEventListener {
 
-    private final String TAG = "HumiditySensorManager";
-    private static HumiditySensorManager instance;
+    private final String TAG = "MagneticFieldManager";
+    private static MagneticFieldManager instance;
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
-    public static int SAMPLING_RATE = 1000; //ms
+    public static int SAMPLING_RATE = 100; //ms
     public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
 
-    public static synchronized HumiditySensorManager getInstance(Context context) {
+    public static synchronized MagneticFieldManager getInstance(Context context) {
         if (instance == null)
-            instance = new HumiditySensorManager(context);
+            instance = new MagneticFieldManager(context);
         return instance;
     }
 
-    private HumiditySensorManager(Context context) {
+    private MagneticFieldManager(Context context) {
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+        sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
 
     private final Sensor sensor;
@@ -65,13 +65,13 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
         if (isSensing())
             return;
         try {
-            if (Settings.HUMIDITY_ENABLED) {
+            if (Settings.MAG_ENABLED) {
                 Log.i(TAG, "Registering listener...");
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
                 } else {
-                    Log.i(TAG, "Cannot calculate Humidity, as humidity sensor is not available!");
+                    Log.i(TAG, "Cannot calculate Magnetic Field data, as Magnetic Field sensor is not available!");
                 }
             }
         } catch (Exception e) {
@@ -85,7 +85,7 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
         if (!isSensing())
             return;
         try {
-            if (Settings.HUMIDITY_ENABLED)
+            if (Settings.MAG_ENABLED)
                 androidSensorManager.unregisterListener(this, getSensor());
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,21 +106,25 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
+        if (sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
             long curTime = System.currentTimeMillis();
 
             Sensor mySensor = event.sensor;
-            if (mySensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
+            if (mySensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
                 // only allow one update every SAMPLING_RATE (ms).
                 if ((curTime - lastUpdate) > SAMPLING_RATE) {
                     lastUpdate = curTime;
-                    float millibars_of_pressure = event.values[0];
-                    PressureSensorData hd = new PressureSensorData();
-                    hd.pressure = millibars_of_pressure;
-                    hd.timestamp = System.currentTimeMillis();
-                    lastEntry = hd;
-                    MySQLiteHelper.getInstance(context).addToHumidity(hd);
-                    Log.i(TAG, "Humidity: " + hd.pressure);
+                    float x = event.values[0];
+                    float y = event.values[1];
+                    float z = event.values[2];
+                    XYZSensorData ad = new XYZSensorData();
+                    ad.X = x;
+                    ad.Y = y;
+                    ad.Z = z;
+                    ad.timestamp = System.currentTimeMillis();
+                    lastEntry = ad;
+                    MySQLiteHelper.getInstance(context).addToMag(ad);
+                    //Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
                 }
             }
         }

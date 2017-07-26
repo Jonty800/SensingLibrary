@@ -1,5 +1,11 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.util;
 
+import android.content.Context;
+
+import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.TemeratureSensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.TemperatureSensorManager;
+
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
  * School of Engineering and Digital Arts, University of Kent
@@ -27,6 +33,18 @@ public class Util {
         Dv = (float) (Ta * (relativeHumidity / 100) * A * Math.exp(m * temperature / (Tn + temperature)) / (K + temperature));
 
         return Dv;
+    }
+
+    public static float calculateAbsoluteHumidityFromExistingSensorData(Context context) {
+        float temp;
+        float relativeHumidity;
+        try {
+            temp = ((TemeratureSensorData) TemperatureSensorManager.getInstance(context).getLastEntry()).degreesC;
+            relativeHumidity = ((PressureSensorData) TemperatureSensorManager.getInstance(context).getLastEntry()).pressure;
+        } catch (Exception e) {
+            return -1;
+        }
+        return calculateAbsoluteHumidity(temp, relativeHumidity);
     }
 
     /*  Td: Dew point temperature in degrees Celsius

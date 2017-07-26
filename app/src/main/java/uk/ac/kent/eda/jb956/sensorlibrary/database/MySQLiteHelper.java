@@ -18,9 +18,7 @@ import java.io.InputStreamReader;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.AccelerometerSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ActivityData;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.GyroSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.InPocketContext;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.LightSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PositionsData;
@@ -28,6 +26,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ProximitySensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.TemeratureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -160,6 +159,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 "degrees FLOAT NOT NULL, " +
                 "timestamp BIGINT NOT NULL)";
         db.execSQL(CREATE_TABLE_TEMP);
+
+        String CREATE_TABLE_MAG = "CREATE TABLE mag ( " +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "timestamp BIGINT NOT NULL, " +
+                "x FLOAT NOT NULL, " +
+                "y FLOAT NOT NULL, " +
+                "z FLOAT NOT NULL)";
+        db.execSQL(CREATE_TABLE_MAG);
     }
 
     public void exportWifiDB() {
@@ -188,7 +195,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void exportPressureiDB() {
+    public void exportPressureDB() {
         File exportDir = new File(Settings.SAVE_PATH);
         if (!exportDir.exists()) {
             exportDir.mkdirs();
@@ -292,6 +299,32 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void exportMagDB() {
+        File exportDir = new File(Settings.SAVE_PATH);
+        if (!exportDir.exists()) {
+            exportDir.mkdirs();
+        }
+
+        File file = new File(exportDir, "exportMagneticFieldDB" + System.currentTimeMillis() + ".csv");
+        try {
+            file.createNewFile();
+            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor curCSV = db.rawQuery("SELECT * FROM mag", null);
+            csvWrite.writeNext(curCSV.getColumnNames());
+            while (curCSV.moveToNext()) {
+                //Which column you want to export
+                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
+                csvWrite.writeNext(arrStr);
+            }
+            csvWrite.close();
+            curCSV.close();
+            refreshFiles(file);
+        } catch (Exception sqlEx) {
+            Log.e("MySQLHelper", sqlEx.getMessage(), sqlEx);
+        }
+    }
+
     public void exportTemperatureDB() {
         File exportDir = new File(Settings.SAVE_PATH);
         if (!exportDir.exists()) {
@@ -358,6 +391,34 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             long start_ts = timestampAInSeconds;
             long end_ts = timestampBInSeconds;
             Cursor curCSV = db.rawQuery("SELECT * FROM acc where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
+            csvWrite.writeNext(curCSV.getColumnNames());
+            while (curCSV.moveToNext()) {
+                //Which column you want to export
+                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
+                csvWrite.writeNext(arrStr);
+            }
+            csvWrite.close();
+            curCSV.close();
+            refreshFiles(file);
+        } catch (Exception sqlEx) {
+            Log.e("MySQLHelper", sqlEx.getMessage(), sqlEx);
+        }
+    }
+
+    public void exporMagDBWithRange(long timestampAInSeconds, long timestampBInSeconds) {
+        File exportDir = new File(Settings.SAVE_PATH + "/" + timestampAInSeconds + "/sensorDataCSV/");
+        if (!exportDir.exists()) {
+            exportDir.mkdirs();
+        }
+
+        File file = new File(exportDir, "exportMagneticFieldDBWithRange-" + timestampAInSeconds + ".csv");
+        try {
+            file.createNewFile();
+            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            SQLiteDatabase db = this.getReadableDatabase();
+            long start_ts = timestampAInSeconds;
+            long end_ts = timestampBInSeconds;
+            Cursor curCSV = db.rawQuery("SELECT * FROM mag where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
             csvWrite.writeNext(curCSV.getColumnNames());
             while (curCSV.moveToNext()) {
                 //Which column you want to export
@@ -631,6 +692,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Log.i("MySQLiteHelper", "Database size after delete (clearGyroDatabase): " + getSize());
     }
 
+    public void clearMagDatabase(int limit) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        Log.i("MySQLiteHelper", "Database size before delete (clearMagDatabase): " + getSize());
+        if (limit == -1)
+            database.execSQL("DELETE FROM mag");
+        else
+            database.execSQL("DELETE FROM mag WHERE id IN(SELECT id FROM mag ORDER BY id ASC LIMIT " + limit + ")");
+
+        Log.i("MySQLiteHelper", "Database size after delete (clearMagDatabase): " + getSize());
+    }
+
     public void clearTemperatureDatabase(int limit) {
         SQLiteDatabase database = this.getWritableDatabase();
         Log.i("MySQLiteHelper", "Database size before delete (clearTemperatureDatabase): " + getSize());
@@ -698,6 +770,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.execSQL("DELETE FROM humidity");
         database.execSQL("DELETE FROM pressure");
         database.execSQL("DELETE FROM temperature");
+        database.execSQL("DELETE FROM mag");
         File dir = new File(Settings.SAVE_PATH);
         DeleteRecursive(dir);
     }
@@ -713,7 +786,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         fileOrDirectory.delete();
     }
 
-    public void addToAcc(AccelerometerSensorData data) {
+    public void addToAcc(XYZSensorData data) {
         if (Settings.SAVE_ACCELEROMETER_TO_DATABASE) {
             try {
                 SQLiteDatabase db = this.getWritableDatabase();
@@ -724,6 +797,24 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 // values.put("user_id", NetworkCache.getInstance().user_id);
                 values.put("timestamp", data.timestamp);
                 db.insert("acc", null, values);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // db.close();
+    }
+
+    public void addToMag(XYZSensorData data) {
+        if (Settings.SAVE_MAG_TO_DATABASE) {
+            try {
+                SQLiteDatabase db = this.getWritableDatabase();
+                ContentValues values = new ContentValues();
+                values.put("x", data.X);
+                values.put("y", data.Y);
+                values.put("z", data.Z);
+                // values.put("user_id", NetworkCache.getInstance().user_id);
+                values.put("timestamp", data.timestamp);
+                db.insert("mag", null, values);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -862,7 +953,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void addToGyro(GyroSensorData data) {
+    public void addToGyro(XYZSensorData data) {
         if (Settings.SAVE_GYRO_TO_DATABASE) {
             try {
                 SQLiteDatabase db = this.getWritableDatabase();
@@ -919,6 +1010,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS pocket");
         db.execSQL("DROP TABLE IF EXISTS humidity");
         db.execSQL("DROP TABLE IF EXISTS temperature");
+        db.execSQL("DROP TABLE IF EXISTS pressure");
+        db.execSQL("DROP TABLE IF EXISTS mag");
         // create fresh table
         this.onCreate(db);
     }

@@ -46,7 +46,7 @@ public class TemperatureSensorManager implements SensingInterface, SensorEventLi
     }
 
     @Override
-    public SensorData getSingleEntry() {
+    public SensorData getLastEntry() {
         return lastEntry;
     }
 

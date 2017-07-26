@@ -49,7 +49,7 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
     }
 
     @Override
-    public SensorData getSingleEntry() {
+    public SensorData getLastEntry() {
         return lastEntry;
     }
 

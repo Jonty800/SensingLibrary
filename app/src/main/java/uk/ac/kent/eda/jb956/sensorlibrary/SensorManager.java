@@ -31,6 +31,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AudioManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.GyroscopeManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.HumiditySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.LightSensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.MagneticFieldManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.PressureSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ProximitySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.TemperatureSensorManager;
@@ -61,6 +62,7 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
     private final HumiditySensorManager humiditySensorManager;
     private final PressureSensorManager pressureSensorManager;
     private final TemperatureSensorManager temperatureSensorManager;
+    private final MagneticFieldManager magneticFieldManager;
     private final List<WifiData> rawHistoricData = new ArrayList<>();
 
     private HandlerThread mSensorThread;
@@ -91,6 +93,7 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
         humiditySensorManager = HumiditySensorManager.getInstance(context);
         pressureSensorManager = PressureSensorManager.getInstance(context);
         temperatureSensorManager = TemperatureSensorManager.getInstance(context);
+        magneticFieldManager = MagneticFieldManager.getInstance(context);
         //client = new OkHttpClient();
 
         if (Settings.ACTIVITY_ENABLED) {
@@ -166,6 +169,7 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
         humiditySensorManager.startSensing();
         pressureSensorManager.startSensing();
         temperatureSensorManager.startSensing();
+        magneticFieldManager.startSensing();
         if (Settings.WIFI_ENABLED) {
             Log.i(TAG, "Starting Wi-Fi Fingerprinting Service");
             Intent fingerprintingAlarm = new Intent(context.getApplicationContext(), AlarmReceiver.class);

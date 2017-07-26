@@ -46,7 +46,7 @@ public class PressureSensorManager implements SensingInterface, SensorEventListe
     }
 
     @Override
-    public SensorData getSingleEntry() {
+    public SensorData getLastEntry() {
         return lastEntry;
     }
 

@@ -18,7 +18,7 @@ interface SensingInterface {
 
     Sensor getSensor();
 
-    SensorData getSingleEntry();
+    SensorData getLastEntry();
 
     void setSamplingRate(int rate);
 
