@@ -31,8 +31,9 @@ import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AudioManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.GyroscopeManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.HumiditySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.LightSensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.PressureAltitudeSensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.PressureSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ProximitySensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.TemperatureSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.ActivityRecognizedService;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.SensingService;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.WifiService;
@@ -58,7 +59,8 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
     private final ProximitySensorManager proximityManager;
     private final LightSensorManager lightSensorManager;
     private final HumiditySensorManager humiditySensorManager;
-    private final PressureAltitudeSensorManager pressureSensorManager;
+    private final PressureSensorManager pressureSensorManager;
+    private final TemperatureSensorManager temperatureSensorManager;
     private final List<WifiData> rawHistoricData = new ArrayList<>();
 
     private HandlerThread mSensorThread;
@@ -87,7 +89,8 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
         proximityManager = ProximitySensorManager.getInstance(context);
         lightSensorManager = LightSensorManager.getInstance(context);
         humiditySensorManager = HumiditySensorManager.getInstance(context);
-        pressureSensorManager = PressureAltitudeSensorManager.getInstance(context);
+        pressureSensorManager = PressureSensorManager.getInstance(context);
+        temperatureSensorManager = TemperatureSensorManager.getInstance(context);
         //client = new OkHttpClient();
 
         if (Settings.ACTIVITY_ENABLED) {
@@ -162,6 +165,7 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
         lightSensorManager.startSensing();
         humiditySensorManager.startSensing();
         pressureSensorManager.startSensing();
+        temperatureSensorManager.startSensing();
         if (Settings.WIFI_ENABLED) {
             Log.i(TAG, "Starting Wi-Fi Fingerprinting Service");
             Intent fingerprintingAlarm = new Intent(context.getApplicationContext(), AlarmReceiver.class);

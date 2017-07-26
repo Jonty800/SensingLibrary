@@ -16,8 +16,7 @@ public class Util {
         A: Pressure constant in hP
         K: Temperature constant for converting to kelvin
     */
-    public static float calculateAbsoluteHumidity(float temperature, float relativeHumidity)
-    {
+    public static float calculateAbsoluteHumidity(float temperature, float relativeHumidity) {
         float Dv;
         float m = 17.62f;
         float Tn = 243.12f;
@@ -25,7 +24,7 @@ public class Util {
         float A = 6.112f;
         float K = 273.15f;
 
-        Dv = (float) (Ta * (relativeHumidity /100) * A * Math.exp(m* temperature /(Tn+ temperature)) / (K + temperature));
+        Dv = (float) (Ta * (relativeHumidity / 100) * A * Math.exp(m * temperature / (Tn + temperature)) / (K + temperature));
 
         return Dv;
     }
@@ -36,10 +35,9 @@ public class Util {
         Rh: Actual relative humidity in percent (%) from phone’s sensor
         Tc: Current temperature in degrees C from phone’ sensor
     */
-    public static float calculateDewPoint(float temperature, float relativeHumidity)
-    {
+    public static float calculateDewPoint(float temperature, float relativeHumidity) {
         float m = 17.62f;
         float Tn = 243.12f;
-        return (float) (Tn * ((Math.log(relativeHumidity /100) + m* temperature /(Tn+ temperature))/(m - (Math.log(relativeHumidity /100) + m* temperature /(Tn+ temperature)))));
+        return (float) (Tn * ((Math.log(relativeHumidity / 100) + m * temperature / (Tn + temperature)) / (m - (Math.log(relativeHumidity / 100) + m * temperature / (Tn + temperature)))));
     }
 }

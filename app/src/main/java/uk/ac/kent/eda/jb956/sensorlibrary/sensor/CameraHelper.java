@@ -22,16 +22,16 @@ package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
  */
 
 
-        import android.annotation.TargetApi;
-        import android.hardware.Camera;
-        import android.os.Build;
-        import android.os.Environment;
-        import android.util.Log;
+import android.annotation.TargetApi;
+import android.hardware.Camera;
+import android.os.Build;
+import android.os.Environment;
+import android.util.Log;
 
-        import java.io.File;
-        import java.text.SimpleDateFormat;
-        import java.util.Date;
-        import java.util.List;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Camera related utilities.
@@ -47,9 +47,9 @@ public class CameraHelper {
      * be lenient with the aspect ratio.
      *
      * @param supportedVideoSizes Supported camera video sizes.
-     * @param previewSizes Supported camera preview sizes.
-     * @param w     The width of the view.
-     * @param h     The height of the view.
+     * @param previewSizes        Supported camera preview sizes.
+     * @param w                   The width of the view.
+     * @param h                   The height of the view.
      * @return Best match camera video size to fit in the view.
      */
     public static Camera.Size getOptimalVideoSize(List<Camera.Size> supportedVideoSizes,
@@ -127,7 +127,6 @@ public class CameraHelper {
 
 
     /**
-     *
      * @param position Physical position of the camera i.e Camera.CameraInfo.CAMERA_FACING_FRONT
      *                 or Camera.CameraInfo.CAMERA_FACING_BACK.
      * @return the default camera on the device. Returns null if camera is not available.
@@ -135,7 +134,7 @@ public class CameraHelper {
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     private static Camera getDefaultCamera(int position) {
         // Find the total number of cameras available
-        int  mNumberOfCameras = Camera.getNumberOfCameras();
+        int mNumberOfCameras = Camera.getNumberOfCameras();
 
         // Find the ID of the back-facing ("default") camera
         Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
@@ -157,11 +156,11 @@ public class CameraHelper {
      * @param type Media type. Can be video or image.
      * @return A file object pointing to the newly created file.
      */
-    public  static File getOutputMediaFile(int type){
+    public static File getOutputMediaFile(int type) {
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
         if (!Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
-            return  null;
+            return null;
         }
 
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
@@ -170,8 +169,8 @@ public class CameraHelper {
         // between applications and persist after your app has been uninstalled.
 
         // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()) {
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
                 Log.d("CameraSample", "failed to create directory");
                 return null;
             }
@@ -180,12 +179,12 @@ public class CameraHelper {
         // Create a media file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE){
+        if (type == MEDIA_TYPE_IMAGE) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_"+ timeStamp + ".jpg");
-        } else if(type == MEDIA_TYPE_VIDEO) {
+                    "IMG_" + timeStamp + ".jpg");
+        } else if (type == MEDIA_TYPE_VIDEO) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_"+ timeStamp + ".mp4");
+                    "VID_" + timeStamp + ".mp4");
         } else {
             return null;
         }

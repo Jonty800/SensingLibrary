@@ -1,7 +1,6 @@
 package uk.ac.kent.eda.jb956.sensorlibrary;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,9 +14,6 @@ import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
@@ -30,7 +26,6 @@ import com.google.android.gms.common.GoogleApiAvailability;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.FingerprintManager;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -49,14 +44,13 @@ public class DemoActivity extends AppCompatActivity {
      * Manager for the Fingerprint API TODO: test these
      */
     //private FingerprintManager fingerprintManager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_demo);
         sensorManager = SensorManager.getInstance(this);
 
-       // fingerprintManager = FingerprintManager.getInstance(this);
+        // fingerprintManager = FingerprintManager.getInstance(this);
         checkPermissions();
 
       /*  Button mFingerprintSignInButton = (Button) findViewById(R.id.fingerprint_sign_in_button);
@@ -100,7 +94,7 @@ public class DemoActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 builder.setTitle("Admin");
                 final EditText input = new EditText(view.getContext());
-                input.setInputType(InputType.TYPE_CLASS_TEXT );
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
                 builder.setView(input);
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
@@ -201,9 +195,9 @@ public class DemoActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-        switch(DemoActivity.exitCode){
+        switch (DemoActivity.exitCode) {
             case 0:
                 break;
             case 1:
@@ -212,7 +206,8 @@ public class DemoActivity extends AppCompatActivity {
                 snack1.getView().setBackgroundColor(Color.parseColor("#38BF2F"));
                 snack1.show();
                 break;
-            case 2: Snackbar snack2 = Snackbar.make(findViewById(android.R.id.content),
+            case 2:
+                Snackbar snack2 = Snackbar.make(findViewById(android.R.id.content),
                         "Experiment stopped unexpectedly", Snackbar.LENGTH_LONG);
                 snack2.getView().setBackgroundColor(Color.parseColor("#FF8000"));
                 snack2.show();

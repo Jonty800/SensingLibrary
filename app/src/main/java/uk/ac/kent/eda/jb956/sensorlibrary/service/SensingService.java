@@ -1,27 +1,17 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.service;
 
-import android.Manifest;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Criteria;
-import android.location.GpsSatellite;
-import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 
@@ -78,7 +68,7 @@ public class SensingService extends Service {
     public class MyLocationListenerGPS implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
-            Log.i(TAG,"onLocationChanged");
+            Log.i(TAG, "onLocationChanged");
             mLastLocation = location;
             if (mLastLocation != null) {
                 boolean isGPS = (mLastLocation.getAccuracy() <= 30);

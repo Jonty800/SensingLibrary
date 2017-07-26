@@ -13,7 +13,6 @@ import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.LightSensorData;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.ProximitySensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 
@@ -81,12 +80,12 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
             e.printStackTrace();
         }
         Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
-        if(Settings.POCKET_ENABLED) {
-            if(!Settings.PROXIMITY_ENABLED) {
+        if (Settings.POCKET_ENABLED) {
+            if (!Settings.PROXIMITY_ENABLED) {
                 Log.i(TAG, "PROXIMITY_ENABLED=false, ignoring pocket detection");
                 return;
             }
-            if(!Settings.LIGHT_ENABLED) {
+            if (!Settings.LIGHT_ENABLED) {
                 Log.i(TAG, "LIGHT_ENABLED=false, ignoring pocket detection");
                 return;
             }
@@ -159,21 +158,21 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
                         && LightSensorManager.getInstance(context).history.size() > 0) {
                     InPocketDetectionHelper inPocketDetectionHelper = InPocketDetectionHelper.getInstance();
                     List<Double> temp = new ArrayList<>();
-                    temp.add( ProximitySensorManager.getInstance(context).history.get( ProximitySensorManager.getInstance(context).history.size()-1).proximity);
-                   // for (ProximitySensorData pd : ProximitySensorManager.getInstance(context).history) {
-                       // temp.add(pd.proximity);
+                    temp.add(ProximitySensorManager.getInstance(context).history.get(ProximitySensorManager.getInstance(context).history.size() - 1).proximity);
+                    // for (ProximitySensorData pd : ProximitySensorManager.getInstance(context).history) {
+                    // temp.add(pd.proximity);
                     //}
                     inPocketDetectionHelper.proximityValues = new ArrayList<>(temp);
 
                     temp = new ArrayList<>();
-                    temp.add(LightSensorManager.getInstance(context).history.get(LightSensorManager.getInstance(context).history.size()-1).illuminance);
+                    temp.add(LightSensorManager.getInstance(context).history.get(LightSensorManager.getInstance(context).history.size() - 1).illuminance);
                     //for (LightSensorData pd : LightSensorManager.getInstance(context).history) {
-                       // temp.add(pd.illuminance);
-                   // }
+                    // temp.add(pd.illuminance);
+                    // }
                     inPocketDetectionHelper.lightValues = new ArrayList<>(temp);
-                    if(Settings.SAVE_POCKET_TO_DATABASE)
+                    if (Settings.SAVE_POCKET_TO_DATABASE)
                         MySQLiteHelper.getInstance(context).addToPocket(inPocketDetectionHelper.getDetectionResult(), System.currentTimeMillis());
-                    Log.i(TAG,"PocketDetectionResult: " + inPocketDetectionHelper.getDetectionResult().toString());
+                    Log.i(TAG, "PocketDetectionResult: " + inPocketDetectionHelper.getDetectionResult().toString());
                     lastTimeCheckedHistory = System.currentTimeMillis();
                     ProximitySensorManager.getInstance(context).history.clear();
                     LightSensorManager.getInstance(context).history.clear();

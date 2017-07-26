@@ -121,7 +121,7 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
                     gd.timestamp = System.currentTimeMillis();
                     lastEntry = gd;
                     MySQLiteHelper.getInstance(context).addToGyro(gd);
-                   // Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
+                    // Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
                 }
             }
         }

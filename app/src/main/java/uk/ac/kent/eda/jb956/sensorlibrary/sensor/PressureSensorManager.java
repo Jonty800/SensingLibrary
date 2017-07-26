@@ -17,22 +17,22 @@ import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class PressureAltitudeSensorManager implements SensingInterface, SensorEventListener {
+public class PressureSensorManager implements SensingInterface, SensorEventListener {
 
-    private final String TAG = "PressureAltitude";
-    private static PressureAltitudeSensorManager instance;
+    private final String TAG = "PressureSensorManager";
+    private static PressureSensorManager instance;
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
     public static int SAMPLING_RATE = 1000; //ms
     public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
 
-    public static synchronized PressureAltitudeSensorManager getInstance(Context context) {
+    public static synchronized PressureSensorManager getInstance(Context context) {
         if (instance == null)
-            instance = new PressureAltitudeSensorManager(context);
+            instance = new PressureSensorManager(context);
         return instance;
     }
 
-    private PressureAltitudeSensorManager(Context context) {
+    private PressureSensorManager(Context context) {
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
@@ -67,11 +67,11 @@ public class PressureAltitudeSensorManager implements SensingInterface, SensorEv
         try {
             if (Settings.PRESSURE_ENABLED) {
                 Log.i(TAG, "Registering listener...");
-                if(sensor != null) {
+                if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
-                }else{
-                    Log.i(TAG, "Cannot calculate altitude, as pressure Sensor is not available!");
+                } else {
+                    Log.i(TAG, "Cannot calculate pressure, as pressure Sensor is not available!");
                 }
             }
         } catch (Exception e) {
@@ -116,7 +116,7 @@ public class PressureAltitudeSensorManager implements SensingInterface, SensorEv
                     lastUpdate = curTime;
                     float pressure = event.values[0];
                     PressureSensorData pd = new PressureSensorData();
-                    pd.pressure  = pressure ;
+                    pd.pressure = pressure;
                     pd.timestamp = System.currentTimeMillis();
                     lastEntry = pd;
                     MySQLiteHelper.getInstance(context).addToPressure(pd);

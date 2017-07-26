@@ -19,7 +19,7 @@ public class InPocketDetectionHelper {
     public List<Double> lightValues = new ArrayList<>();
     public List<Double> proximityValues = new ArrayList<>();
     //private List<Double> lightValuesNorm = new ArrayList<>();
-   // private List<Double> proximityValuesNorm = new ArrayList<>();
+    // private List<Double> proximityValuesNorm = new ArrayList<>();
 
     private final String TAG = "InPocketDetectionManager";
     private static InPocketDetectionHelper instance;
@@ -33,12 +33,12 @@ public class InPocketDetectionHelper {
     InPocketContext getDetectionResult() {
         if (proximityValues.size() == 0 || lightValues.size() == 0)
             return InPocketContext.UNKNOWN;
-       // proximityValuesNorm = norm(proximityValues);
-       // lightValuesNorm = norm(lightValues);
+        // proximityValuesNorm = norm(proximityValues);
+        // lightValuesNorm = norm(lightValues);
         double m_proximity = arrayAverage(proximityValues);
         double m_light = arrayAverage(lightValues);
 
-       // System.out.println(m_proximity + " - " + th_bag + " - " + m_light + " - " + i_dark);
+        // System.out.println(m_proximity + " - " + th_bag + " - " + m_light + " - " + i_dark);
 
         if (m_proximity < th_bag && m_light < i_dark) {
             int numClose = 0;

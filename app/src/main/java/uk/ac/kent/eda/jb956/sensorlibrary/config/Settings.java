@@ -33,6 +33,7 @@ public class Settings {
     public static final boolean POCKET_ENABLED = true;
     public static final boolean HUMIDITY_ENABLED = true;
     public static final boolean PRESSURE_ENABLED = true;
+    public static final boolean TEMP_ENABLED = true;
     public static boolean GPS_ENABLED = false; //TODO implement GPS
 
     /*
@@ -54,6 +55,7 @@ public class Settings {
     public static final boolean SAVE_POCKET_TO_DATABASE = true;
     public static final boolean SAVE_PRESSURE_TO_DATABASE = true;
     public static final boolean SAVE_HUMIDITY_TO_DATABASE = true;
+    public static final boolean SAVE_TEMP_TO_DATABASE = true;
     public static final String SAVE_PATH = Environment.getExternalStorageDirectory().getPath() + "/" + appName;
 
     /*

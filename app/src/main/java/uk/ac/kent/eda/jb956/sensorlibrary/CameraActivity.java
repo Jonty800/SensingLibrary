@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -30,12 +29,10 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.cameraview.CameraView;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,7 +44,6 @@ import java.util.concurrent.TimeUnit;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.GPS;
-import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -67,8 +63,8 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
         tv = (TextView) findViewById(R.id.count_field);
         File dir = new File(Settings.SAVE_PATH + "/SensorLibraryCamera");
-        if(dir.list()!=null)
-            tv.setText(dir.list().length+"");
+        if (dir.list() != null)
+            tv.setText(dir.list().length + "");
         mCameraView = (CameraView) findViewById(R.id.camera);
 
         mCameraView.addCallback(new CameraView.Callback() {
@@ -88,7 +84,7 @@ public class CameraActivity extends AppCompatActivity {
             public void onClick(View arg0) {
                 try {
                     mCameraView.takePicture();
-                }catch(Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -154,6 +150,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     Dialog builder;
+
     public void showImage(Bitmap bitmap, final long startTime) {
         builder = new Dialog(this);
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -176,9 +173,9 @@ public class CameraActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setImageBitmap(bitmap);
         float scale = getResources().getDisplayMetrics().density;
-        int dpAsPixels = (int) (16*scale + 0.5f);
-        imageView.setPadding(dpAsPixels,dpAsPixels,dpAsPixels,dpAsPixels);
-        builder.addContentView(imageView,params );
+        int dpAsPixels = (int) (16 * scale + 0.5f);
+        imageView.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, dpAsPixels);
+        builder.addContentView(imageView, params);
         Window window = builder.getWindow();
         if (window != null) {
             window.setLayout(
@@ -186,7 +183,7 @@ public class CameraActivity extends AppCompatActivity {
                     (int) (window.getWindowManager().getDefaultDisplay().getHeight()));
         }
         builder.show();
-        long dur = Math.max(0, 1000-(System.currentTimeMillis()-startTime));
+        long dur = Math.max(0, 1000 - (System.currentTimeMillis() - startTime));
         final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
         service.schedule(new Runnable() {
@@ -195,13 +192,13 @@ public class CameraActivity extends AppCompatActivity {
                 imageTaken = false;
                 if (builder.isShowing())
                     builder.dismiss();
-                if(tv!=null) {
+                if (tv != null) {
                     final File dir = new File(Settings.SAVE_PATH + "/SensorLibraryCamera");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if(dir.list()!=null)
-                                tv.setText(dir.list().length+"");
+                            if (dir.list() != null)
+                                tv.setText(dir.list().length + "");
                         }
                     });
                 }
@@ -231,8 +228,8 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(builder!=null){
-            if(builder.isShowing())
+        if (builder != null) {
+            if (builder.isShowing())
                 builder.dismiss();
         }
     }
@@ -286,7 +283,7 @@ public class CameraActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Log.d(TAG, "Saving custom CSV");
-                       // MySQLiteHelper.getInstance(getApplicationContext()).exportAccDBtest(timestamp);
+                        // MySQLiteHelper.getInstance(getApplicationContext()).exportAccDBtest(timestamp);
                     }
                 }, 10, TimeUnit.SECONDS);
 

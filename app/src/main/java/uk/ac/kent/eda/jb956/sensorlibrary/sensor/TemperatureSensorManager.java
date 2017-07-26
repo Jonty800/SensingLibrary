@@ -8,8 +8,8 @@ import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.TemeratureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 
 /**
@@ -17,25 +17,25 @@ import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class HumiditySensorManager implements SensingInterface, SensorEventListener {
+public class TemperatureSensorManager implements SensingInterface, SensorEventListener {
 
-    private final String TAG = "HumiditySensorManager";
-    private static HumiditySensorManager instance;
+    private final String TAG = "TemperatureSensor";
+    private static TemperatureSensorManager instance;
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
     public static int SAMPLING_RATE = 1000; //ms
     public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
 
-    public static synchronized HumiditySensorManager getInstance(Context context) {
+    public static synchronized TemperatureSensorManager getInstance(Context context) {
         if (instance == null)
-            instance = new HumiditySensorManager(context);
+            instance = new TemperatureSensorManager(context);
         return instance;
     }
 
-    private HumiditySensorManager(Context context) {
+    private TemperatureSensorManager(Context context) {
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+        sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
     }
 
     private final Sensor sensor;
@@ -65,13 +65,13 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
         if (isSensing())
             return;
         try {
-            if (Settings.HUMIDITY_ENABLED) {
+            if (Settings.TEMP_ENABLED) {
                 Log.i(TAG, "Registering listener...");
-                if (androidSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY) != null) {
+                if (androidSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE) != null) {
                     androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
                 } else {
-                    Log.i(TAG, "Cannot calculate Absolute Humidity, as relative humidity sensor is not available!");
+                    Log.i(TAG, "Cannot calculate Ambient Temperature, as Ambient Temperature sensor is not available!");
                 }
             }
         } catch (Exception e) {
@@ -85,7 +85,7 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
         if (!isSensing())
             return;
         try {
-            if (Settings.HUMIDITY_ENABLED)
+            if (Settings.TEMP_ENABLED)
                 androidSensorManager.unregisterListener(this, getSensor());
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,21 +106,21 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
+        if (sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
             long curTime = System.currentTimeMillis();
 
             Sensor mySensor = event.sensor;
-            if (mySensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
+            if (mySensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
                 // only allow one update every SAMPLING_RATE (ms).
                 if ((curTime - lastUpdate) > SAMPLING_RATE) {
                     lastUpdate = curTime;
-                    float millibars_of_pressure = event.values[0];
-                    PressureSensorData hd = new PressureSensorData();
-                    hd.pressure = millibars_of_pressure;
+                    float degreesC = event.values[0];
+                    TemeratureSensorData hd = new TemeratureSensorData();
+                    hd.degreesC = degreesC;
                     hd.timestamp = System.currentTimeMillis();
                     lastEntry = hd;
-                    MySQLiteHelper.getInstance(context).addToHumidity(hd);
-                    Log.i(TAG, "Humidity: " + hd.pressure);
+                    MySQLiteHelper.getInstance(context).addToTemperature(hd);
+                    Log.i(TAG, "Humidity: " + hd.degreesC);
                 }
             }
         }

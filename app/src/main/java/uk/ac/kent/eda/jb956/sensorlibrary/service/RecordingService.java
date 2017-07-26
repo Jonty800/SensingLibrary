@@ -1,32 +1,28 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.service;
-        import java.io.File;
-        import java.io.IOException;
-        import java.util.List;
-        import android.app.Service;
-        import android.content.Intent;
-        import android.graphics.PixelFormat;
-        import android.hardware.Camera;
-        import android.hardware.Camera.Size;
-        import android.media.CamcorderProfile;
-        import android.media.MediaRecorder;
-        import android.os.AsyncTask;
-        import android.os.Build;
-        import android.os.Environment;
-        import android.os.IBinder;
-        import android.support.annotation.RequiresApi;
-        import android.util.Log;
-        import android.view.Display;
-        import android.view.SurfaceHolder;
-        import android.view.SurfaceView;
-        import android.widget.Toast;
 
-        import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
-        import uk.ac.kent.eda.jb956.sensorlibrary.sensor.CameraHelper;
+import android.app.Service;
+import android.content.Intent;
+import android.hardware.Camera;
+import android.media.CamcorderProfile;
+import android.media.MediaRecorder;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.IBinder;
+import android.support.annotation.RequiresApi;
+import android.util.Log;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.CameraHelper;
 
 public class RecordingService extends Service {
     private static final String TAG = "RecorderService";
-   // private SurfaceView mSurfaceView;
-   // private SurfaceHolder mSurfaceHolder;
+    // private SurfaceView mSurfaceView;
+    // private SurfaceHolder mSurfaceHolder;
     private static Camera mServiceCamera;
     private boolean mRecordingStatus;
     private MediaRecorder mMediaRecorder;
@@ -35,8 +31,8 @@ public class RecordingService extends Service {
     public void onCreate() {
         mRecordingStatus = false;
         //mServiceCamera = CameraRecorder.mCamera;
-       // mSurfaceView = CameraRecorder.mSurfaceView;
-      //  mSurfaceHolder = CameraRecorder.mSurfaceHolder;
+        // mSurfaceView = CameraRecorder.mSurfaceView;
+        //  mSurfaceHolder = CameraRecorder.mSurfaceHolder;
 
         super.onCreate();
         if (!mRecordingStatus)
@@ -50,11 +46,11 @@ public class RecordingService extends Service {
     }
 
 
-    public boolean startRecording(){
+    public boolean startRecording() {
 
-            Toast.makeText(getBaseContext(), "Recording Started", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getBaseContext(), "Recording Started", Toast.LENGTH_SHORT).show();
 
-            mServiceCamera = getCameraInstance();
+        mServiceCamera = getCameraInstance();
 
            /* try {
                 //mServiceCamera.setPreviewDisplay(mSurfaceHolder);
@@ -66,7 +62,7 @@ public class RecordingService extends Service {
             }*/
 
 
-            mMediaRecorder = new MediaRecorder();
+        mMediaRecorder = new MediaRecorder();
 
         new MediaPrepareTask().execute();
 
@@ -76,12 +72,11 @@ public class RecordingService extends Service {
 
     }
 
-    public static Camera getCameraInstance(){
+    public static Camera getCameraInstance() {
         Camera c = null;
         try {
             c = Camera.open(1); // attempt to get a Camera instance
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             // Camera is not available (in use or does not exist)
             e.printStackTrace();
         }
@@ -89,7 +84,7 @@ public class RecordingService extends Service {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
-    private boolean prepareVideoRecorder(){
+    private boolean prepareVideoRecorder() {
 
         // BEGIN_INCLUDE (configure_preview)
         mServiceCamera = getCameraInstance();
@@ -131,14 +126,14 @@ public class RecordingService extends Service {
         mMediaRecorder.setCamera(mServiceCamera);
 
         // Step 2: Set sources
-        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT );
+        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
         // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
         mMediaRecorder.setProfile(profile);
 
         // Step 4: Set output file
-       File mOutputFile = new File(Settings.SAVE_PATH +"/videos");
+        File mOutputFile = new File(Settings.SAVE_PATH + "/videos");
         if (mOutputFile == null) {
             return false;
         }
@@ -168,7 +163,7 @@ public class RecordingService extends Service {
         super.onDestroy();
     }
 
-    private void releaseMediaRecorder(){
+    private void releaseMediaRecorder() {
         if (mMediaRecorder != null) {
             mMediaRecorder.reset();   // clear recorder configuration
             mMediaRecorder.release(); // release the recorder object
@@ -177,8 +172,8 @@ public class RecordingService extends Service {
         }
     }
 
-    private void releaseCamera(){
-        if (mServiceCamera != null){
+    private void releaseCamera() {
+        if (mServiceCamera != null) {
             mServiceCamera.release();        // release the camera for other applications
             mServiceCamera = null;
         }

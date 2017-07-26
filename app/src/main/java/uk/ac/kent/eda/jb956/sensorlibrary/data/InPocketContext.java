@@ -12,9 +12,11 @@ public enum InPocketContext {
 
     private final int id;
 
-    InPocketContext(int i){
+    InPocketContext(int i) {
         id = i;
     }
 
-    public int getId() { return id; }
+    public int getId() {
+        return id;
+    }
 }

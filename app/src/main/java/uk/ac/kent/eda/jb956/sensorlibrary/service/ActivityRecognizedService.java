@@ -40,7 +40,7 @@ public class ActivityRecognizedService extends IntentService {
         int accuracy = 0;
         for (DetectedActivity activity : probableActivities) {
 
-            if(activity.getConfidence() > accuracy){
+            if (activity.getConfidence() > accuracy) {
                 accuracy = activity.getConfidence();
                 best = activity;
             }
@@ -87,7 +87,7 @@ public class ActivityRecognizedService extends IntentService {
                 }
             }
         }
-        if(best!=null){
+        if (best != null) {
             ActivityData data = new ActivityData();
             data.activityCode = best.getType();
             data.confidence = best.getConfidence();

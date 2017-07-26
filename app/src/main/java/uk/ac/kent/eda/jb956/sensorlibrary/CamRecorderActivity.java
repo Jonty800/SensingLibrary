@@ -1,11 +1,10 @@
 package uk.ac.kent.eda.jb956.sensorlibrary;
+
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.TimeInterpolator;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -20,10 +19,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.annotation.RequiresApi;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -92,9 +87,9 @@ public class CamRecorderActivity extends Activity {
         mPreview = (TextureView) findViewById(R.id.surface_view);
         captureButton = (Button) findViewById(R.id.button_capture);
         movingTextView = (TextView) findViewById(R.id.moving_tv);
-        if(mCamera==null)
+        if (mCamera == null)
             mCamera = CameraHelper.getDefaultFrontFacingCameraInstance();
-        if(mMediaRecorder==null)
+        if (mMediaRecorder == null)
             mMediaRecorder = new MediaRecorder();
         projectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
     }
@@ -107,28 +102,27 @@ public class CamRecorderActivity extends Activity {
         display.getSize(size);
         final Random random = new Random();
         final int xBounds = size.x - tvWidth;
-        final int yBounds = size.y-((captureButton.getHeight()*2)+tvWidth);
+        final int yBounds = size.y - ((captureButton.getHeight() * 2) + tvWidth);
 
         float chosenX = (float) random.nextInt(xBounds);
         float chosenY = (float) random.nextInt(yBounds);
 
-        if(chosenX < tvWidth)
+        if (chosenX < tvWidth)
             chosenX = tvWidth;
 
-        if(chosenY < tvWidth)
+        if (chosenY < tvWidth)
             chosenY = tvWidth;
 
-        while(true)
-        {
+        while (true) {
             double d = Math.sqrt(Math.pow(movingTextView.getX() - chosenX, 2) + Math.pow(movingTextView.getY() - chosenY, 2));
-            if( d > xBounds/3){
+            if (d > xBounds / 3) {
                 break;
-            }else{
+            } else {
                 chosenX = (float) random.nextInt(xBounds);
                 chosenY = (float) random.nextInt(yBounds);
-                if(chosenX < tvWidth)
+                if (chosenX < tvWidth)
                     chosenX = tvWidth;
-                if(chosenY < tvWidth)
+                if (chosenY < tvWidth)
                     chosenY = tvWidth;
             }
         }
@@ -141,7 +135,7 @@ public class CamRecorderActivity extends Activity {
         int Result = random.nextInt(High - Low) + Low;
         mAnimatorSet.setDuration(Result);
         mAnimatorSet.setInterpolator(new AccelerateInterpolator(0.5f));
-       // mAnimatorSet.setStartDelay(500);
+        // mAnimatorSet.setStartDelay(500);
         mAnimatorSet.start();
         mAnimatorSet.addListener(new Animator.AnimatorListener() {
             @Override
@@ -151,11 +145,11 @@ public class CamRecorderActivity extends Activity {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                if(!finishAnimation) {
-                   // movingTextView.setLayerType(View.LAYER_TYPE_NONE, null);
+                if (!finishAnimation) {
+                    // movingTextView.setLayerType(View.LAYER_TYPE_NONE, null);
                     screenRandomAnimator(movingTextView);
-                }else{
-                    finishAnimation=false;
+                } else {
+                    finishAnimation = false;
                 }
             }
 
@@ -170,70 +164,71 @@ public class CamRecorderActivity extends Activity {
         });
     }
 
-        /**
-         * The capture button controls all user interaction. When recording, the button click
-         * stops recording, releases {@link MediaRecorder} and {@link Camera}. When not recording,
-         * it prepares the {@link MediaRecorder} and starts recording.
-         *
-         * @param view the view generating the event.
-         */
+    /**
+     * The capture button controls all user interaction. When recording, the button click
+     * stops recording, releases {@link MediaRecorder} and {@link Camera}. When not recording,
+     * it prepares the {@link MediaRecorder} and starts recording.
+     *
+     * @param view the view generating the event.
+     */
     boolean finishAnimation = false;
+
     public void onCaptureClick(View view) {
         if (isRecording) {
             DemoActivity.exitCode = 2;
-           stopAllStuff(true);
+            stopAllStuff(true);
 
         } else {
-            startTime = System.currentTimeMillis()/1000;
-            new MediaPrepareTask().execute(null,null,null);
+            startTime = System.currentTimeMillis() / 1000;
+            new MediaPrepareTask().execute(null, null, null);
         }
     }
 
-    void stopAllStuff(boolean finish){
+    void stopAllStuff(boolean finish) {
         // BEGIN_INCLUDE(stop_release_media_recorder)
 
         // stop recording and release camera
         try {
             System.out.println("mMediaRecorder.stop()");
-            finishAnimation =true;
+            finishAnimation = true;
             mMediaRecorder.stop();
             long end = System.currentTimeMillis();
             releaseMediaRecorder(); // release the MediaRecorder object
-            if(stopAllRunnable!=null)
+            if (stopAllRunnable != null)
                 stopAllRunnable.cancel();
-            if(service!=null && !service.isShutdown())
+            if (service != null && !service.isShutdown())
                 service.shutdown();
-            if(running)
+            if (running)
                 stopRecordingScreen();
             //mCamera.lock();         // take camera access back from MediaRecorder
 
-            File dir = new File(Settings.SAVE_PATH + "/" + startTime +"/SensorLibraryCamera/");
+            File dir = new File(Settings.SAVE_PATH + "/" + startTime + "/SensorLibraryCamera/");
             dir.mkdirs();
 
             String newFileNameCamera = String.format(Locale.ENGLISH, "camera_%d.mp4", actualStartTime);
             String screenFileLocation = String.format(Locale.ENGLISH, "screen_%d.webm", startTime);
             String newFileNameScreen = String.format(Locale.ENGLISH, "screen_%d.webm", actualStartTime);
-            File to = new File(dir,newFileNameCamera);
-            File screenFile = new File(dir,screenFileLocation);
-            if(outFile.exists())
+            File to = new File(dir, newFileNameCamera);
+            File screenFile = new File(dir, screenFileLocation);
+            if (outFile.exists())
                 outFile.renameTo(to);
             refreshGallery(to);
-            to = new File(dir,newFileNameScreen);
-            if(screenFile.exists())
+            to = new File(dir, newFileNameScreen);
+            if (screenFile.exists())
                 screenFile.renameTo(to);
             refreshGallery(to);
 
             File oldfolder = new File(Settings.SAVE_PATH + "/" + startTime);
             File newfolder = new File(Settings.SAVE_PATH + "/" + actualStartTime);
-            if(oldfolder.exists())
+            if (oldfolder.exists())
                 oldfolder.renameTo(newfolder);
-            dir = new File(Settings.SAVE_PATH + "/" + actualStartTime +"/SensorLibraryCamera/");
-            File toRefresh = new File(dir,newFileNameScreen);
+            dir = new File(Settings.SAVE_PATH + "/" + actualStartTime + "/SensorLibraryCamera/");
+            File toRefresh = new File(dir, newFileNameScreen);
             refreshGallery(toRefresh);
-            toRefresh = new File(dir,newFileNameCamera);
+            toRefresh = new File(dir, newFileNameCamera);
             refreshGallery(toRefresh);
 
-            if(startTime>0) {
+            if (startTime > 0) {
                 MySQLiteHelper.getInstance(getApplication()).exportAccDBWithRange(actualStartTime, end);
                 MySQLiteHelper.getInstance(getApplication()).exportGyroDBWithRange(actualStartTime, end);
                 MySQLiteHelper.getInstance(getApplication()).exportLightDBWithRange(actualStartTime, end);
@@ -254,7 +249,7 @@ public class CamRecorderActivity extends Activity {
         isRecording = false;
         releaseCamera();
 
-        if(finish)
+        if (finish)
             finish();
         // END_INCLUDE(stop_release_media_recorder)
     }
@@ -265,10 +260,10 @@ public class CamRecorderActivity extends Activity {
 
     public void startRecordingScreen() {
         Log.d(TAG, "Starting screen recording...");
-        File dir = new File(Settings.SAVE_PATH + "/" + startTime +"/SensorLibraryCamera/");
+        File dir = new File(Settings.SAVE_PATH + "/" + startTime + "/SensorLibraryCamera/");
         dir.mkdirs();
         String fileName = String.format(Locale.ENGLISH, "screen_%d.webm", startTime);
-        screenFile = new File(dir,fileName);
+        screenFile = new File(dir, fileName);
 
         Log.d(TAG, String.format("Recording: %s x %s @ %s", recordingInfo.width, recordingInfo.height,
                 recordingInfo.density));
@@ -303,7 +298,7 @@ public class CamRecorderActivity extends Activity {
         recorder.start();
         running = true;
 
-        Log.d(TAG,"Screen recording started.");
+        Log.d(TAG, "Screen recording started.");
     }
 
     public void stopRecordingScreen() {
@@ -335,7 +330,7 @@ public class CamRecorderActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        if(service!=null && !service.isShutdown())
+        if (service != null && !service.isShutdown())
             service.shutdown();
         super.onDestroy();
     }
@@ -350,7 +345,7 @@ public class CamRecorderActivity extends Activity {
         mMediaRecorder = null;
         mCamera = null;
 
-        if(mCamera!=null)
+        if (mCamera != null)
             mCamera.lock();
         if (outFile != null)
             refreshGallery(outFile);
@@ -394,7 +389,7 @@ public class CamRecorderActivity extends Activity {
         Log.i(TAG, "prepareVideoRecorder()");
 
         // BEGIN_INCLUDE (configure_preview)
-       // mCamera = CameraHelper.getDefaultFrontFacingCameraInstance();
+        // mCamera = CameraHelper.getDefaultFrontFacingCameraInstance();
 
         // We need to make sure that our preview and recording video size are supported by the
         // camera. Query camera to find all the sizes and choose the optimal size given the
@@ -405,8 +400,7 @@ public class CamRecorderActivity extends Activity {
         Camera.Size optimalSize = CameraHelper.getOptimalVideoSize(mSupportedVideoSizes,
                 mSupportedPreviewSizes, mPreview.getWidth(), mPreview.getHeight());
 
-        for(Camera.Size s: mSupportedVideoSizes)
-        {
+        for (Camera.Size s : mSupportedVideoSizes) {
             System.out.println(s.width + " " + s.height);
         }
 
@@ -416,7 +410,7 @@ public class CamRecorderActivity extends Activity {
         mCamera.setParameters(parameters);
 
         // Use the same size for recording profile.
-        parameters.setPreviewSize(mSupportedPreviewSizes.get(mSupportedPreviewSizes.size()-1).width, mSupportedPreviewSizes.get(mSupportedPreviewSizes.size()-1).height);
+        parameters.setPreviewSize(mSupportedPreviewSizes.get(mSupportedPreviewSizes.size() - 1).width, mSupportedPreviewSizes.get(mSupportedPreviewSizes.size() - 1).height);
 
         // likewise for the camera object itself.
 
@@ -441,19 +435,19 @@ public class CamRecorderActivity extends Activity {
         mMediaRecorder.setCamera(mCamera);
 
         // Step 2: Set sources
-     //mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+        //mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
 //        mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 //
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
         //CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
 //
 //        System.out.println("Setting camera size: " + mSupportedVideoSizes.get(5).width + " x " + mSupportedVideoSizes.get(5).height);
-       // profile.videoFrameWidth = mSupportedVideoSizes.get(5).width;
-       // profile.videoFrameHeight = mSupportedVideoSizes.get(5).height;
+        // profile.videoFrameWidth = mSupportedVideoSizes.get(5).width;
+        // profile.videoFrameHeight = mSupportedVideoSizes.get(5).height;
 //
 //
 //        // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
-      // mMediaRecorder.setProfile(profile);
+        // mMediaRecorder.setProfile(profile);
 
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mMediaRecorder.setVideoFrameRate(recordingInfo.frameRate);
@@ -539,7 +533,7 @@ public class CamRecorderActivity extends Activity {
     @Override
     public void onStart() {
         super.onStart();
-       // Log.i(TAG, "onStart()");
+        // Log.i(TAG, "onStart()");
     }
 
     @Override
@@ -575,6 +569,7 @@ public class CamRecorderActivity extends Activity {
     }*/
 
     public long actualStartTime = 0L;
+
     /**
      * Asynchronous task for preparing the {@link MediaRecorder} since it's a long blocking
      * operation.
@@ -585,8 +580,8 @@ public class CamRecorderActivity extends Activity {
         protected Boolean doInBackground(Void... voids) {
             //init screen recording
             // initialize video camera
-            startTime = System.currentTimeMillis()/1000;
-            File dir = new File(Settings.SAVE_PATH + "/" + startTime +"/SensorLibraryCamera/");
+            startTime = System.currentTimeMillis() / 1000;
+            File dir = new File(Settings.SAVE_PATH + "/" + startTime + "/SensorLibraryCamera/");
             dir.mkdirs();
             String fileName = String.format(Locale.ENGLISH, "camera_%d.mp4", startTime);
 
@@ -624,7 +619,7 @@ public class CamRecorderActivity extends Activity {
         @Override
         protected void onPostExecute(Boolean result) {
             if (!result) {
-               // CamRecorderActivity.this.finish();
+                // CamRecorderActivity.this.finish();
             }
             // inform the user that recording has started
             setCaptureButtonText("Experiment Running...");
