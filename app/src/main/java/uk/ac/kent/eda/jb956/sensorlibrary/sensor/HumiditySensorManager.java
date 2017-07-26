@@ -67,11 +67,11 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
         try {
             if (Settings.HUMIDITY_ENABLED) {
                 Log.i(TAG, "Registering listener...");
-                if (androidSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY) != null) {
+                if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
                 } else {
-                    Log.i(TAG, "Cannot calculate Absolute Humidity, as relative humidity sensor is not available!");
+                    Log.i(TAG, "Cannot calculate Humidity, as humidity sensor is not available!");
                 }
             }
         } catch (Exception e) {

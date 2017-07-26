@@ -67,7 +67,7 @@ public class TemperatureSensorManager implements SensingInterface, SensorEventLi
         try {
             if (Settings.TEMP_ENABLED) {
                 Log.i(TAG, "Registering listener...");
-                if (androidSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE) != null) {
+                if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
                 } else {

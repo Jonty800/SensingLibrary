@@ -68,8 +68,12 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
         try {
             if (Settings.GYRO_ENABLED) {
                 Log.i(TAG, "Registering listener...");
-                androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
-                sensing = true;
+                if (sensor != null) {
+                    androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
+                    sensing = true;
+                } else {
+                    Log.i(TAG, "Cannot calculate Gyroscope data, as gyroscope sensor is not available!");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
