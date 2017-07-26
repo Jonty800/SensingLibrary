@@ -169,22 +169,29 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_MAG);
     }
 
+    public String[] arrayTrim(String[] input){
+        int n=input.length-1;
+        String[] newArray=new String[n];
+        System.arraycopy(input,1,newArray,0,n);
+        return newArray;
+    }
+
     public void exportWifiDB() {
         File exportDir = new File(Settings.SAVE_PATH);
         if (!exportDir.exists()) {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportWifiDB" + System.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportWifiDB-" + System.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor curCSV = db.rawQuery("SELECT * FROM wifi", null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -201,16 +208,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportPressureDB" + System.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportPressureDB-" + System.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor curCSV = db.rawQuery("SELECT * FROM pressure", null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -227,16 +234,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportHumidityDB" + System.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportHumidityDB-" + System.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor curCSV = db.rawQuery("SELECT * FROM humidity", null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2), curCSV.getString(3)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -253,16 +260,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportPocketDetectionDB" + System.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportPocketDetectionDB-" + System.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor curCSV = db.rawQuery("SELECT * FROM pocket", null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -279,16 +286,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportGyroDB" + System.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportGyroDB-" + System.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor curCSV = db.rawQuery("SELECT * FROM gyro", null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -305,16 +312,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportMagneticFieldDB" + System.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportMagneticFieldDB-" + System.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor curCSV = db.rawQuery("SELECT * FROM mag", null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -331,16 +338,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportTemperatureDB" + System.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportTemperatureDB-" + System.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor curCSV = db.rawQuery("SELECT * FROM temperature", null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -363,10 +370,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor curCSV = db.rawQuery("SELECT * FROM acc", null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -391,10 +398,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             long start_ts = timestampAInSeconds;
             long end_ts = timestampBInSeconds;
             Cursor curCSV = db.rawQuery("SELECT * FROM acc where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -419,10 +426,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             long start_ts = timestampAInSeconds;
             long end_ts = timestampBInSeconds;
             Cursor curCSV = db.rawQuery("SELECT * FROM mag where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -447,10 +454,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             long start_ts = timestampAInSeconds;
             long end_ts = timestampBInSeconds;
             Cursor curCSV = db.rawQuery("SELECT * FROM humidity where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -475,10 +482,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             long start_ts = timestampAInSeconds;
             long end_ts = timestampBInSeconds;
             Cursor curCSV = db.rawQuery("SELECT * FROM pocket where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -503,10 +510,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             long start_ts = timestampAInSeconds;
             long end_ts = timestampBInSeconds;
             Cursor curCSV = db.rawQuery("SELECT * FROM pressure where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -531,10 +538,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             long start_ts = timestampAInSeconds;
             long end_ts = timestampBInSeconds;
             Cursor curCSV = db.rawQuery("SELECT * FROM temperature where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -559,10 +566,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             long start_ts = timestampAInSeconds;
             long end_ts = timestampBInSeconds;
             Cursor curCSV = db.rawQuery("SELECT * FROM gyro where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -587,10 +594,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             long start_ts = timestampAInSeconds;
             long end_ts = timestampBInSeconds;
             Cursor curCSV = db.rawQuery("SELECT * FROM light where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -615,10 +622,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             long start_ts = timestampAInSeconds;
             long end_ts = timestampBInSeconds;
             Cursor curCSV = db.rawQuery("SELECT * FROM positions where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2), curCSV.getString(3)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -635,16 +642,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportActDB" + System.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportActDB-" + System.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor curCSV = db.rawQuery("SELECT * FROM act", null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2), curCSV.getString(3)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -661,16 +668,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportProximityDB" + System.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportProximityDB-" + System.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor curCSV = db.rawQuery("SELECT * FROM proximity", null);
-            csvWrite.writeNext(curCSV.getColumnNames());
+            csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2)};
+                String arrStr[] = {curCSV.getString(1), curCSV.getString(2)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
@@ -838,7 +845,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void addToPocket(InPocketContext context, long ts) {
-        if (Settings.SAVE_LIGHT_TO_DATABASE) {
+        if (Settings.SAVE_POCKET_TO_DATABASE) {
             try {
                 SQLiteDatabase db = this.getWritableDatabase();
                 ContentValues values = new ContentValues();

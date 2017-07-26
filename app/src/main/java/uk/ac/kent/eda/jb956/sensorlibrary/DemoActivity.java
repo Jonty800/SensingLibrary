@@ -107,6 +107,12 @@ public class DemoActivity extends AppCompatActivity {
                             MySQLiteHelper.getInstance(getApplicationContext()).exportGyroDB();
                             MySQLiteHelper.getInstance(getApplicationContext()).exportActDB();
                             MySQLiteHelper.getInstance(getApplicationContext()).exportProximityDB();
+
+                            MySQLiteHelper.getInstance(getApplicationContext()).exportMagDB();
+                            MySQLiteHelper.getInstance(getApplicationContext()).exportPocketDB();
+                            MySQLiteHelper.getInstance(getApplicationContext()).exportHumidityDB();
+                            MySQLiteHelper.getInstance(getApplicationContext()).exportPressureDB();
+                            MySQLiteHelper.getInstance(getApplicationContext()).exportTemperatureDB();
                         }
                         if (m_Text.equalsIgnoreCase("clear")) {
                             Log.i(TAG, "Deleting everything");
