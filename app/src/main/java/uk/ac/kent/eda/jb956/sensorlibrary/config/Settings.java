@@ -26,8 +26,8 @@ public class Settings {
      */
     public static final boolean ACC_ENABLED = true;
     public static final boolean GYRO_ENABLED = true;
-    public static final boolean WIFI_ENABLED = false;
-    public static final boolean ACTIVITY_ENABLED = false;
+    public static final boolean WIFI_ENABLED = true;
+    public static final boolean ACTIVITY_ENABLED = true;
     public static final boolean LIGHT_ENABLED = true;
     public static final boolean PROXIMITY_ENABLED = true;
     public static final boolean POCKET_ENABLED = true;

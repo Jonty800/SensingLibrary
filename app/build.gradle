@@ -1,15 +1,22 @@
-apply plugin: 'com.android.application'
+apply plugin: 'android-library'
 
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "uk.ac.kent.eda.jb956.sensorlibrary"
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    sourceSets {
+        main  {
+            // Here is the path to your source code
+            java {
+                srcDir 'src'
+            }
+        }
     }
     buildTypes {
         release {
@@ -19,19 +26,27 @@ android {
     }
 }
 
+// This is the actual solution, as in https://stackoverflow.com/a/19037807/1002054
+task clearJar(type: Delete) {
+    delete 'build/libs/sensorlibrary.jar'
+}
+
+task makeJar(type: Copy) {
+    from('build/bundles/release/')
+    into('build/libs/')
+    include('classes.jar')
+    rename ('classes.jar', 'sensorlibrary.jar')
+}
+
+makeJar.dependsOn(clearJar, build)
+
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:appcompat-v7:25.2.0'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'net.sf.opencsv:opencsv:2.3'
-    compile 'com.android.support:design:25.2.0'
-
     compile 'com.google.android.gms:play-services-location:10.0.1'
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.github.google:cameraview:aa7dcf6'
-    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:25.2.0'
 }
