@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
@@ -36,6 +37,14 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+    }
+
+    private SensingEvent sensorEvent = null;
+    @Override
+    public SensingEvent getSensorEventListener() {
+        if(sensorEvent ==null)
+            sensorEvent = new SensingEvent();
+        return sensorEvent;
     }
 
     private final Sensor sensor;
@@ -124,6 +133,8 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
                     ad.timestamp = System.currentTimeMillis();
                     lastEntry = ad;
                     MySQLiteHelper.getInstance(context).addToMag(ad);
+                    if(sensorEvent!=null)
+                        sensorEvent.doEvent(event);
                     //Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
                 }
             }

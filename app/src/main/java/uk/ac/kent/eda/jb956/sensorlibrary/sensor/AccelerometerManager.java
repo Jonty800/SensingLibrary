@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
@@ -58,6 +59,14 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
     @Override
     public int getSamplingRate() {
         return SAMPLING_RATE;
+    }
+
+    private SensingEvent sensorEvent = null;
+    @Override
+    public SensingEvent getSensorEventListener() {
+        if(sensorEvent ==null)
+            sensorEvent = new SensingEvent();
+        return sensorEvent;
     }
 
     @Override
@@ -124,6 +133,8 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
                     ad.timestamp = System.currentTimeMillis();
                     lastEntry = ad;
                     MySQLiteHelper.getInstance(context).addToAcc(ad);
+                    if(sensorEvent!=null)
+                        sensorEvent.doEvent(event);
                     //Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
                 }
             }

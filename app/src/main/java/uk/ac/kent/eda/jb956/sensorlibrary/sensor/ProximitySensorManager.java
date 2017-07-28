@@ -10,6 +10,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ProximitySensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
@@ -61,6 +62,14 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
     @Override
     public int getSamplingRate() {
         return SAMPLING_RATE_PROXIMITY;
+    }
+
+    private SensingEvent sensorEvent = null;
+    @Override
+    public SensingEvent getSensorEventListener() {
+        if(sensorEvent ==null)
+            sensorEvent = new SensingEvent();
+        return sensorEvent;
     }
 
     @Override
@@ -133,6 +142,8 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
                             temp.add(data);
                     }
                     history = new ArrayList<>(temp);
+                    if(sensorEvent!=null)
+                        sensorEvent.doEvent(event);
                 }
                 // System.out.println(""+(System.currentTimeMillis() - lastTimeCheckedHistory));
 

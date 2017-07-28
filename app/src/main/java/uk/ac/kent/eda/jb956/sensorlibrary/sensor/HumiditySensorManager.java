@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
@@ -36,6 +37,14 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+    }
+
+    private SensingEvent sensorEvent = null;
+    @Override
+    public SensingEvent getSensorEventListener() {
+        if(sensorEvent ==null)
+            sensorEvent = new SensingEvent();
+        return sensorEvent;
     }
 
     private final Sensor sensor;
@@ -121,6 +130,8 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
                     lastEntry = hd;
                     MySQLiteHelper.getInstance(context).addToHumidity(hd);
                     Log.i(TAG, "Humidity: " + hd.pressure);
+                    if(sensorEvent!=null)
+                        sensorEvent.doEvent(event);
                 }
             }
         }

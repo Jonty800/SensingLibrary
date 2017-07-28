@@ -2,6 +2,7 @@ package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
 
 import android.hardware.Sensor;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 
 /**
@@ -23,4 +24,6 @@ interface SensingInterface {
     void setSamplingRate(int rate);
 
     int getSamplingRate();
+
+    SensingEvent getSensorEventListener();
 }

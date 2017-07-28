@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
@@ -37,6 +38,14 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+    }
+
+    private SensingEvent sensorEvent = null;
+    @Override
+    public SensingEvent getSensorEventListener() {
+        if(sensorEvent ==null)
+            sensorEvent = new SensingEvent();
+        return sensorEvent;
     }
 
     @Override
@@ -125,6 +134,8 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
                     gd.timestamp = System.currentTimeMillis();
                     lastEntry = gd;
                     MySQLiteHelper.getInstance(context).addToGyro(gd);
+                    if(sensorEvent!=null)
+                        sensorEvent.doEvent(event);
                     // Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
                 }
             }

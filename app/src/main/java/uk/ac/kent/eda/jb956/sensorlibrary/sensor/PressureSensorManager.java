@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
@@ -121,9 +122,19 @@ public class PressureSensorManager implements SensingInterface, SensorEventListe
                     lastEntry = pd;
                     MySQLiteHelper.getInstance(context).addToPressure(pd);
                     Log.i(TAG, "Pressure: " + pd.pressure);
+                    if(sensorEvent!=null)
+                        sensorEvent.doEvent(event);
                 }
             }
         }
+    }
+
+    private SensingEvent sensorEvent = null;
+    @Override
+    public SensingEvent getSensorEventListener() {
+        if(sensorEvent ==null)
+            sensorEvent = new SensingEvent();
+        return sensorEvent;
     }
 
     @Override

@@ -13,20 +13,10 @@
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
-    <uses-permission android:name="android.permission.CAMERA" />
-
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true" />
-    <uses-feature
-        android:name="android.hardware.camera.front"
-        android:required="true" />
 
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="true"
-        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:supportsRtl="true"
@@ -40,17 +30,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-        <activity
-            android:name=".DemoActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
         <receiver android:name=".service.receiver.AlarmReceiver" />
         <receiver android:name=".service.receiver.BootReceiver">
             <intent-filter>
@@ -60,20 +39,6 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".service.ActivityRecognizedService" />
-        <service
-            android:name=".service.WifiService"
-            android:exported="false" />
-        <service
-            android:name=".service.SensingService"
-            android:exported="false" />
-        <service
-            android:name=".service.RecordingService"
-            android:exported="false" />
-
-        <activity
-            android:name=".CameraActivity"
-            android:screenOrientation="portrait" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -81,13 +46,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
-        <activity
-            android:name=".CamRecorderActivity"
-            android:clearTaskOnLaunch="true"
-
-            android:finishOnTaskLaunch="true"
-            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
