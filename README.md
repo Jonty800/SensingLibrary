@@ -1,16 +1,8 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
-
-### What is this repository for? ###
-
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
 ### How do I get set up? ###
 
-<service android:name="uk.ac.kent.eda.jb956.sensorlibrary.service.ActivityRecognizedService" />
+        <service android:name="uk.ac.kent.eda.jb956.sensorlibrary.service.ActivityRecognizedService" />
         <service
             android:name="uk.ac.kent.eda.jb956.sensorlibrary.service.WifiService"
             android:exported="false" />
@@ -21,11 +13,14 @@ This README would normally document whatever steps are necessary to get your app
             android:name="uk.ac.kent.eda.jb956.sensorlibrary.service.RecordingService"
             android:exported="false" />
 
-### Contribution guidelines ###
+### Example Sensor Subscription ###
 
-* Writing tests
-* Code review
-* Other guidelines
+    AccelerometerManager.getInstance(this).getSensorEventListener().setOnEventListener(new SensingEvent.OnEventListener() {
+            @Override
+            public void onEvent(SensorEvent sensorEvent) {
+                System.out.println(sensorEvent.values[0]);
+            }
+        });
 
 ### Who do I talk to? ###
 
