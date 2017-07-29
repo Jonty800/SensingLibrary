@@ -1,28 +1,23 @@
-# README #
+# SensorLibrary
 
-### How do I get set up? ###
+The SensorLibrary is a library project for Android application developers. The main goal of the project is to make accessing and polling for Android smartphone sensor data easy, highly configurable, and battery-friendly.
 
-        <service android:name="uk.ac.kent.eda.jb956.sensorlibrary.service.ActivityRecognizedService" />
-        <service
-            android:name="uk.ac.kent.eda.jb956.sensorlibrary.service.WifiService"
-            android:exported="false" />
-        <service
-            android:name="uk.ac.kent.eda.jb956.sensorlibrary.service.SensingService"
-            android:exported="false" />
-        <service
-            android:name="uk.ac.kent.eda.jb956.sensorlibrary.service.RecordingService"
-            android:exported="false" />
+## Authors & Contributors
+* Jon Baker ([Jonty800](https://github.com/Jonty800)), University of Kent, UK
 
-### Example Sensor Subscription ###
+## License
+Copyright (C) Jon Baker, University of Kent
 
-    AccelerometerManager.getInstance(this).getSensorEventListener().setOnEventListener(new SensingEvent.OnEventListener() {
-            @Override
-            public void onEvent(SensorEvent sensorEvent) {
-                System.out.println(sensorEvent.values[0]);
-            }
-        });
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
 
-### Who do I talk to? ###
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-* Repo owner or admin
-* Other community or team contact
+More information available [here](http://en.wikipedia.org/wiki/BSD_licenses).
