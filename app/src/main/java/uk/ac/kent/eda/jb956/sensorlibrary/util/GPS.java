@@ -1,4 +1,4 @@
-package uk.ac.kent.eda.jb956.sensorlibrary.data;
+package uk.ac.kent.eda.jb956.sensorlibrary.util;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>

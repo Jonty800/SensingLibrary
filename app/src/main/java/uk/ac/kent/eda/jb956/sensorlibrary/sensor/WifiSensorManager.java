@@ -1,11 +1,13 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -16,39 +18,43 @@ import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingCallbackData;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
+import uk.ac.kent.eda.jb956.sensorlibrary.service.WifiService;
+import uk.ac.kent.eda.jb956.sensorlibrary.service.receiver.AlarmReceiver;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class AccelerometerManager implements SensingInterface, SensorEventListener {
+public class WifiSensorManager implements SensingInterface {
 
-    private final String TAG = "AccelerometerManager";
-    private static AccelerometerManager instance;
+    private final String TAG = "WifiSensorManager";
+    private static WifiSensorManager instance;
     private final Context context;
-    private final android.hardware.SensorManager androidSensorManager;
-    public static int SAMPLING_RATE = 100; //ms
+    private final WifiManager wifiManager;
+    public static int SAMPLING_RATE = 10000; //ms
     public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
 
-    public static synchronized AccelerometerManager getInstance(Context context) {
+    public static synchronized WifiSensorManager getInstance(Context context) {
         if (instance == null)
-            instance = new AccelerometerManager(context);
+            instance = new WifiSensorManager(context);
         return instance;
     }
 
-    private AccelerometerManager(Context context) {
+    private WifiSensorManager(Context context) {
         this.context = context.getApplicationContext();
-        androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        sensor = null;
     }
 
     private final Sensor sensor;
 
     @Override
     public Sensor getSensor() {
+        Log.e(TAG, "getSensor() for this class is always null");
         return sensor;
     }
 
@@ -79,14 +85,13 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
     @Override
     public List<SensorData> getDataFromRange(long start, long end) {
         List<SensorData> temp = new ArrayList<>();
-        Cursor cur = MySQLiteHelper.getInstance(context).getReadableDatabase().rawQuery("SELECT * FROM acc where timestamp >=" + start + " and timestamp <=" + end, null);
+        Cursor cur = MySQLiteHelper.getInstance(context).getReadableDatabase().rawQuery("SELECT * FROM wifi where timestamp >=" + start + " and timestamp <=" + end, null);
         while (cur.moveToNext()) {
             //Which column you want to export
-            XYZSensorData sensorData = new XYZSensorData();
-            sensorData.timestamp = Long.parseLong(cur.getString(1));
-            sensorData.X = Double.parseDouble(cur.getString(2));
-            sensorData.Y = Double.parseDouble(cur.getString(3));
-            sensorData.Z = Double.parseDouble(cur.getString(4));
+            WifiData sensorData = new WifiData();
+            sensorData.timestamp = Long.parseLong(cur.getString(3));
+            sensorData.bssid= cur.getString(1);
+            sensorData.rssi = Double.parseDouble(cur.getString(2));
             temp.add(sensorData);
         }
         cur.close();
@@ -108,16 +113,16 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
         Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         if (limit == -1)
-            database.execSQL("DELETE FROM acc");
+            database.execSQL("DELETE FROM wifi");
         else
-            database.execSQL("DELETE FROM acc WHERE id IN(SELECT id FROM acc ORDER BY id ASC LIMIT " + limit + ")");
+            database.execSQL("DELETE FROM wifi WHERE id IN(SELECT id FROM wifi ORDER BY id ASC LIMIT " + limit + ")");
 
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
     @Override
     public void removeDataFromDatabaseWithRange(long start, long end) {
-        String dbName = "acc";
+        String dbName = "wifi";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
         Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
@@ -129,14 +134,11 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
         if (isSensing())
             return;
         try {
-            if (Settings.ACC_ENABLED) {
-                Log.i(TAG, "Registering listener...");
-                if (sensor != null) {
-                    androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
-                    sensing = true;
-                } else {
-                    Log.i(TAG, "Cannot calculate Accelerometer data, as Accelerometer sensor is not available!");
-                }
+            if (Settings.WIFI_ENABLED) {
+                Log.i(TAG, "Starting Wi-Fi Fingerprinting Service");
+                Intent fingerprintingAlarm = new Intent(context.getApplicationContext(), AlarmReceiver.class);
+                fingerprintingAlarm.setAction("fingerprintingAlarm");
+                SensorManager.getInstance(context).startAlarm(fingerprintingAlarm, 0, WifiService.alarmReceiverID);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -149,8 +151,11 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
         if (!isSensing())
             return;
         try {
-            if (Settings.ACC_ENABLED)
-                androidSensorManager.unregisterListener(this, getSensor());
+            if (Settings.WIFI_ENABLED) {
+                Intent fingerprintingAlarm = new Intent(context.getApplicationContext(), AlarmReceiver.class);
+                fingerprintingAlarm.setAction("fingerprintingAlarm");
+                SensorManager.getInstance(context).stopAlarm(fingerprintingAlarm, WifiService.alarmReceiverID);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -167,37 +172,4 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
 
     private long lastUpdate = 0;
     private SensorData lastEntry = null;
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            long curTime = System.currentTimeMillis();
-
-            Sensor mySensor = event.sensor;
-            if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-                // only allow one update every SAMPLING_RATE (ms).
-                if ((curTime - lastUpdate) > SAMPLING_RATE) {
-                    lastUpdate = curTime;
-                    float x = event.values[0];
-                    float y = event.values[1];
-                    float z = event.values[2];
-                    XYZSensorData ad = new XYZSensorData();
-                    ad.X = x;
-                    ad.Y = y;
-                    ad.Z = z;
-                    ad.timestamp = System.currentTimeMillis();
-                    lastEntry = ad;
-                    MySQLiteHelper.getInstance(context).addToAcc(ad);
-                    if (sensorEvent != null)
-                        sensorEvent.doEvent(new SensingCallbackData(ad, ad.timestamp));
-                    //Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
 }

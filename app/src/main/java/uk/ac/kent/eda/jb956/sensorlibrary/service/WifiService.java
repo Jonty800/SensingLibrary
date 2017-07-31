@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.hardware.SensorEvent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -34,9 +35,11 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingCallbackData;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.WifiSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.receiver.AlarmReceiver;
 
 public class WifiService extends Service {
@@ -73,7 +76,6 @@ public class WifiService extends Service {
     private long timeLastInitiated = 0;
     public static final int alarmReceiverID = 0;
     private boolean wasBroadcastReceiverTriggered = false;
-    private List<WifiData> lastEntry = null;
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context c, Intent intent) {
@@ -112,9 +114,9 @@ public class WifiService extends Service {
                         //NetworkCache.getInstance().getFingerprintData().add(wd);
                         SensorManager.getInstance(getApplication()).getRawHistoricData().add(wd);
                         currentEntries.add(wd);
+                        WifiSensorManager.getInstance(c).getSensorEventListener().doEvent(new SensingCallbackData(wd, wd.timestamp));
                     }
                 }
-                lastEntry = new ArrayList<>(currentEntries);
 
                 Type type = new TypeToken<List<WifiData>>() {
                 }.getType();
@@ -134,10 +136,6 @@ public class WifiService extends Service {
         }
     };
 
-    public List<WifiData> getSingleEntry() {
-        return lastEntry;
-    }
-
     public boolean checkPermissions() {
         return Build.VERSION.SDK_INT < 23 || ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
@@ -151,7 +149,7 @@ public class WifiService extends Service {
     public void onCreate() {
         super.onCreate();
         if (wifi == null)
-            wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+            wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         //lock = wifi.createWifiLock(WifiManager.WIFI_MODE_FULL, "LockTag");
     }
 

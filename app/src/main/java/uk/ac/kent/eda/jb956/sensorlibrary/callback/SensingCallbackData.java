@@ -19,7 +19,7 @@ public class SensingCallbackData {
     private SensorData sensorData;
     private long timestamp;
 
-    public SensingCallbackData(SensorData sensorData, long timestamp){
+    public SensingCallbackData(SensorData sensorData, long timestamp) {
         this.sensorData = sensorData;
         this.timestamp = timestamp;
     }

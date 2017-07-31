@@ -35,6 +35,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.sensor.MagneticFieldManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.PressureSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ProximitySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.TemperatureSensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.WifiSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.ActivityRecognizedService;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.SensingService;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.WifiService;
@@ -54,7 +55,7 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
     private final String TAG = "SensorManager";
     private GoogleApiClient mApiClient;
 
-    public final AudioManager audioManager;
+    private final AudioManager audioManager;
     private final AccelerometerManager accelerometerManager;
     private final GyroscopeManager gyroscopeManager;
     private final ProximitySensorManager proximityManager;
@@ -63,6 +64,7 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
     private final PressureSensorManager pressureSensorManager;
     private final TemperatureSensorManager temperatureSensorManager;
     private final MagneticFieldManager magneticFieldManager;
+    private final WifiSensorManager wifiSensorManager;
     private final List<WifiData> rawHistoricData = new ArrayList<>();
 
     private HandlerThread mSensorThread;
@@ -94,6 +96,7 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
         pressureSensorManager = PressureSensorManager.getInstance(context);
         temperatureSensorManager = TemperatureSensorManager.getInstance(context);
         magneticFieldManager = MagneticFieldManager.getInstance(context);
+        wifiSensorManager = WifiSensorManager.getInstance(context);
         //client = new OkHttpClient();
 
         if (Settings.ACTIVITY_ENABLED) {
@@ -170,12 +173,19 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
         pressureSensorManager.startSensing();
         temperatureSensorManager.startSensing();
         magneticFieldManager.startSensing();
-        if (Settings.WIFI_ENABLED) {
-            Log.i(TAG, "Starting Wi-Fi Fingerprinting Service");
-            Intent fingerprintingAlarm = new Intent(context.getApplicationContext(), AlarmReceiver.class);
-            fingerprintingAlarm.setAction("fingerprintingAlarm");
-            startAlarm(fingerprintingAlarm, 0, WifiService.alarmReceiverID);
-        }
+        wifiSensorManager.startSensing();
+    }
+
+    public void stopAllSensors() {
+        gyroscopeManager.stopSensing();
+        accelerometerManager.stopSensing();
+        proximityManager.stopSensing();
+        lightSensorManager.stopSensing();
+        humiditySensorManager.stopSensing();
+        pressureSensorManager.stopSensing();
+        temperatureSensorManager.stopSensing();
+        magneticFieldManager.stopSensing();
+        wifiSensorManager.stopSensing();
     }
 
     public void startSensingService() {
@@ -207,6 +217,18 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
             e.printStackTrace();
         }
         //yes
+    }
+
+    public void stopAlarm(Intent alarmIntent, int alarmId) {
+        try {
+            PendingIntent recurringAlarm = PendingIntent.getBroadcast(context.getApplicationContext(), alarmId,
+                    alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager alarms = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            alarms.cancel(recurringAlarm);
+            recurringAlarm.cancel();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void storeIntoSharedPref(String key, Object entry, Type type) {

@@ -46,9 +46,10 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
     }
 
     private SensingEvent sensorEvent = null;
+
     @Override
     public SensingEvent getSensorEventListener() {
-        if(sensorEvent ==null)
+        if (sensorEvent == null)
             sensorEvent = new SensingEvent();
         return sensorEvent;
     }
@@ -139,7 +140,7 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
                     ad.timestamp = System.currentTimeMillis();
                     lastEntry = ad;
                     MySQLiteHelper.getInstance(context).addToMag(ad);
-                    if(sensorEvent!=null)
+                    if (sensorEvent != null)
                         sensorEvent.doEvent(new SensingCallbackData(ad, ad.timestamp));
                     //Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
                 }
@@ -175,7 +176,7 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
     }
 
     @Override
-    public void removeAllDataFromDatabase(){
+    public void removeAllDataFromDatabase() {
         removeDataFromDatabaseWithLimit(-1);
     }
 
@@ -184,7 +185,7 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
         String dbName = "mag";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
         Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
-        database.execSQL("DELETE FROM "+dbName+" where timestamp >=" + start + " and timestamp <=" + end);
+        database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
@@ -194,9 +195,9 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
         Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         if (limit == -1)
-            database.execSQL("DELETE FROM "+ dbName);
+            database.execSQL("DELETE FROM " + dbName);
         else
-            database.execSQL("DELETE FROM "+dbName+" WHERE id IN(SELECT id FROM "+dbName+" ORDER BY id ASC LIMIT " + limit + ")");
+            database.execSQL("DELETE FROM " + dbName + " WHERE id IN(SELECT id FROM " + dbName + " ORDER BY id ASC LIMIT " + limit + ")");
 
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }

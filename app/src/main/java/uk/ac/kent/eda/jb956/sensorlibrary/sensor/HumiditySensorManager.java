@@ -17,7 +17,6 @@ import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 
 /**
@@ -47,9 +46,10 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
     }
 
     private SensingEvent sensorEvent = null;
+
     @Override
     public SensingEvent getSensorEventListener() {
-        if(sensorEvent ==null)
+        if (sensorEvent == null)
             sensorEvent = new SensingEvent();
         return sensorEvent;
     }
@@ -137,7 +137,7 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
                     lastEntry = hd;
                     MySQLiteHelper.getInstance(context).addToHumidity(hd);
                     Log.i(TAG, "Humidity: " + hd.pressure);
-                    if(sensorEvent!=null)
+                    if (sensorEvent != null)
                         sensorEvent.doEvent(new SensingCallbackData(hd, hd.timestamp));
                 }
             }
@@ -170,7 +170,7 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
     }
 
     @Override
-    public void removeAllDataFromDatabase(){
+    public void removeAllDataFromDatabase() {
         removeDataFromDatabaseWithLimit(-1);
     }
 
@@ -179,7 +179,7 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
         String dbName = "humidity";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
         Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
-        database.execSQL("DELETE FROM "+dbName+" where timestamp >=" + start + " and timestamp <=" + end);
+        database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
@@ -189,9 +189,9 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
         Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         if (limit == -1)
-            database.execSQL("DELETE FROM "+ dbName);
+            database.execSQL("DELETE FROM " + dbName);
         else
-            database.execSQL("DELETE FROM "+dbName+" WHERE id IN(SELECT id FROM "+dbName+" ORDER BY id ASC LIMIT " + limit + ")");
+            database.execSQL("DELETE FROM " + dbName + " WHERE id IN(SELECT id FROM " + dbName + " ORDER BY id ASC LIMIT " + limit + ")");
 
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }

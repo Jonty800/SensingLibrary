@@ -17,7 +17,6 @@ import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingCallbackData;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.LightSensorData;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 
@@ -72,9 +71,10 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
     }
 
     private SensingEvent sensorEvent = null;
+
     @Override
     public SensingEvent getSensorEventListener() {
-        if(sensorEvent ==null)
+        if (sensorEvent == null)
             sensorEvent = new SensingEvent();
         return sensorEvent;
     }
@@ -154,14 +154,14 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
                     lastEntry = ld;
                     history.add(ld);
                     MySQLiteHelper.getInstance(context).addToLight(ld);
-                   // Log.i(TAG, "Lx: " + lx);
+                    // Log.i(TAG, "Lx: " + lx);
                     List<LightSensorData> temp = new ArrayList<>();
                     for (LightSensorData data : history) {
                         if (data.timestamp > (System.currentTimeMillis() - 4000))
                             temp.add(data);
                     }
                     history = new ArrayList<>(temp);
-                    if(sensorEvent!=null)
+                    if (sensorEvent != null)
                         sensorEvent.doEvent(new SensingCallbackData(ld, ld.timestamp));
                 }
             }
@@ -236,7 +236,7 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
     }
 
     @Override
-    public void removeAllDataFromDatabase(){
+    public void removeAllDataFromDatabase() {
         removeDataFromDatabaseWithLimit(-1);
     }
 
@@ -245,7 +245,7 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
         String dbName = "light";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
         Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
-        database.execSQL("DELETE FROM "+dbName+" where timestamp >=" + start + " and timestamp <=" + end);
+        database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
@@ -255,9 +255,9 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
         Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         if (limit == -1)
-            database.execSQL("DELETE FROM "+ dbName);
+            database.execSQL("DELETE FROM " + dbName);
         else
-            database.execSQL("DELETE FROM "+dbName+" WHERE id IN(SELECT id FROM "+dbName+" ORDER BY id ASC LIMIT " + limit + ")");
+            database.execSQL("DELETE FROM " + dbName + " WHERE id IN(SELECT id FROM " + dbName + " ORDER BY id ASC LIMIT " + limit + ")");
 
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }

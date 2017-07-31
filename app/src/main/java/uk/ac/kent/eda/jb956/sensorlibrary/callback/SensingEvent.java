@@ -1,7 +1,5 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.callback;
 
-import android.hardware.SensorEvent;
-
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
  * School of Engineering and Digital Arts, University of Kent
@@ -19,7 +17,7 @@ public class SensingEvent {
             mOnEventListener.onEvent(sensingCallbackData);
     }
 
-    public interface OnEventListener {
+    interface OnEventListener {
         void onEvent(SensingCallbackData sensingCallbackData);
     }
 }
