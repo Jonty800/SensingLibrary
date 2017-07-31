@@ -49,7 +49,6 @@ public class WifiService extends Service {
      */
     public static final String MSG_HEARTBEAT = "heartbeat.start";
     public static final String MSG_SENDING = "sendingService.start";
-    public static final String MSG_AUDIO = "audioService.start";
     public static boolean uploading = false;
     private String TAG = "WifiService";
     Callback callback = new Callback() {
@@ -158,9 +157,6 @@ public class WifiService extends Service {
         super.onDestroy();
         if (!wasBroadcastReceiverTriggered)
             Log.i(TAG, "BroadcastReceiver was not triggered. Was this running on an emulator or is Wi-Fi unavailable?");
-        //  if (lock.isHeld())
-        // lock.release();
-        // System.out.println("Destroyed");
         try {
             //unregister this receiver
             unregisterReceiver(receiver);
@@ -182,10 +178,8 @@ public class WifiService extends Service {
                     if (!checkPermissions()) {
                         Log.i(TAG, "Ending SendingService: No permissions");
                     } else {
-                        //  if (!lock.isHeld())
-                        //      lock.acquire();
                         WifiService.uploading = true;
-                        // NetworkManager.getInstance().checkSendExtraSensors();
+                        //TODO old code, cleanup
                         if (SensorManager.getInstance(getApplication()).getRawHistoricData().size() > 0) {
                             // SensorManager.getInstance(getApplication()).sendRequestXCompressed(SensorManager.getInstance(getApplication()).generateAverageFingerprint(), callback);
                         }
@@ -214,21 +208,7 @@ public class WifiService extends Service {
     void setAlarm() {
         Intent myAlarm = new Intent(getApplicationContext(), AlarmReceiver.class);
         myAlarm.setAction("fingerprintingAlarm");
-       /* Calendar c = Calendar.getInstance();
-        int seconds = c.get(Calendar.SECOND);
-        int milliseconds = c.get(Calendar.MILLISECOND);
-        String sec_num = "" + seconds;
-        int num;
-        if (sec_num.length() == 1) {
-            num = Integer.parseInt(sec_num + milliseconds);
-        } else {
-            num = Integer.parseInt("" + sec_num.toCharArray()[1] + milliseconds);
-        }*/
-        //  System.out.println("sec_num: " + sec_num);
-        // System.out.println("mili: " + mili);
-        // System.out.println("Num: " + num);
-        int next_delay = Settings.WIFI_SENSING_RATE;// - (num);
-        //System.out.println("Next delay: " + next_delay);
+        int next_delay = WifiSensorManager.getInstance(this).getSamplingRate();// - (num);
         checkWifiSettings();
         SensorManager.getInstance(getApplication()).startAlarm(myAlarm, next_delay, alarmReceiverID);
     }
@@ -301,7 +281,6 @@ public class WifiService extends Service {
         timeLastInitiated = System.currentTimeMillis();
         wifi.startScan();
     }
-
 
     /**
      * When binding to the service, we return an interface to our messenger

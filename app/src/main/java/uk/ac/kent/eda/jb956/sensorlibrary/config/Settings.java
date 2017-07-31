@@ -41,7 +41,6 @@ public class Settings {
      * Sensor sampling rates
      */
     public static final int ACTIVITY_SAMPLING_RATE = 3000; //ms
-    public static final int WIFI_SENSING_RATE = 10000; //ms
 
     /*
      * Database toggles and path

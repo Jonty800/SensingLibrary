@@ -34,7 +34,6 @@ public class WifiSensorManager implements SensingInterface {
     private final String TAG = "WifiSensorManager";
     private static WifiSensorManager instance;
     private final Context context;
-    private final WifiManager wifiManager;
     public static int SAMPLING_RATE = 10000; //ms
     public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
 
@@ -46,7 +45,6 @@ public class WifiSensorManager implements SensingInterface {
 
     private WifiSensorManager(Context context) {
         this.context = context.getApplicationContext();
-        wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         sensor = null;
     }
 
@@ -139,6 +137,7 @@ public class WifiSensorManager implements SensingInterface {
                 Intent fingerprintingAlarm = new Intent(context.getApplicationContext(), AlarmReceiver.class);
                 fingerprintingAlarm.setAction("fingerprintingAlarm");
                 SensorManager.getInstance(context).startAlarm(fingerprintingAlarm, 0, WifiService.alarmReceiverID);
+                sensing = true;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -170,6 +169,5 @@ public class WifiSensorManager implements SensingInterface {
         return sensing;
     }
 
-    private long lastUpdate = 0;
     private SensorData lastEntry = null;
 }
