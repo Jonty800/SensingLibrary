@@ -8,6 +8,14 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
  */
 
 public class SensingCallbackData {
+    public SensorData getSensorData() {
+        return sensorData;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
     private SensorData sensorData;
     private long timestamp;
 

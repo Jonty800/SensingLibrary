@@ -6,4 +6,32 @@ package uk.ac.kent.eda.jb956.sensorlibrary.data;
  */
 public class SensorData {
     public long timestamp;
+
+    public ActivityData toActivityData(){
+        return (ActivityData)this;
+    }
+
+    public LightSensorData toLightSensorData(){
+        return (LightSensorData)this;
+    }
+
+    public PositionsData toPositionsData(){
+        return (PositionsData)this;
+    }
+
+    public PressureSensorData toPressureSensorData(){
+        return (PressureSensorData)this;
+    }
+
+    public TemeratureSensorData toTemeratureSensorData(){
+        return (TemeratureSensorData)this;
+    }
+
+    public WifiData toWifiData(){
+        return (WifiData)this;
+    }
+
+    public XYZSensorData toXYZSensorData(){
+        return (XYZSensorData)this;
+    }
 }
