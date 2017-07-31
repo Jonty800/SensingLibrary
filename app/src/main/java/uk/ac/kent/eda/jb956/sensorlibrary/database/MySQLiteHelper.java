@@ -24,7 +24,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.LightSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PositionsData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ProximitySensorData;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.TemeratureSensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.TemperatureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
 
@@ -977,7 +977,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void addToTemperature(TemeratureSensorData data) {
+    public void addToTemperature(TemperatureSensorData data) {
         if (Settings.SAVE_TEMP_TO_DATABASE) {
             try {
                 SQLiteDatabase db = this.getWritableDatabase();

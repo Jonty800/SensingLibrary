@@ -3,7 +3,7 @@ package uk.ac.kent.eda.jb956.sensorlibrary.util;
 import android.content.Context;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.TemeratureSensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.TemperatureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.TemperatureSensorManager;
 
 /**
@@ -39,7 +39,7 @@ public class Util {
         float temp;
         float relativeHumidity;
         try {
-            temp = ((TemeratureSensorData) TemperatureSensorManager.getInstance(context).getLastEntry()).degreesC;
+            temp = ((TemperatureSensorData) TemperatureSensorManager.getInstance(context).getLastEntry()).degreesC;
             relativeHumidity = ((PressureSensorData) TemperatureSensorManager.getInstance(context).getLastEntry()).pressure;
         } catch (Exception e) {
             return -1;

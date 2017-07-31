@@ -23,8 +23,8 @@ public class SensorData {
         return (PressureSensorData)this;
     }
 
-    public TemeratureSensorData toTemeratureSensorData(){
-        return (TemeratureSensorData)this;
+    public TemperatureSensorData toTemeratureSensorData(){
+        return (TemperatureSensorData)this;
     }
 
     public WifiData toWifiData(){

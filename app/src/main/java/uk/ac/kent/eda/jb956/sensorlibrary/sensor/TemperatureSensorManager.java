@@ -15,9 +15,8 @@ import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingCallbackData;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.ProximitySensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.TemeratureSensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.TemperatureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 
 /**
@@ -131,7 +130,7 @@ public class TemperatureSensorManager implements SensingInterface, SensorEventLi
                 if ((curTime - lastUpdate) > SAMPLING_RATE) {
                     lastUpdate = curTime;
                     float degreesC = event.values[0];
-                    TemeratureSensorData hd = new TemeratureSensorData();
+                    TemperatureSensorData hd = new TemperatureSensorData();
                     hd.degreesC = degreesC;
                     hd.timestamp = System.currentTimeMillis();
                     lastEntry = hd;
@@ -150,7 +149,7 @@ public class TemperatureSensorManager implements SensingInterface, SensorEventLi
         Cursor cur = MySQLiteHelper.getInstance(context).getReadableDatabase().rawQuery("SELECT * FROM temp where timestamp >=" + start + " and timestamp <=" + end, null);
         while (cur.moveToNext()) {
             //Which column you want to export
-            TemeratureSensorData sensorData = new TemeratureSensorData();
+            TemperatureSensorData sensorData = new TemperatureSensorData();
             sensorData.timestamp = Long.parseLong(cur.getString(1));
             sensorData.degreesC = Float.parseFloat(cur.getString(2));
             temp.add(sensorData);
