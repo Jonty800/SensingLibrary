@@ -17,7 +17,7 @@ public class SensingEvent {
             mOnEventListener.onEvent(sensingCallbackData);
     }
 
-    interface OnEventListener {
+    public interface OnEventListener {
         void onEvent(SensingCallbackData sensingCallbackData);
     }
 }
