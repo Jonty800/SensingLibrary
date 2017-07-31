@@ -160,6 +160,11 @@ public class TemperatureSensorManager implements SensingInterface, SensorEventLi
     }
 
     @Override
+    public void setSaveToCSV(boolean save) {
+        Settings.SAVE_TEMP_TO_DATABASE = save;
+    }
+
+    @Override
     public List<SensorData> getAllData() {
         return getDataFromRange(0L, System.currentTimeMillis());
     }

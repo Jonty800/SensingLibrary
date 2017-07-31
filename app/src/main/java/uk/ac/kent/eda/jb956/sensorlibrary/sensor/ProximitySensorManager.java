@@ -199,6 +199,11 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
     }
 
     @Override
+    public void setSaveToCSV(boolean save) {
+        Settings.SAVE_PROXIMITY_TO_DATABASE = save;
+    }
+
+    @Override
     public void removeDataFromDatabaseWithRange(long start, long end) {
         String dbName = "proximity";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();

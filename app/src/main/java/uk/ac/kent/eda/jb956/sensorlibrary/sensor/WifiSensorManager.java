@@ -126,6 +126,11 @@ public class WifiSensorManager implements SensingInterface {
         database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
+    @Override
+    public void setSaveToCSV(boolean save) {
+        Settings.SAVE_WIFI_TO_DATABASE = save;
+    }
+
 
     @Override
     public void startSensing() {

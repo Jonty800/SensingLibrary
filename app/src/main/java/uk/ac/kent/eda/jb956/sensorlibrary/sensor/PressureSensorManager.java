@@ -175,6 +175,11 @@ public class PressureSensorManager implements SensingInterface, SensorEventListe
     }
 
     @Override
+    public void setSaveToCSV(boolean save) {
+        Settings.SAVE_PRESSURE_TO_DATABASE = save;
+    }
+
+    @Override
     public void removeDataFromDatabaseWithRange(long start, long end) {
         String dbName = "pressure";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();

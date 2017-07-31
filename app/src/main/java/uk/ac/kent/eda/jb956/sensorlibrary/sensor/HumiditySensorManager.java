@@ -175,6 +175,11 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
     }
 
     @Override
+    public void setSaveToCSV(boolean save) {
+        Settings.SAVE_HUMIDITY_TO_DATABASE = save;
+    }
+
+    @Override
     public void removeDataFromDatabaseWithRange(long start, long end) {
         String dbName = "humidity";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();

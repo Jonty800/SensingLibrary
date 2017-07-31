@@ -181,6 +181,11 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
     }
 
     @Override
+    public void setSaveToCSV(boolean save) {
+        Settings.SAVE_MAG_TO_DATABASE = save;
+    }
+
+    @Override
     public void removeDataFromDatabaseWithRange(long start, long end) {
         String dbName = "mag";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();

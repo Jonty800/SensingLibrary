@@ -104,6 +104,11 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
     }
 
     @Override
+    public void setSaveToCSV(boolean save) {
+        Settings.SAVE_ACCELEROMETER_TO_DATABASE = save;
+    }
+
+    @Override
     public void removeDataFromDatabaseWithLimit(int limit) {
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
         Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());

@@ -241,6 +241,11 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
     }
 
     @Override
+    public void setSaveToCSV(boolean save) {
+        Settings.SAVE_LIGHT_TO_DATABASE = save;
+    }
+
+    @Override
     public void removeDataFromDatabaseWithRange(long start, long end) {
         String dbName = "light";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();

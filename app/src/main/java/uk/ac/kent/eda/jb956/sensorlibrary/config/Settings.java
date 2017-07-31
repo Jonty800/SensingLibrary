@@ -45,18 +45,18 @@ public class Settings {
     /*
      * Database toggles and path
      */
-    public static final boolean SAVE_GYRO_TO_DATABASE = true;
-    public static final boolean SAVE_ACCELEROMETER_TO_DATABASE = true;
-    public static final boolean SAVE_ACTIVITY_TO_DATABASE = true;
-    public static final boolean SAVE_WIFI_TO_DATABASE = true;
-    public static final boolean SAVE_LIGHT_TO_DATABASE = true;
-    public static final boolean SAVE_PROXIMITY_TO_DATABASE = true;
-    public static final boolean SAVE_POSITIONS_TO_DATABASE = true;
-    public static final boolean SAVE_POCKET_TO_DATABASE = true;
-    public static final boolean SAVE_PRESSURE_TO_DATABASE = true;
-    public static final boolean SAVE_HUMIDITY_TO_DATABASE = true;
-    public static final boolean SAVE_TEMP_TO_DATABASE = true;
-    public static final boolean SAVE_MAG_TO_DATABASE = true;
+    public static boolean SAVE_GYRO_TO_DATABASE = true;
+    public static boolean SAVE_ACCELEROMETER_TO_DATABASE = true;
+    public static boolean SAVE_ACTIVITY_TO_DATABASE = true;
+    public static boolean SAVE_WIFI_TO_DATABASE = true;
+    public static boolean SAVE_LIGHT_TO_DATABASE = true;
+    public static boolean SAVE_PROXIMITY_TO_DATABASE = true;
+    public static boolean SAVE_POSITIONS_TO_DATABASE = true;
+    public static boolean SAVE_POCKET_TO_DATABASE = true;
+    public static boolean SAVE_PRESSURE_TO_DATABASE = true;
+    public static boolean SAVE_HUMIDITY_TO_DATABASE = true;
+    public static boolean SAVE_TEMP_TO_DATABASE = true;
+    public static boolean SAVE_MAG_TO_DATABASE = true;
     public static final String SAVE_PATH = Environment.getExternalStorageDirectory().getPath() + "/" + appName;
 
     /*

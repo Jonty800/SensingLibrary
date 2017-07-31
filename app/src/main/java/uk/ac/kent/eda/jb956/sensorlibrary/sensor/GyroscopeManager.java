@@ -182,6 +182,11 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
     }
 
     @Override
+    public void setSaveToCSV(boolean save) {
+        Settings.SAVE_GYRO_TO_DATABASE = save;
+    }
+
+    @Override
     public void removeDataFromDatabaseWithLimit(int limit) {
         String dbName = "gyro";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
