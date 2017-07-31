@@ -1,12 +1,18 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingCallbackData;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
@@ -135,7 +141,7 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
                     lastEntry = gd;
                     MySQLiteHelper.getInstance(context).addToGyro(gd);
                     if(sensorEvent!=null)
-                        sensorEvent.doEvent(event);
+                        sensorEvent.doEvent(new SensingCallbackData(gd, gd.timestamp));
                     // Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
                 }
             }
@@ -143,7 +149,56 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
     }
 
     @Override
+    public List<SensorData> getDataFromRange(long start, long end) {
+        List<SensorData> temp = new ArrayList<>();
+        Cursor cur = MySQLiteHelper.getInstance(context).getReadableDatabase().rawQuery("SELECT * FROM gyro where timestamp >=" + start + " and timestamp <=" + end, null);
+        while (cur.moveToNext()) {
+            //Which column you want to export
+            XYZSensorData sensorData = new XYZSensorData();
+            sensorData.timestamp = Long.parseLong(cur.getString(1));
+            sensorData.X = Double.parseDouble(cur.getString(2));
+            sensorData.Y = Double.parseDouble(cur.getString(3));
+            sensorData.Z = Double.parseDouble(cur.getString(4));
+            temp.add(sensorData);
+        }
+        cur.close();
+        return temp;
+    }
+
+    @Override
+    public List<SensorData> getAllData() {
+        return getDataFromRange(0L, System.currentTimeMillis());
+    }
+
+    @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    @Override
+    public void removeAllDataFromDatabase(){
+        removeDataFromDatabaseWithLimit(-1);
+    }
+
+    @Override
+    public void removeDataFromDatabaseWithLimit(int limit) {
+        String dbName = "gyro";
+        SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
+        Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
+        if (limit == -1)
+            database.execSQL("DELETE FROM "+ dbName);
+        else
+            database.execSQL("DELETE FROM "+dbName+" WHERE id IN(SELECT id FROM "+dbName+" ORDER BY id ASC LIMIT " + limit + ")");
+
+        Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
+    }
+
+    @Override
+    public void removeDataFromDatabaseWithRange(long start, long end) {
+        String dbName = "gyro";
+        SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
+        Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
+        database.execSQL("DELETE FROM "+dbName+" where timestamp >=" + start + " and timestamp <=" + end);
+        Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 }

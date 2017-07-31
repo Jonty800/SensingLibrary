@@ -1,6 +1,8 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -11,9 +13,11 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingCallbackData;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.LightSensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 
@@ -158,7 +162,7 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
                     }
                     history = new ArrayList<>(temp);
                     if(sensorEvent!=null)
-                        sensorEvent.doEvent(event);
+                        sensorEvent.doEvent(new SensingCallbackData(ld, ld.timestamp));
                 }
             }
         }
@@ -207,8 +211,55 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
     }
 
     @Override
+    public List<SensorData> getDataFromRange(long start, long end) {
+        List<SensorData> temp = new ArrayList<>();
+        Cursor cur = MySQLiteHelper.getInstance(context).getReadableDatabase().rawQuery("SELECT * FROM light where timestamp >=" + start + " and timestamp <=" + end, null);
+        while (cur.moveToNext()) {
+            //Which column you want to export
+            LightSensorData sensorData = new LightSensorData();
+            sensorData.timestamp = Long.parseLong(cur.getString(1));
+            sensorData.illuminance = Float.parseFloat(cur.getString(2));
+            temp.add(sensorData);
+        }
+        cur.close();
+        return temp;
+    }
+
+    @Override
+    public List<SensorData> getAllData() {
+        return getDataFromRange(0L, System.currentTimeMillis());
+    }
+
+    @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    @Override
+    public void removeAllDataFromDatabase(){
+        removeDataFromDatabaseWithLimit(-1);
+    }
+
+    @Override
+    public void removeDataFromDatabaseWithRange(long start, long end) {
+        String dbName = "light";
+        SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
+        Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
+        database.execSQL("DELETE FROM "+dbName+" where timestamp >=" + start + " and timestamp <=" + end);
+        Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
+    }
+
+    @Override
+    public void removeDataFromDatabaseWithLimit(int limit) {
+        String dbName = "light";
+        SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
+        Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
+        if (limit == -1)
+            database.execSQL("DELETE FROM "+ dbName);
+        else
+            database.execSQL("DELETE FROM "+dbName+" WHERE id IN(SELECT id FROM "+dbName+" ORDER BY id ASC LIMIT " + limit + ")");
+
+        Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 }
 

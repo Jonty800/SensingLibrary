@@ -992,7 +992,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
-    private long getSize() {
+    public long getSize() {
         File f = context.getDatabasePath(DATABASE_NAME);
         return f.length();
     }

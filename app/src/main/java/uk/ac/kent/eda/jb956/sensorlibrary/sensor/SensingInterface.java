@@ -2,6 +2,8 @@ package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
 
 import android.hardware.Sensor;
 
+import java.util.List;
+
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 
@@ -11,6 +13,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
  */
 
 interface SensingInterface {
+
     void startSensing();
 
     void stopSensing();
@@ -26,4 +29,15 @@ interface SensingInterface {
     int getSamplingRate();
 
     SensingEvent getSensorEventListener();
+
+    List<SensorData> getDataFromRange(long start, long end);
+
+    List<SensorData> getAllData();
+
+    void removeDataFromDatabaseWithLimit(int limit);
+
+    void removeDataFromDatabaseWithRange(long start, long end);
+
+    void removeAllDataFromDatabase();
+
 }

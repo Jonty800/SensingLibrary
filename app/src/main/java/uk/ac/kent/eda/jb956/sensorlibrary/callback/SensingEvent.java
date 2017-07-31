@@ -14,12 +14,12 @@ public class SensingEvent {
         mOnEventListener = listener;
     }
 
-    public void doEvent(SensorEvent eventResult) {
+    public void doEvent(SensingCallbackData sensingCallbackData) {
         if (mOnEventListener != null)
-            mOnEventListener.onEvent(eventResult);
+            mOnEventListener.onEvent(sensingCallbackData);
     }
 
     public interface OnEventListener {
-        void onEvent(SensorEvent er);
+        void onEvent(SensingCallbackData sensingCallbackData);
     }
 }
