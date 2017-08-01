@@ -46,7 +46,7 @@ public class ActivityRecognizedService extends IntentService {
             }
 
             switch (activity.getType()) {
-                case DetectedActivity.IN_VEHICLE: {
+                /*case DetectedActivity.IN_VEHICLE: {
                     Log.e("ActivityRecogition", "In Vehicle - confidence: " + activity.getConfidence());
                     break;
                 }
@@ -79,12 +79,12 @@ public class ActivityRecognizedService extends IntentService {
                         builder.setContentTitle( getString( R.string.app_name ) );
                         NotificationManagerCompat.from(this).notify(0, builder.build());
                     }*/
-                    break;
+                 /*   break;
                 }
                 case DetectedActivity.UNKNOWN: {
                     Log.e("ActivityRecogition", "Unknown - confidence: " + activity.getConfidence());
                     break;
-                }
+                }*/
             }
         }
         if (best != null) {

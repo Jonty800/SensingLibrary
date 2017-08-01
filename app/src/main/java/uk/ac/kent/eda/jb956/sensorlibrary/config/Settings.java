@@ -24,23 +24,18 @@ public class Settings {
     /*
      * Sensor toggles
      */
-    public static boolean ACC_ENABLED = false;
-    public static boolean GYRO_ENABLED = false;
-    public static boolean WIFI_ENABLED = false;
-    public static boolean ACTIVITY_ENABLED = false;
-    public static boolean LIGHT_ENABLED = false;
-    public static boolean PROXIMITY_ENABLED = false;
-    public static boolean POCKET_ENABLED = false;
-    public static boolean HUMIDITY_ENABLED = false;
-    public static boolean PRESSURE_ENABLED = false;
-    public static boolean TEMP_ENABLED = false;
-    public static boolean MAG_ENABLED = false;
+    public static boolean ACC_ENABLED = true;
+    public static boolean GYRO_ENABLED = true;
+    public static boolean WIFI_ENABLED = true;
+    public static boolean ACTIVITY_ENABLED = true;
+    public static boolean LIGHT_ENABLED = true;
+    public static boolean PROXIMITY_ENABLED = true;
+    public static boolean POCKET_ENABLED = true;
+    public static boolean HUMIDITY_ENABLED = true;
+    public static boolean PRESSURE_ENABLED = true;
+    public static boolean TEMP_ENABLED = true;
+    public static boolean MAG_ENABLED = true;
     public static boolean GPS_ENABLED = false; //TODO implement GPS
-
-    /*
-     * Sensor sampling rates
-     */
-    public static final int ACTIVITY_SAMPLING_RATE = 3000; //ms
 
     /*
      * Database toggles and path

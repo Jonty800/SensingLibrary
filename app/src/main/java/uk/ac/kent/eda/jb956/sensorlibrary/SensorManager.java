@@ -27,6 +27,7 @@ import java.util.List;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AccelerometerManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ActivitySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AudioManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.GyroscopeManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.HumiditySensorManager;
@@ -46,14 +47,13 @@ import uk.ac.kent.eda.jb956.sensorlibrary.service.receiver.AlarmReceiver;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class SensorManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class SensorManager {
 
     private static SensorManager instance;
     public final WifiManager wifiManager;
 
     private final Context context;
     private final String TAG = "SensorManager";
-    private GoogleApiClient mApiClient;
 
     private final AudioManager audioManager;
     private final AccelerometerManager accelerometerManager;
@@ -65,6 +65,7 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
     private final TemperatureSensorManager temperatureSensorManager;
     private final MagneticFieldManager magneticFieldManager;
     private final WifiSensorManager wifiSensorManager;
+    private final ActivitySensorManager activitySensorManager;
     private final List<WifiData> rawHistoricData = new ArrayList<>();
 
     private HandlerThread mSensorThread;
@@ -97,63 +98,14 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
         temperatureSensorManager = TemperatureSensorManager.getInstance(context);
         magneticFieldManager = MagneticFieldManager.getInstance(context);
         wifiSensorManager = WifiSensorManager.getInstance(context);
+        activitySensorManager = ActivitySensorManager.getInstance(context);
         //client = new OkHttpClient();
-
-        if (Settings.ACTIVITY_ENABLED) {
-            mApiClient = new GoogleApiClient.Builder(context)
-                    .addApi(ActivityRecognition.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
-
-            mApiClient.connect();
-        }
     }
 
     public static synchronized SensorManager getInstance(Context c) {
         if (instance == null)
             instance = new SensorManager(c.getApplicationContext());
         return instance;
-    }
-
-    /**
-     * Event which occurs when the GoogleAPI has connected to the GooglePlayServices
-     * This is where we request activity updates
-     *
-     * @param bundle
-     */
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Intent intent = new Intent(context, ActivityRecognizedService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(mApiClient, Settings.ACTIVITY_SAMPLING_RATE, pendingIntent);
-    }
-
-    /**
-     * Event which occurs when the GoogleAPI connection has been suspended
-     *
-     * @param i
-     */
-    @Override
-    public void onConnectionSuspended(int i) {
-        // The connection to Google Play services was lost for some reason. We call connect() to
-        // attempt to re-establish the connection.
-        Log.i(TAG, "Connection suspended");
-        mApiClient.connect();
-        // removeActivityUpdates();
-    }
-
-    /**
-     * Event which occurs when the GoogleAPI has failed to connect to the GooglePlayServices
-     *
-     * @param connectionResult
-     */
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
-        // onConnectionFailed.
-        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
-        mApiClient.connect();
     }
 
 
@@ -174,6 +126,7 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
         temperatureSensorManager.startSensing();
         magneticFieldManager.startSensing();
         wifiSensorManager.startSensing();
+        activitySensorManager.startSensing();
     }
 
     public void stopAllSensors() {
@@ -186,6 +139,7 @@ public class SensorManager implements GoogleApiClient.ConnectionCallbacks, Googl
         temperatureSensorManager.stopSensing();
         magneticFieldManager.stopSensing();
         wifiSensorManager.stopSensing();
+        activitySensorManager.stopSensing();
     }
 
     public void startSensingService() {
