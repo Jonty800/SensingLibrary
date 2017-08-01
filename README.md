@@ -5,6 +5,20 @@ The SensorLibrary is a library project for Android application developers. The m
 ## Authors & Contributors
 * Jon Baker ([Jonty800](https://github.com/Jonty800)), University of Kent, UK
 
+## Example Sensor Subscription
+
+     WifiSensorManager.getInstance(this).getSensorEventListener().subscribeToSensor(new SensingEvent.OnEventListener() {
+          @Override
+          public void onDataSensed(SensorData sensorData) {
+              try {
+                  WifiData data = sensorData.toWifiData();
+                  Log.i(TAG, data.bssid);
+              } catch (Exception e) {
+                  e.printStackTrace();
+              }
+          }
+      });
+
 ## License
 Copyright (C) Jon Baker, University of Kent
 
