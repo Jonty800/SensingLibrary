@@ -122,14 +122,13 @@ public class PressureSensorManager implements SensingInterface, SensorEventListe
                 if ((curTime - lastUpdate) > SAMPLING_RATE) {
                     lastUpdate = curTime;
                     float pressure = event.values[0];
-                    PressureSensorData pd = new PressureSensorData();
-                    pd.pressure = pressure;
-                    pd.timestamp = System.currentTimeMillis();
-                    lastEntry = pd;
-                    MySQLiteHelper.getInstance(context).addToPressure(pd);
-                    Log.i(TAG, "Pressure: " + pd.pressure);
+                    PressureSensorData sensorData = new PressureSensorData();
+                    sensorData.pressure = pressure;
+                    sensorData.timestamp = System.currentTimeMillis();
+                    lastEntry = sensorData;
+                    MySQLiteHelper.getInstance(context).addToPressure(sensorData);
                     if (sensorEvent != null)
-                        sensorEvent.onDataSensed(new SensingCallbackData(pd, pd.timestamp));
+                        sensorEvent.onDataSensed(sensorData);
                 }
             }
         }

@@ -133,13 +133,12 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
                 if ((curTime - lastUpdate) > SAMPLING_RATE_PROXIMITY) {
                     lastUpdate = curTime;
                     float proximity = event.values[0]; //cm
-                    ProximitySensorData pd = new ProximitySensorData();
-                    pd.proximity = proximity;
-                    pd.timestamp = System.currentTimeMillis();
-                    lastEntry = pd;
-                    MySQLiteHelper.getInstance(context).addToProximity(pd);
-                    history.add(pd);
-                    Log.i(TAG, "proximity: " + proximity);
+                    ProximitySensorData sensorData = new ProximitySensorData();
+                    sensorData.proximity = proximity;
+                    sensorData.timestamp = System.currentTimeMillis();
+                    lastEntry = sensorData;
+                    MySQLiteHelper.getInstance(context).addToProximity(sensorData);
+                    history.add(sensorData);
                     List<ProximitySensorData> temp = new ArrayList<>();
                     for (ProximitySensorData data : history) {
                         if (data.timestamp > (System.currentTimeMillis() - 4000))
@@ -147,7 +146,7 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
                     }
                     history = new ArrayList<>(temp);
                     if (sensorEvent != null)
-                        sensorEvent.onDataSensed(new SensingCallbackData(pd, pd.timestamp));
+                        sensorEvent.onDataSensed(sensorData);
                 }
                 // System.out.println(""+(System.currentTimeMillis() - lastTimeCheckedHistory));
 

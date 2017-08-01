@@ -148,12 +148,12 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
                 if ((curTime - lastUpdate) > SAMPLING_RATE) {
                     lastUpdate = curTime;
                     double lx = event.values[0];
-                    LightSensorData ld = new LightSensorData();
-                    ld.illuminance = lx;
-                    ld.timestamp = System.currentTimeMillis();
-                    lastEntry = ld;
-                    history.add(ld);
-                    MySQLiteHelper.getInstance(context).addToLight(ld);
+                    LightSensorData sensorData = new LightSensorData();
+                    sensorData.illuminance = lx;
+                    sensorData.timestamp = System.currentTimeMillis();
+                    lastEntry = sensorData;
+                    history.add(sensorData);
+                    MySQLiteHelper.getInstance(context).addToLight(sensorData);
                     // Log.i(TAG, "Lx: " + lx);
                     List<LightSensorData> temp = new ArrayList<>();
                     for (LightSensorData data : history) {
@@ -162,7 +162,7 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
                     }
                     history = new ArrayList<>(temp);
                     if (sensorEvent != null)
-                        sensorEvent.onDataSensed(new SensingCallbackData(ld, ld.timestamp));
+                        sensorEvent.onDataSensed(sensorData);
                 }
             }
         }

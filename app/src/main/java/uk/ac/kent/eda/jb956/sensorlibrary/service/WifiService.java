@@ -107,12 +107,12 @@ public class WifiService extends Service {
                 }
 
                 List<WifiData> currentEntries = new ArrayList<>();
-                for (WifiData wd : unparsedResults) {
-                    if (wd.timestamp <= System.currentTimeMillis() && wd.timestamp >= timeLastInitiated) {
+                for (WifiData sensorData : unparsedResults) {
+                    if (sensorData.timestamp <= System.currentTimeMillis() && sensorData.timestamp >= timeLastInitiated) {
                         //NetworkCache.getInstance().getFingerprintData().add(wd);
-                        SensorManager.getInstance(getApplication()).getRawHistoricData().add(wd);
-                        currentEntries.add(wd);
-                        WifiSensorManager.getInstance(c).getSensorEventListener().onDataSensed(new SensingCallbackData(wd, wd.timestamp));
+                        SensorManager.getInstance(getApplication()).getRawHistoricData().add(sensorData);
+                        currentEntries.add(sensorData);
+                        WifiSensorManager.getInstance(c).getSensorEventListener().onDataSensed(sensorData);
                     }
                 }
 

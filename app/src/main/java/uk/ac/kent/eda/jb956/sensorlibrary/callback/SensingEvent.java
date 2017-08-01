@@ -1,5 +1,7 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.callback;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
+
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
  * School of Engineering and Digital Arts, University of Kent
@@ -15,12 +17,12 @@ public class SensingEvent {
         mOnEventListener = null;
     }
 
-    public void onDataSensed(SensingCallbackData sensingCallbackData) {
+    public void onDataSensed(SensorData sensorData) {
         if (mOnEventListener != null)
-            mOnEventListener.onDataSensed(sensingCallbackData);
+            mOnEventListener.onDataSensed(sensorData);
     }
 
     public interface OnEventListener {
-        void onDataSensed(SensingCallbackData sensingCallbackData);
+        void onDataSensed(SensorData sensorData);
     }
 }

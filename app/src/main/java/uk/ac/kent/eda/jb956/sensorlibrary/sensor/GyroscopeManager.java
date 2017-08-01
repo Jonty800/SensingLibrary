@@ -134,15 +134,15 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
                     float x = event.values[0];
                     float y = event.values[1];
                     float z = event.values[2];
-                    XYZSensorData gd = new XYZSensorData();
-                    gd.X = x;
-                    gd.Y = y;
-                    gd.Z = z;
-                    gd.timestamp = System.currentTimeMillis();
-                    lastEntry = gd;
-                    MySQLiteHelper.getInstance(context).addToGyro(gd);
+                    XYZSensorData sensorData = new XYZSensorData();
+                    sensorData.X = x;
+                    sensorData.Y = y;
+                    sensorData.Z = z;
+                    sensorData.timestamp = System.currentTimeMillis();
+                    lastEntry = sensorData;
+                    MySQLiteHelper.getInstance(context).addToGyro(sensorData);
                     if (sensorEvent != null)
-                        sensorEvent.onDataSensed(new SensingCallbackData(gd, gd.timestamp));
+                        sensorEvent.onDataSensed(sensorData);
                     // Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
                 }
             }

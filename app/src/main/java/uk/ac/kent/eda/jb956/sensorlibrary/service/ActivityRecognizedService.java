@@ -11,6 +11,7 @@ import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ActivityData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ActivitySensorManager;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -88,11 +89,12 @@ public class ActivityRecognizedService extends IntentService {
             }
         }
         if (best != null) {
-            ActivityData data = new ActivityData();
-            data.activityCode = best.getType();
-            data.confidence = best.getConfidence();
-            data.timestamp = System.currentTimeMillis();
-            MySQLiteHelper.getInstance(this).addToActivity(data);
+            ActivityData sensorData = new ActivityData();
+            sensorData.activityCode = best.getType();
+            sensorData.confidence = best.getConfidence();
+            sensorData.timestamp = System.currentTimeMillis();
+            MySQLiteHelper.getInstance(this).addToActivity(sensorData);
+            ActivitySensorManager.getInstance(this).getSensorEventListener().onDataSensed(sensorData);
         }
     }
 }

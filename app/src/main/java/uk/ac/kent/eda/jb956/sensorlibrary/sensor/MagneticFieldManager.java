@@ -133,15 +133,15 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
                     float x = event.values[0];
                     float y = event.values[1];
                     float z = event.values[2];
-                    XYZSensorData ad = new XYZSensorData();
-                    ad.X = x;
-                    ad.Y = y;
-                    ad.Z = z;
-                    ad.timestamp = System.currentTimeMillis();
-                    lastEntry = ad;
-                    MySQLiteHelper.getInstance(context).addToMag(ad);
+                    XYZSensorData sensorData = new XYZSensorData();
+                    sensorData.X = x;
+                    sensorData.Y = y;
+                    sensorData.Z = z;
+                    sensorData.timestamp = System.currentTimeMillis();
+                    lastEntry = sensorData;
+                    MySQLiteHelper.getInstance(context).addToMag(sensorData);
                     if (sensorEvent != null)
-                        sensorEvent.onDataSensed(new SensingCallbackData(ad, ad.timestamp));
+                        sensorEvent.onDataSensed(sensorData);
                     //Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
                 }
             }

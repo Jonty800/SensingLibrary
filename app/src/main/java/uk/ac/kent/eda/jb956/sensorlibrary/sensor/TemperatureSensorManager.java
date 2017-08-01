@@ -131,14 +131,13 @@ public class TemperatureSensorManager implements SensingInterface, SensorEventLi
                 if ((curTime - lastUpdate) > SAMPLING_RATE) {
                     lastUpdate = curTime;
                     float degreesC = event.values[0];
-                    TemperatureSensorData hd = new TemperatureSensorData();
-                    hd.degreesC = degreesC;
-                    hd.timestamp = System.currentTimeMillis();
-                    lastEntry = hd;
-                    MySQLiteHelper.getInstance(context).addToTemperature(hd);
-                    Log.i(TAG, "Humidity: " + hd.degreesC);
+                    TemperatureSensorData sensorData = new TemperatureSensorData();
+                    sensorData.degreesC = degreesC;
+                    sensorData.timestamp = System.currentTimeMillis();
+                    lastEntry = sensorData;
+                    MySQLiteHelper.getInstance(context).addToTemperature(sensorData);
                     if (sensorEvent != null)
-                        sensorEvent.onDataSensed(new SensingCallbackData(hd, hd.timestamp));
+                        sensorEvent.onDataSensed(sensorData);
                 }
             }
         }

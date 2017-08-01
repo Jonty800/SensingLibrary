@@ -131,14 +131,13 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
                 if ((curTime - lastUpdate) > SAMPLING_RATE) {
                     lastUpdate = curTime;
                     float millibars_of_pressure = event.values[0];
-                    PressureSensorData hd = new PressureSensorData();
-                    hd.pressure = millibars_of_pressure;
-                    hd.timestamp = System.currentTimeMillis();
-                    lastEntry = hd;
-                    MySQLiteHelper.getInstance(context).addToHumidity(hd);
-                    Log.i(TAG, "Humidity: " + hd.pressure);
+                    PressureSensorData sensorData = new PressureSensorData();
+                    sensorData.pressure = millibars_of_pressure;
+                    sensorData.timestamp = System.currentTimeMillis();
+                    lastEntry = sensorData;
+                    MySQLiteHelper.getInstance(context).addToHumidity(sensorData);
                     if (sensorEvent != null)
-                        sensorEvent.onDataSensed(new SensingCallbackData(hd, hd.timestamp));
+                        sensorEvent.onDataSensed(sensorData);
                 }
             }
         }
