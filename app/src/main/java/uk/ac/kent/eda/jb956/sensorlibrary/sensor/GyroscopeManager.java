@@ -142,7 +142,7 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
                     lastEntry = gd;
                     MySQLiteHelper.getInstance(context).addToGyro(gd);
                     if (sensorEvent != null)
-                        sensorEvent.doEvent(new SensingCallbackData(gd, gd.timestamp));
+                        sensorEvent.onDataSensed(new SensingCallbackData(gd, gd.timestamp));
                     // Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
                 }
             }

@@ -14,7 +14,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.hardware.SensorEvent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -113,7 +112,7 @@ public class WifiService extends Service {
                         //NetworkCache.getInstance().getFingerprintData().add(wd);
                         SensorManager.getInstance(getApplication()).getRawHistoricData().add(wd);
                         currentEntries.add(wd);
-                        WifiSensorManager.getInstance(c).getSensorEventListener().doEvent(new SensingCallbackData(wd, wd.timestamp));
+                        WifiSensorManager.getInstance(c).getSensorEventListener().onDataSensed(new SensingCallbackData(wd, wd.timestamp));
                     }
                 }
 

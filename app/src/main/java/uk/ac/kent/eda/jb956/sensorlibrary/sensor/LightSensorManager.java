@@ -162,7 +162,7 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
                     }
                     history = new ArrayList<>(temp);
                     if (sensorEvent != null)
-                        sensorEvent.doEvent(new SensingCallbackData(ld, ld.timestamp));
+                        sensorEvent.onDataSensed(new SensingCallbackData(ld, ld.timestamp));
                 }
             }
         }

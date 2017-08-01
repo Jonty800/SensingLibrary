@@ -138,7 +138,7 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
                     MySQLiteHelper.getInstance(context).addToHumidity(hd);
                     Log.i(TAG, "Humidity: " + hd.pressure);
                     if (sensorEvent != null)
-                        sensorEvent.doEvent(new SensingCallbackData(hd, hd.timestamp));
+                        sensorEvent.onDataSensed(new SensingCallbackData(hd, hd.timestamp));
                 }
             }
         }

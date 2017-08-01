@@ -194,7 +194,7 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
                     lastEntry = ad;
                     MySQLiteHelper.getInstance(context).addToAcc(ad);
                     if (sensorEvent != null)
-                        sensorEvent.doEvent(new SensingCallbackData(ad, ad.timestamp));
+                        sensorEvent.onDataSensed(new SensingCallbackData(ad, ad.timestamp));
                     //Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
                 }
             }

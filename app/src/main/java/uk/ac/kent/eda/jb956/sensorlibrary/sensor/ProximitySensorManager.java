@@ -147,7 +147,7 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
                     }
                     history = new ArrayList<>(temp);
                     if (sensorEvent != null)
-                        sensorEvent.doEvent(new SensingCallbackData(pd, pd.timestamp));
+                        sensorEvent.onDataSensed(new SensingCallbackData(pd, pd.timestamp));
                 }
                 // System.out.println(""+(System.currentTimeMillis() - lastTimeCheckedHistory));
 

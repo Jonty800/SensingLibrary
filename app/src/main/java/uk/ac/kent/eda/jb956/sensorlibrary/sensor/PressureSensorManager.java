@@ -129,7 +129,7 @@ public class PressureSensorManager implements SensingInterface, SensorEventListe
                     MySQLiteHelper.getInstance(context).addToPressure(pd);
                     Log.i(TAG, "Pressure: " + pd.pressure);
                     if (sensorEvent != null)
-                        sensorEvent.doEvent(new SensingCallbackData(pd, pd.timestamp));
+                        sensorEvent.onDataSensed(new SensingCallbackData(pd, pd.timestamp));
                 }
             }
         }

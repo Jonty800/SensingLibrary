@@ -8,16 +8,19 @@ package uk.ac.kent.eda.jb956.sensorlibrary.callback;
 public class SensingEvent {
     private OnEventListener mOnEventListener;
 
-    public void setOnEventListener(OnEventListener listener) {
+    public synchronized void subscribeToSensor(OnEventListener listener) {
         mOnEventListener = listener;
     }
+    public synchronized void unsubscribeFromSensor() {
+        mOnEventListener = null;
+    }
 
-    public void doEvent(SensingCallbackData sensingCallbackData) {
+    public void onDataSensed(SensingCallbackData sensingCallbackData) {
         if (mOnEventListener != null)
-            mOnEventListener.onEvent(sensingCallbackData);
+            mOnEventListener.onDataSensed(sensingCallbackData);
     }
 
     public interface OnEventListener {
-        void onEvent(SensingCallbackData sensingCallbackData);
+        void onDataSensed(SensingCallbackData sensingCallbackData);
     }
 }

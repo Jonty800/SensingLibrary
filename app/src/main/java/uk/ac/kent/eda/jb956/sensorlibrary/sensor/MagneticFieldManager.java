@@ -141,7 +141,7 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
                     lastEntry = ad;
                     MySQLiteHelper.getInstance(context).addToMag(ad);
                     if (sensorEvent != null)
-                        sensorEvent.doEvent(new SensingCallbackData(ad, ad.timestamp));
+                        sensorEvent.onDataSensed(new SensingCallbackData(ad, ad.timestamp));
                     //Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
                 }
             }

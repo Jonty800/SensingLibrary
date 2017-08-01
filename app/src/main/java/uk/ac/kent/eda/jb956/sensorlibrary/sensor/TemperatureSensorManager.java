@@ -138,7 +138,7 @@ public class TemperatureSensorManager implements SensingInterface, SensorEventLi
                     MySQLiteHelper.getInstance(context).addToTemperature(hd);
                     Log.i(TAG, "Humidity: " + hd.degreesC);
                     if (sensorEvent != null)
-                        sensorEvent.doEvent(new SensingCallbackData(hd, hd.timestamp));
+                        sensorEvent.onDataSensed(new SensingCallbackData(hd, hd.timestamp));
                 }
             }
         }
