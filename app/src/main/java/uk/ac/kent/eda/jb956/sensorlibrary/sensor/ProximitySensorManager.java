@@ -211,5 +211,10 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
         database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
+
+    @Override
+    public void setEnabled(boolean enabled){
+        Settings.PROXIMITY_ENABLED = enabled;
+    }
 }
 

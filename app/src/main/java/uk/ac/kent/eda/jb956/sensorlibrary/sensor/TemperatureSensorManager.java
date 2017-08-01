@@ -165,6 +165,11 @@ public class TemperatureSensorManager implements SensingInterface, SensorEventLi
     }
 
     @Override
+    public void setEnabled(boolean enabled){
+        Settings.TEMP_ENABLED = enabled;
+    }
+
+    @Override
     public List<SensorData> getAllData() {
         return getDataFromRange(0L, System.currentTimeMillis());
     }

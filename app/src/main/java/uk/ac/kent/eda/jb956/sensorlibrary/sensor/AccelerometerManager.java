@@ -202,6 +202,11 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
     }
 
     @Override
+    public void setEnabled(boolean enabled){
+        Settings.ACC_ENABLED = enabled;
+    }
+
+    @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }

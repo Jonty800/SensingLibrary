@@ -200,4 +200,9 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
 
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
+
+    @Override
+    public void setEnabled(boolean enabled){
+        Settings.HUMIDITY_ENABLED = enabled;
+    }
 }

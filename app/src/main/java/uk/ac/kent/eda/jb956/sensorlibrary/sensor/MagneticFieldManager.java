@@ -206,4 +206,9 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
 
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
+
+    @Override
+    public void setEnabled(boolean enabled){
+        Settings.MAG_ENABLED = enabled;
+    }
 }

@@ -24,17 +24,17 @@ public class Settings {
     /*
      * Sensor toggles
      */
-    public static final boolean ACC_ENABLED = true;
-    public static final boolean GYRO_ENABLED = true;
-    public static final boolean WIFI_ENABLED = true;
-    public static final boolean ACTIVITY_ENABLED = true;
-    public static final boolean LIGHT_ENABLED = true;
-    public static final boolean PROXIMITY_ENABLED = true;
-    public static final boolean POCKET_ENABLED = true;
-    public static final boolean HUMIDITY_ENABLED = true;
-    public static final boolean PRESSURE_ENABLED = true;
-    public static final boolean TEMP_ENABLED = true;
-    public static final boolean MAG_ENABLED = true;
+    public static boolean ACC_ENABLED = false;
+    public static boolean GYRO_ENABLED = false;
+    public static boolean WIFI_ENABLED = false;
+    public static boolean ACTIVITY_ENABLED = false;
+    public static boolean LIGHT_ENABLED = false;
+    public static boolean PROXIMITY_ENABLED = false;
+    public static boolean POCKET_ENABLED = false;
+    public static boolean HUMIDITY_ENABLED = false;
+    public static boolean PRESSURE_ENABLED = false;
+    public static boolean TEMP_ENABLED = false;
+    public static boolean MAG_ENABLED = false;
     public static boolean GPS_ENABLED = false; //TODO implement GPS
 
     /*
@@ -62,7 +62,7 @@ public class Settings {
     /*
      *  Permission codes for M+
      */
-    public static final String[] permissionCodes = new String[]{
+    public static String[] permissionCodes = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,

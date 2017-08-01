@@ -42,4 +42,6 @@ interface SensingInterface {
 
     void setSaveToCSV(boolean save);
 
+    void setEnabled(boolean enabled);
+
 }

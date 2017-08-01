@@ -207,4 +207,9 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
         database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
+
+    @Override
+    public void setEnabled(boolean enabled){
+        Settings.GYRO_ENABLED = enabled;
+    }
 }

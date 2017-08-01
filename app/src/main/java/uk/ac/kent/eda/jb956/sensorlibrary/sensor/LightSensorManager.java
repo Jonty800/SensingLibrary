@@ -266,5 +266,10 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
 
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
+
+    @Override
+    public void setEnabled(boolean enabled){
+        Settings.LIGHT_ENABLED = enabled;
+    }
 }
 
