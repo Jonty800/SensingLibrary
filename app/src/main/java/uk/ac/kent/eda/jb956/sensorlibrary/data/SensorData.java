@@ -31,6 +31,10 @@ public class SensorData {
         return (WifiData) this;
     }
 
+    public AudioSensorData toAudioData() {
+        return (AudioSensorData) this;
+    }
+
     public XYZSensorData toXYZSensorData() {
         return (XYZSensorData) this;
     }

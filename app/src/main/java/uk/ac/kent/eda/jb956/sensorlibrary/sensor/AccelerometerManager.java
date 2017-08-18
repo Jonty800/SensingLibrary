@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingCallbackData;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
@@ -202,8 +201,13 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
     }
 
     @Override
-    public void setEnabled(boolean enabled){
+    public void setEnabled(boolean enabled) {
         Settings.ACC_ENABLED = enabled;
+    }
+
+    @Override
+    public void setDutyCyclingIntervalPattern(int... args) {
+
     }
 
     @Override

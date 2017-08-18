@@ -18,22 +18,19 @@ import com.google.android.gms.location.ActivityRecognition;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.ActivityRecognizedService;
-import uk.ac.kent.eda.jb956.sensorlibrary.service.WifiService;
-import uk.ac.kent.eda.jb956.sensorlibrary.service.receiver.AlarmReceiver;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class ActivitySensorManager implements SensingInterface, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
+public class ActivitySensorManager implements SensingInterface, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private final String TAG = "ActivitySensorManager";
     private static ActivitySensorManager instance;
@@ -93,7 +90,7 @@ public class ActivitySensorManager implements SensingInterface, GoogleApiClient.
             //Which column you want to export
             WifiData sensorData = new WifiData();
             sensorData.timestamp = Long.parseLong(cur.getString(3));
-            sensorData.bssid= cur.getString(1);
+            sensorData.bssid = cur.getString(1);
             sensorData.rssi = Double.parseDouble(cur.getString(2));
             temp.add(sensorData);
         }
@@ -102,7 +99,7 @@ public class ActivitySensorManager implements SensingInterface, GoogleApiClient.
     }
 
     @Override
-    public void setEnabled(boolean enabled){
+    public void setEnabled(boolean enabled) {
         Settings.WIFI_ENABLED = enabled;
     }
 
@@ -129,6 +126,11 @@ public class ActivitySensorManager implements SensingInterface, GoogleApiClient.
     }
 
     @Override
+    public void setDutyCyclingIntervalPattern(int... args) {
+
+    }
+
+    @Override
     public void removeDataFromDatabaseWithRange(long start, long end) {
         String dbName = "act";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
@@ -136,6 +138,7 @@ public class ActivitySensorManager implements SensingInterface, GoogleApiClient.
         database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
+
     @Override
     public void setSaveToCSV(boolean save) {
         Settings.SAVE_WIFI_TO_DATABASE = save;

@@ -26,4 +26,5 @@ dependencies {
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.android.support:appcompat-v7:25.3.1'
+    compile files('libs/TarsosDSP-Android-2.4.jar')
 }

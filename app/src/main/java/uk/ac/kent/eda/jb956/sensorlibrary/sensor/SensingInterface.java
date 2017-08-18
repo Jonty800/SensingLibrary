@@ -44,4 +44,6 @@ interface SensingInterface {
 
     void setEnabled(boolean enabled);
 
+    void setDutyCyclingIntervalPattern(int... args);
+
 }

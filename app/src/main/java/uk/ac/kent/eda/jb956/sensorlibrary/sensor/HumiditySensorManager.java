@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingCallbackData;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
@@ -144,6 +143,11 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
     }
 
     @Override
+    public void setDutyCyclingIntervalPattern(int... args) {
+
+    }
+
+    @Override
     public List<SensorData> getDataFromRange(long start, long end) {
         List<SensorData> temp = new ArrayList<>();
         Cursor cur = MySQLiteHelper.getInstance(context).getReadableDatabase().rawQuery("SELECT * FROM humidity where timestamp >=" + start + " and timestamp <=" + end, null);
@@ -201,7 +205,7 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
     }
 
     @Override
-    public void setEnabled(boolean enabled){
+    public void setEnabled(boolean enabled) {
         Settings.HUMIDITY_ENABLED = enabled;
     }
 }

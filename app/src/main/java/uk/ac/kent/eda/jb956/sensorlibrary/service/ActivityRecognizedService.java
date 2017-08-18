@@ -2,7 +2,6 @@ package uk.ac.kent.eda.jb956.sensorlibrary.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
 
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;

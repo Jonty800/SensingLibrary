@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingCallbackData;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
@@ -112,6 +111,11 @@ public class PressureSensorManager implements SensingInterface, SensorEventListe
     private SensorData lastEntry = null;
 
     @Override
+    public void setDutyCyclingIntervalPattern(int... args) {
+
+    }
+
+    @Override
     public void onSensorChanged(SensorEvent event) {
         if (sensor.getType() == Sensor.TYPE_PRESSURE) {
             long curTime = System.currentTimeMillis();
@@ -201,7 +205,7 @@ public class PressureSensorManager implements SensingInterface, SensorEventListe
     }
 
     @Override
-    public void setEnabled(boolean enabled){
+    public void setEnabled(boolean enabled) {
         Settings.PRESSURE_ENABLED = enabled;
     }
 }

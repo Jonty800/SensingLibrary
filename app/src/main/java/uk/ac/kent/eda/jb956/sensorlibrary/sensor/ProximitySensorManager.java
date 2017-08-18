@@ -12,7 +12,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingCallbackData;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ProximitySensorData;
@@ -123,6 +122,11 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
     public List<ProximitySensorData> history = new ArrayList<>();
 
     @Override
+    public void setDutyCyclingIntervalPattern(int... args) {
+
+    }
+
+    @Override
     public void onSensorChanged(SensorEvent event) {
         if (sensor.getType() == Sensor.TYPE_PROXIMITY) {
             long curTime = System.currentTimeMillis();
@@ -212,7 +216,7 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
     }
 
     @Override
-    public void setEnabled(boolean enabled){
+    public void setEnabled(boolean enabled) {
         Settings.PROXIMITY_ENABLED = enabled;
     }
 }

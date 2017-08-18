@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingCallbackData;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
@@ -94,6 +93,11 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
             e.printStackTrace();
         }
         Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
+    }
+
+    @Override
+    public void setDutyCyclingIntervalPattern(int... args) {
+
     }
 
     @Override
@@ -208,7 +212,7 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
     }
 
     @Override
-    public void setEnabled(boolean enabled){
+    public void setEnabled(boolean enabled) {
         Settings.MAG_ENABLED = enabled;
     }
 }

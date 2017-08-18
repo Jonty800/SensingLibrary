@@ -13,7 +13,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingCallbackData;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.LightSensorData;
@@ -168,6 +167,11 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
         }
     }
 
+    @Override
+    public void setDutyCyclingIntervalPattern(int... args) {
+
+    }
+
     private Runnable mStatusChecker = new Runnable() {
         @Override
         public void run() {
@@ -268,7 +272,7 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
     }
 
     @Override
-    public void setEnabled(boolean enabled){
+    public void setEnabled(boolean enabled) {
         Settings.LIGHT_ENABLED = enabled;
     }
 }

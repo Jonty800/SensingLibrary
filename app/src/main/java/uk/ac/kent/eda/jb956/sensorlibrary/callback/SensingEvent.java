@@ -13,6 +13,7 @@ public class SensingEvent {
     public synchronized void subscribeToSensor(OnEventListener listener) {
         mOnEventListener = listener;
     }
+
     public synchronized void unsubscribeFromSensor() {
         mOnEventListener = null;
     }

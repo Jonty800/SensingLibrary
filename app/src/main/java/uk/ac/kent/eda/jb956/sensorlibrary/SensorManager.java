@@ -7,16 +7,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.ActivityRecognition;
 import com.google.gson.Gson;
 
 import java.lang.reflect.Type;
@@ -28,7 +22,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AccelerometerManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ActivitySensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AudioManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AudioSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.GyroscopeManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.HumiditySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.LightSensorManager;
@@ -37,10 +31,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.sensor.PressureSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ProximitySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.TemperatureSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.WifiSensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.service.ActivityRecognizedService;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.SensingService;
-import uk.ac.kent.eda.jb956.sensorlibrary.service.WifiService;
-import uk.ac.kent.eda.jb956.sensorlibrary.service.receiver.AlarmReceiver;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -55,7 +46,7 @@ public class SensorManager {
     private final Context context;
     private final String TAG = "SensorManager";
 
-    private final AudioManager audioManager;
+    private final AudioSensorManager audioManager;
     private final AccelerometerManager accelerometerManager;
     private final GyroscopeManager gyroscopeManager;
     private final ProximitySensorManager proximityManager;
@@ -74,7 +65,6 @@ public class SensorManager {
     public synchronized List<WifiData> getRawHistoricData() {
         return rawHistoricData;
     }
-    //private OkHttpClient client;
 
     /**
      * Upon creation of this singleton class, it will attempt to start the
@@ -87,8 +77,8 @@ public class SensorManager {
         mSensorThread = new HandlerThread("Sensor thread", Thread.MAX_PRIORITY);
         mSensorThread.start();
         mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
-        wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        audioManager = AudioManager.getInstance();
+        wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        audioManager = AudioSensorManager.getInstance();
         accelerometerManager = AccelerometerManager.getInstance(context);
         gyroscopeManager = GyroscopeManager.getInstance(context);
         proximityManager = ProximitySensorManager.getInstance(context);
@@ -99,7 +89,6 @@ public class SensorManager {
         magneticFieldManager = MagneticFieldManager.getInstance(context);
         wifiSensorManager = WifiSensorManager.getInstance(context);
         activitySensorManager = ActivitySensorManager.getInstance(context);
-        //client = new OkHttpClient();
     }
 
     public static synchronized SensorManager getInstance(Context c) {
@@ -127,6 +116,7 @@ public class SensorManager {
         magneticFieldManager.startSensing();
         wifiSensorManager.startSensing();
         activitySensorManager.startSensing();
+        audioManager.startSensing();
     }
 
     public void stopAllSensors() {
@@ -140,6 +130,7 @@ public class SensorManager {
         magneticFieldManager.stopSensing();
         wifiSensorManager.stopSensing();
         activitySensorManager.stopSensing();
+        audioManager.stopSensing();
     }
 
     public void startSensingService() {
@@ -170,7 +161,6 @@ public class SensorManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //yes
     }
 
     public void stopAlarm(Intent alarmIntent, int alarmId) {

@@ -34,7 +34,6 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingCallbackData;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
@@ -204,12 +203,23 @@ public class WifiService extends Service {
         return START_STICKY;
     }
 
+    int dutyIndex = 0;
+
     void setAlarm() {
         Intent myAlarm = new Intent(getApplicationContext(), AlarmReceiver.class);
         myAlarm.setAction("fingerprintingAlarm");
         int next_delay = WifiSensorManager.getInstance(this).getSamplingRate();// - (num);
         checkWifiSettings();
-        SensorManager.getInstance(getApplication()).startAlarm(myAlarm, next_delay, alarmReceiverID);
+        WifiSensorManager wifiSensorManager = WifiSensorManager.getInstance(this);
+        int[] profile = wifiSensorManager.getDutyCyclingIntervalProfile();
+        if (profile == null)
+            SensorManager.getInstance(getApplication()).startAlarm(myAlarm, next_delay, alarmReceiverID);
+        else {
+            //TODO test this
+            SensorManager.getInstance(getApplication()).startAlarm(myAlarm, profile[dutyIndex++], alarmReceiverID);
+            if (dutyIndex > profile.length)
+                dutyIndex = 0;
+        }
     }
 
     private boolean isDialogShowing = false;

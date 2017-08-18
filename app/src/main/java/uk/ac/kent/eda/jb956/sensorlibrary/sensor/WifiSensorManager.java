@@ -5,21 +5,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingCallbackData;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.WifiService;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.receiver.AlarmReceiver;
@@ -36,6 +31,12 @@ public class WifiSensorManager implements SensingInterface {
     private final Context context;
     public static int SAMPLING_RATE = 10000; //ms
     public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
+
+    public int[] getDutyCyclingIntervalProfile() {
+        return dutyCyclingIntervalProfile;
+    }
+
+    private int[] dutyCyclingIntervalProfile;
 
     public static synchronized WifiSensorManager getInstance(Context context) {
         if (instance == null)
@@ -88,7 +89,7 @@ public class WifiSensorManager implements SensingInterface {
             //Which column you want to export
             WifiData sensorData = new WifiData();
             sensorData.timestamp = Long.parseLong(cur.getString(3));
-            sensorData.bssid= cur.getString(1);
+            sensorData.bssid = cur.getString(1);
             sensorData.rssi = Double.parseDouble(cur.getString(2));
             temp.add(sensorData);
         }
@@ -97,8 +98,16 @@ public class WifiSensorManager implements SensingInterface {
     }
 
     @Override
-    public void setEnabled(boolean enabled){
+    public void setEnabled(boolean enabled) {
         Settings.WIFI_ENABLED = enabled;
+    }
+
+    @Override
+    public void setDutyCyclingIntervalPattern(int... args) {
+        if (args == null)
+            dutyCyclingIntervalProfile = null;
+        else if (args.length > 0)
+            dutyCyclingIntervalProfile = args;
     }
 
     @Override
@@ -131,6 +140,7 @@ public class WifiSensorManager implements SensingInterface {
         database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
+
     @Override
     public void setSaveToCSV(boolean save) {
         Settings.SAVE_WIFI_TO_DATABASE = save;
