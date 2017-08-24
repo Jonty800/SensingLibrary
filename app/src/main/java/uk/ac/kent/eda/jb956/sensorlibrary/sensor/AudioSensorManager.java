@@ -33,16 +33,13 @@ public class AudioSensorManager {
         return instance;
     }
 
-    private AudioSensorManager() {
-        dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(RECORDER_SAMPLERATE, BUFFER_SIZE, 0);
-        Thread mainThread = new Thread(dispatcher, "Audio Dispatcher");
-        mainThread.start();
-    }
-
     public void startSensing() {
         if (isSensing())
             return;
         if (Settings.AUDIO_ENABLED) {
+            Thread mainThread = new Thread(dispatcher, "Audio Dispatcher");
+            mainThread.start();
+            dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(RECORDER_SAMPLERATE, BUFFER_SIZE, 0);
             AudioProcessor processor = new AudioProcessor() {
                 @Override
                 public boolean process(final AudioEvent audioEvent) {
