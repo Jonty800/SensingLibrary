@@ -157,6 +157,13 @@ public class WifiSensorManager implements SensingInterface {
         Settings.SAVE_WIFI_TO_DATABASE = save;
     }
 
+    private boolean sleepingTaskStarted = false;
+    void startSleepingTask(){
+        if(sleepingTaskStarted)
+            return;
+        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(sleepTask, AWAKE_DURATION);
+        sleepingTaskStarted = true;
+    }
 
     @Override
     public void startSensing() {
@@ -165,7 +172,7 @@ public class WifiSensorManager implements SensingInterface {
         try {
             if (Settings.WIFI_ENABLED) {
                 Log.i(TAG, "Starting Wi-Fi Fingerprinting Service");
-                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(sleepTask, AWAKE_DURATION);
+                startSleepingTask();
                 addNewTask();
                 sensing = true;
             }
@@ -196,10 +203,12 @@ public class WifiSensorManager implements SensingInterface {
             if(sensing) {
                 Log.i(TAG, "Sleeping for " + SLEEP_DURATION);
                 stopSensing();
+                SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(sleepTask);
                 SensorManager.getInstance(context).getWorkerThread().postDelayedTask(sleepTask, SLEEP_DURATION);
             }else{
                 Log.i(TAG, "Sensing for " + AWAKE_DURATION);
                 startSensing();
+                SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(sleepTask);
                 SensorManager.getInstance(context).getWorkerThread().postDelayedTask(this, AWAKE_DURATION);
             }
         }
