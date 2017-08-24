@@ -5,6 +5,7 @@ import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
 import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
+import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.AudioSensorData;
 
 /**
@@ -39,27 +40,33 @@ public class AudioSensorManager {
     }
 
     public void startSensing() {
-        AudioProcessor processor = new AudioProcessor() {
-            @Override
-            public boolean process(final AudioEvent audioEvent) {
-                AudioSensorData sensorData = new AudioSensorData();
-                sensorData.timestamp = System.currentTimeMillis();
-                sensorData.buffer = audioEvent.getFloatBuffer();
-                sensorData.bufferSize = getBufferSize();
-                if (sensorEvent != null)
-                    sensorEvent.onDataSensed(sensorData);
-                return true;
-            }
+        if (isSensing())
+            return;
+        if (Settings.AUDIO_ENABLED) {
+            AudioProcessor processor = new AudioProcessor() {
+                @Override
+                public boolean process(final AudioEvent audioEvent) {
+                    AudioSensorData sensorData = new AudioSensorData();
+                    sensorData.timestamp = System.currentTimeMillis();
+                    sensorData.buffer = audioEvent.getFloatBuffer();
+                    sensorData.bufferSize = getBufferSize();
+                    if (sensorEvent != null)
+                        sensorEvent.onDataSensed(sensorData);
+                    return true;
+                }
 
-            @Override
-            public void processingFinished() {
-            }
-        };
-        dispatcher.addAudioProcessor(processor);
-        sensing = true;
+                @Override
+                public void processingFinished() {
+                }
+            };
+            dispatcher.addAudioProcessor(processor);
+            sensing = true;
+        }
     }
 
     public void stopSensing() {
+        if (!isSensing())
+            return;
         dispatcher.stop();
         sensing = false;
     }
@@ -98,5 +105,9 @@ public class AudioSensorManager {
         if (sensorEvent == null)
             sensorEvent = new SensingEvent();
         return sensorEvent;
+    }
+
+    public void setEnabled(boolean enabled) {
+        Settings.AUDIO_ENABLED = enabled;
     }
 }

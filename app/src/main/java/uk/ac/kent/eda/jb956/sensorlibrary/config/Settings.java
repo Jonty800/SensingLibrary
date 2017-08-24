@@ -35,6 +35,7 @@ public class Settings {
     public static boolean PRESSURE_ENABLED = false;
     public static boolean TEMP_ENABLED = false;
     public static boolean MAG_ENABLED = false;
+    public static boolean AUDIO_ENABLED = false;
     public static boolean GPS_ENABLED = false; //TODO implement GPS
 
     /*
