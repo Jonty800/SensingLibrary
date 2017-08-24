@@ -84,7 +84,11 @@ public class AudioSensorManager {
         return RECORDER_SAMPLERATE;
     }
 
-    public void setDutyCyclingIntervalPattern(int... args) {
+    public void setSensingWindowDuration() {
+
+    }
+
+    public void setSleepingDuration() {
 
     }
 

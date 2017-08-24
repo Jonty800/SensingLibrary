@@ -44,6 +44,8 @@ interface SensingInterface {
 
     void setEnabled(boolean enabled);
 
-    void setDutyCyclingIntervalPattern(int... args);
+    void setSensingWindowDuration(int duration);
+
+    void setSleepingDuration(int duration);
 
 }

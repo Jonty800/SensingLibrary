@@ -122,7 +122,12 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
     public List<ProximitySensorData> history = new ArrayList<>();
 
     @Override
-    public void setDutyCyclingIntervalPattern(int... args) {
+    public void setSensingWindowDuration(int duration) {
+
+    }
+
+    @Override
+    public void setSleepingDuration(int duration) {
 
     }
 

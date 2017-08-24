@@ -1,10 +1,23 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
 
+import android.Manifest;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.os.IBinder;
+import android.os.SystemClock;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -16,8 +29,6 @@ import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
-import uk.ac.kent.eda.jb956.sensorlibrary.service.WifiService;
-import uk.ac.kent.eda.jb956.sensorlibrary.service.receiver.AlarmReceiver;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -31,12 +42,8 @@ public class WifiSensorManager implements SensingInterface {
     private final Context context;
     public static int SAMPLING_RATE = 10000; //ms
     public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
-
-    public int[] getDutyCyclingIntervalProfile() {
-        return dutyCyclingIntervalProfile;
-    }
-
-    private int[] dutyCyclingIntervalProfile;
+    public static int SLEEP_DURATION = 20000; //ms
+    public static int AWAKE_DURATION = 30000; //ms
 
     public static synchronized WifiSensorManager getInstance(Context context) {
         if (instance == null)
@@ -47,6 +54,10 @@ public class WifiSensorManager implements SensingInterface {
     private WifiSensorManager(Context context) {
         this.context = context.getApplicationContext();
         sensor = null;
+        if (wifi == null)
+            wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(sleepTask, AWAKE_DURATION);
     }
 
     private final Sensor sensor;
@@ -103,11 +114,13 @@ public class WifiSensorManager implements SensingInterface {
     }
 
     @Override
-    public void setDutyCyclingIntervalPattern(int... args) {
-        if (args == null)
-            dutyCyclingIntervalProfile = null;
-        else if (args.length > 0)
-            dutyCyclingIntervalProfile = args;
+    public void setSensingWindowDuration(int duration) {
+        AWAKE_DURATION = duration;
+    }
+
+    @Override
+    public void setSleepingDuration(int duration) {
+        SLEEP_DURATION = duration;
     }
 
     @Override
@@ -154,9 +167,7 @@ public class WifiSensorManager implements SensingInterface {
         try {
             if (Settings.WIFI_ENABLED) {
                 Log.i(TAG, "Starting Wi-Fi Fingerprinting Service");
-                Intent fingerprintingAlarm = new Intent(context.getApplicationContext(), AlarmReceiver.class);
-                fingerprintingAlarm.setAction("fingerprintingAlarm");
-                SensorManager.getInstance(context).startAlarm(fingerprintingAlarm, 0, WifiService.alarmReceiverID);
+                addNewTask();
                 sensing = true;
             }
         } catch (Exception e) {
@@ -171,15 +182,211 @@ public class WifiSensorManager implements SensingInterface {
             return;
         try {
             if (Settings.WIFI_ENABLED) {
-                Intent fingerprintingAlarm = new Intent(context.getApplicationContext(), AlarmReceiver.class);
-                fingerprintingAlarm.setAction("fingerprintingAlarm");
-                SensorManager.getInstance(context).stopAlarm(fingerprintingAlarm, WifiService.alarmReceiverID);
+                stopTask();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         sensing = false;
         Log.i(TAG, "Sensor stopped");
+    }
+
+    Runnable sleepTask = new Runnable() {
+        @Override
+        public void run() {
+            if(sensing) {
+                Log.i(TAG, "Sleeping for " + SLEEP_DURATION);
+                stopSensing();
+                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(sleepTask, SLEEP_DURATION);
+            }else{
+                Log.i(TAG, "Sensing for " + AWAKE_DURATION);
+                startSensing();
+                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(this, AWAKE_DURATION);
+            }
+        }
+    };
+
+    public static final String MSG_HEARTBEAT = "heartbeat.start";
+    public static final String MSG_SENDING = "sendingService.start";
+    public static boolean uploading = false;
+    private WifiManager wifi;
+    private long timeLastInitiated = 0;
+    private boolean wasBroadcastReceiverTriggered = false;
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context c, Intent intent) {
+            wasBroadcastReceiverTriggered = true;
+            List<ScanResult> results = wifi.getScanResults();
+            //if 1 or more results found
+            if (results.size() > 0) {
+                Log.i(TAG, "Inserting new Wi-Fi fingerprint");
+                //filter anything except 2.4GHZ access points
+                List<WifiData> unparsedResults = new ArrayList<>();
+                for (ScanResult r : results) {
+                    if (r.frequency < 3000) {
+                        WifiData wd = new WifiData();
+                        wd.rssi = r.level;
+                        if (Build.VERSION.SDK_INT >= 17) {
+                            wd.timestamp = System.currentTimeMillis() - SystemClock.elapsedRealtime() + (r.timestamp / 1000);
+                        } else {
+                            wd.timestamp = System.currentTimeMillis();//TODO test this
+                        }
+                        wd.bssid = r.BSSID;
+                        wd.distanceEstimate = calculateDistance(r.level, r.frequency);
+                        // long testTs = wd.timestamp / 1000;
+                        // long now = System.currentTimeMillis() / 1000;
+                        //if (Math.abs(testTs - now) > 86400) {
+                        //ACRA.getErrorReporter().handleSilentException(new Exception("Bssid: " + wd.bssid + " | Timestamp: " + wd.timestamp + " | SystemClock.elapsedRealtime(): " + SystemClock.elapsedRealtime() + " | r.timestamp: " + r.timestamp));
+                        //}
+                        unparsedResults.add(wd);
+                        if (Settings.SAVE_WIFI_TO_DATABASE)
+                            MySQLiteHelper.getInstance(context).addToWifi(wd);
+                    }
+                }
+
+                List<WifiData> currentEntries = new ArrayList<>();
+                for (WifiData sensorData : unparsedResults) {
+                    if (sensorData.timestamp <= System.currentTimeMillis() && sensorData.timestamp >= timeLastInitiated) {
+                        //NetworkCache.getInstance().getFingerprintData().add(wd);
+                        SensorManager.getInstance(context).getRawHistoricData().add(sensorData);
+                        currentEntries.add(sensorData);
+                        WifiSensorManager.getInstance(c).getSensorEventListener().onDataSensed(sensorData);
+                    }
+                }
+
+            } else {
+                Log.i(TAG, "Scanned Wi-Fi list was empty - In Android 7+ this could be because location services are turned off");
+            }
+
+            try {
+                //unregister this receiver
+                context.unregisterReceiver(receiver);
+                if (!uploading)
+                    stopTask();
+            } catch (Exception e) { //catch any errors
+                e.printStackTrace();
+            }
+        }
+    };
+
+    public boolean checkPermissions() {
+        return Build.VERSION.SDK_INT < 23 || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public double calculateDistance(double signalLevelInDb, double freqInMHz) {
+        double exp = (27.55 - (20 * Math.log10(freqInMHz)) + Math.abs(signalLevelInDb)) / 20.0;
+        return Math.pow(10.0, exp);
+    }
+
+    public void startActionWithCode(String code) {
+        addNewTask();
+            switch (code) {
+                case MSG_HEARTBEAT:
+                    sendHeartbeat();
+                    break;
+                case MSG_SENDING: //TODO IMPLEMENT THIS
+                    if (!checkPermissions()) {
+                        Log.i(TAG, "Ending SendingService: No permissions");
+                    } else {
+                        uploading = true;
+                        //TODO old code, cleanup
+                        if (SensorManager.getInstance(context).getRawHistoricData().size() > 0) {
+                            // SensorManager.getInstance(getApplication()).sendRequestXCompressed(SensorManager.getInstance(getApplication()).generateAverageFingerprint(), callback);
+                        }
+                    }
+                    break;
+                default:
+                    //Log no action
+                    Log.i(TAG, "No action was set in onStartCommand");
+                    break;
+            }
+    }
+
+    private void stopTask(){
+        SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(task);
+    }
+
+    private void addNewTask() {
+        checkWifiSettings();
+        int next_delay = WifiSensorManager.getInstance(context).getSamplingRate();
+        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(task, next_delay);
+    }
+
+    private Runnable task = new Runnable() {
+        @Override
+        public void run() {
+            sendHeartbeat();
+        }
+    };
+
+    private boolean isDialogShowing = false;
+
+    private void checkWifiSettings() {
+        try {
+            if (!canAccessWifiSignals()) {
+                //wifi is enabled
+                try {
+                    if (!isDialogShowing) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setMessage(
+                                Settings.appName + " needs Wi-Fi enabled. Do you wish to turn it on?")
+                                .setCancelable(false)
+                                .setPositiveButton("Yes",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog,
+                                                                int id) {
+                                                SensorManager.getInstance(context).wifiManager.setWifiEnabled(true);
+                                                isDialogShowing = false;
+                                            }
+                                        })
+                                .setNegativeButton("No",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog,
+                                                                int id) {
+                                                isDialogShowing = false;
+                                                checkWifiSettings();
+                                                SensorManager.getInstance(context).wifiManager.setWifiEnabled(false);
+                                            }
+                                        });
+                        AlertDialog alert = builder.create();
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean canAccessWifiSignals() {
+        boolean canProceed = SensorManager.getInstance(context).wifiManager.isWifiEnabled();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            canProceed = canProceed || ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) &&
+                    SensorManager.getInstance(context).wifiManager.isScanAlwaysAvailable());
+        }
+        return canProceed;
+    }
+
+    private void sendHeartbeat() {
+        if (!canAccessWifiSignals()) {
+            Log.i(TAG, "Wi-Fi not enabled or not always available - ignoring sendHeartbeat");
+            return;
+        }
+        if (!checkPermissions()) {
+            Log.i(TAG, "Missing permissions for access to Wi-Fi. Aborting.");
+            return;
+        }
+        try {
+            context.registerReceiver(receiver, new IntentFilter(WifiManager
+                    .SCAN_RESULTS_AVAILABLE_ACTION));
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+        timeLastInitiated = System.currentTimeMillis();
+        wifi.startScan();
+        addNewTask();
     }
 
     private boolean sensing = false;

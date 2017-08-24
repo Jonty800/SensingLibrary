@@ -20,14 +20,6 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive");
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-            Object val = SensorManager.getInstance(context).getFromSharedPref("enabled", boolean.class, SensorManager.getInstance(context).getUserID());
-            boolean active = true;
-            if (val != null)
-                active = (boolean) val;
-            Log.d(TAG, "active:" + active);
-            if (!active) {
-                return;
-            }
             SensorManager.getInstance(context).startSensingService();
         }
     }

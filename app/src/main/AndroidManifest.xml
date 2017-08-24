@@ -31,7 +31,6 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <receiver android:name=".service.receiver.AlarmReceiver" />
         <receiver android:name=".service.receiver.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -41,9 +40,6 @@
         </receiver>
 
         <service android:name="uk.ac.kent.eda.jb956.sensorlibrary.service.ActivityRecognizedService" />
-        <service
-            android:name="uk.ac.kent.eda.jb956.sensorlibrary.service.WifiService"
-            android:exported="false" />
         <service
             android:name="uk.ac.kent.eda.jb956.sensorlibrary.service.SensingService"
             android:exported="false" />

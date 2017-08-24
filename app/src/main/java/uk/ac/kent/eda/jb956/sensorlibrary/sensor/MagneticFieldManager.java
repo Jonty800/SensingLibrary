@@ -96,7 +96,12 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
     }
 
     @Override
-    public void setDutyCyclingIntervalPattern(int... args) {
+    public void setSensingWindowDuration(int duration) {
+
+    }
+
+    @Override
+    public void setSleepingDuration(int duration) {
 
     }
 

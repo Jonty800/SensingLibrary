@@ -4,21 +4,16 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.Log;
 
-import com.google.gson.Gson;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
+import uk.ac.kent.eda.jb956.sensorlibrary.control.WorkerThread;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AccelerometerManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ActivitySensorManager;
@@ -59,6 +54,12 @@ public class SensorManager {
     private final ActivitySensorManager activitySensorManager;
     private final List<WifiData> rawHistoricData = new ArrayList<>();
 
+    public WorkerThread getWorkerThread() {
+        return workerThread;
+    }
+
+    private WorkerThread workerThread;
+
     private HandlerThread mSensorThread;
     private Handler mSensorHandler;
 
@@ -89,6 +90,8 @@ public class SensorManager {
         magneticFieldManager = MagneticFieldManager.getInstance(context);
         wifiSensorManager = WifiSensorManager.getInstance(context);
         activitySensorManager = ActivitySensorManager.getInstance(context);
+
+        workerThread =  WorkerThread.create();
     }
 
     public static synchronized SensorManager getInstance(Context c) {
@@ -173,59 +176,6 @@ public class SensorManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public void storeIntoSharedPref(String key, Object entry, Type type) {
-
-        storeIntoSharedPref(key, entry, type, Settings.appName + "Config");
-    }
-
-    public Object getFromSharedPref(String key, Type type) {
-        return getFromSharedPref(key, type, Settings.appName + "Config");
-    }
-
-    public void deleteFromSharedPref(String key) {
-        deleteFromSharedPref(key, Settings.appName + "Config");
-    }
-
-    public synchronized void deleteFromSharedPref(String key, String user_id) {
-        SharedPreferences prefs = context.getSharedPreferences(
-                user_id, Context.MODE_PRIVATE);
-        Log.i("deleteFromSharedPref", key + "::" + user_id);
-        prefs.edit().remove(key).apply();
-    }
-
-    public void storeIntoSharedPref(String key, Object entry, Type type, String user_id) {
-        storeIntoSharedPref(key, entry, type, user_id, true);
-    }
-
-    public synchronized void storeIntoSharedPref(String key, Object entry, Type type, String user_id, boolean log) {
-        SharedPreferences prefs = context.getSharedPreferences(
-                user_id, Context.MODE_PRIVATE);
-        String json = new Gson().toJson(entry, type);
-        if (log)
-            Log.i("storeIntoSharedPref", "" + json);
-        prefs.edit().putString(key, json).apply();
-    }
-
-    public synchronized Object getFromSharedPref(String key, Type type, String user_id) {
-        SharedPreferences prefs = context.getSharedPreferences(
-                user_id, Context.MODE_PRIVATE);
-        String json = prefs.getString(key, null);
-        Log.i("getFromSharedPref: " + key, "" + json);
-        return new Gson().fromJson(json, type);
-    }
-
-    public Object getStringEntryFromPrefs(String key) {
-        return getStringEntryFromPrefs(key, Settings.appName + "Config");
-    }
-
-    public synchronized Object getStringEntryFromPrefs(String key, String user_id) {
-        SharedPreferences prefs = context.getSharedPreferences(
-                user_id, Context.MODE_PRIVATE);
-        String value = prefs.getString(key, null);
-        Log.i("getFromSharedPref: " + key, "" + value);
-        return value;
     }
 
     public Handler getmSensorHandler() {

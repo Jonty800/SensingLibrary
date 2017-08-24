@@ -126,7 +126,12 @@ public class ActivitySensorManager implements SensingInterface, GoogleApiClient.
     }
 
     @Override
-    public void setDutyCyclingIntervalPattern(int... args) {
+    public void setSensingWindowDuration(int duration) {
+
+    }
+
+    @Override
+    public void setSleepingDuration(int duration) {
 
     }
 
