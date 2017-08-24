@@ -26,7 +26,6 @@ import uk.ac.kent.eda.jb956.sensorlibrary.sensor.PressureSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ProximitySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.TemperatureSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.WifiSensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.service.SensingService;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -134,11 +133,6 @@ public class SensorManager {
         wifiSensorManager.stopSensing();
         activitySensorManager.stopSensing();
         audioManager.stopSensing();
-    }
-
-    public void startSensingService() {
-        Intent intent = new Intent(context, SensingService.class);
-        context.startService(intent);
     }
 
     /**

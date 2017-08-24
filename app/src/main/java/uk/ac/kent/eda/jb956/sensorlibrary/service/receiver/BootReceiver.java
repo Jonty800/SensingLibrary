@@ -20,7 +20,7 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive");
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-            SensorManager.getInstance(context).startSensingService();
+            SensorManager.getInstance(context).startAllSensors();
         }
     }
 }
