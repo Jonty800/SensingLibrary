@@ -56,8 +56,6 @@ public class WifiSensorManager implements SensingInterface {
         sensor = null;
         if (wifi == null)
             wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
-        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(sleepTask, AWAKE_DURATION);
     }
 
     private final Sensor sensor;
@@ -167,6 +165,7 @@ public class WifiSensorManager implements SensingInterface {
         try {
             if (Settings.WIFI_ENABLED) {
                 Log.i(TAG, "Starting Wi-Fi Fingerprinting Service");
+                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(sleepTask, AWAKE_DURATION);
                 addNewTask();
                 sensing = true;
             }
