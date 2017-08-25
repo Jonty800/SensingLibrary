@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.callback.PermissionsEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.control.Permissions;
 import uk.ac.kent.eda.jb956.sensorlibrary.control.WorkerThread;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
@@ -78,8 +79,6 @@ public class SensorManager {
         mSensorThread = new HandlerThread("Sensor thread", Thread.MAX_PRIORITY);
         mSensorThread.start();
         mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
-        new Permissions().checkPermissions();
-
         wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         audioManager = AudioSensorManager.getInstance();
         accelerometerManager = AccelerometerManager.getInstance(context);
@@ -99,6 +98,16 @@ public class SensorManager {
         if (instance == null)
             instance = new SensorManager(c.getApplicationContext());
         return instance;
+    }
+
+    public void startListeningAndRequestPermissions(PermissionsEvent.OnEventListener eventListener){
+        PermissionsEvent.getInstance().startListening(eventListener);
+        new Permissions(context).checkPermissions();
+
+    }
+
+    public void stopListeningForPermissions(PermissionsEvent.OnEventListener eventListener){
+        PermissionsEvent.getInstance().stopListening();
     }
 
 

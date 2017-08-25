@@ -16,13 +16,14 @@ import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 public class Permissions extends Activity {
 
     private final int PERMISSIONS_REQUEST = 99;
-
-    public Permissions() {
+    Context context;
+    public Permissions(Context context) {
+        this.context = context;
     }
     public void checkPermissions() {
         boolean ok = true;
         for (String permission : Settings.getPermissionCodes()) {
-            if (ActivityCompat.checkSelfPermission(getApplication(), permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
                         Settings.getPermissionCodes(),
                         PERMISSIONS_REQUEST);
