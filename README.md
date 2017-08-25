@@ -5,19 +5,58 @@ The SensorLibrary is a library project for Android application developers. The m
 ## Authors & Contributors
 * Jon Baker ([Jonty800](https://github.com/Jonty800)), University of Kent, UK
 
+
+## Setting up permissions
+
+	 public void checkPermissions() {
+        boolean ok = true;
+        for (String permission : Settings.getPermissionCodes()) {
+            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        Settings.getPermissionCodes(),
+                        PERMISSIONS_REQUEST);
+                ok = false;
+                break;
+            }
+        }
+        if (ok) {
+            startSensorsAfterPermissionAccepted();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    checkPermissions();
+                }
+            }
+        }
+    }
+
 ## Example Sensor Subscription
 
-     WifiSensorManager.getInstance(this).getSensorEventListener().subscribeToSensor(new SensingEvent.OnEventListener() {
-          @Override
-          public void onDataSensed(SensorData sensorData) {
-              try {
-                  WifiData data = sensorData.toWifiData();
-                  Log.i(TAG, data.bssid);
-              } catch (Exception e) {
-                  e.printStackTrace();
-              }
-          }
-      });
+	WifiSensorManager.getInstance(this).getSensorEventListener().subscribeToSensor(new SensingEvent.OnEventListener() {
+	  @Override
+	  public void onDataSensed(SensorData sensorData) {
+		  try {
+			  WifiData data = sensorData.toWifiData();
+			  Log.i(TAG, data.bssid);
+		  } catch (Exception e) {
+			  e.printStackTrace();
+		  }
+	  }
+	});
+	  
+## Start Sensing
+
+	void startSensorsAfterPermissionAccepted(){
+		WifiSensorManager.getInstance(this).setEnabled(true);
+		WifiSensorManager.getInstance(this).startSensing();
+	}
 
 ## License
 Copyright (C) Jon Baker, University of Kent

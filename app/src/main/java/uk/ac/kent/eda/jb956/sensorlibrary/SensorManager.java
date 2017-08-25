@@ -1,6 +1,5 @@
 package uk.ac.kent.eda.jb956.sensorlibrary;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -14,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.PermissionsEvent;
-import uk.ac.kent.eda.jb956.sensorlibrary.control.Permissions;
 import uk.ac.kent.eda.jb956.sensorlibrary.control.WorkerThread;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AccelerometerManager;
@@ -100,17 +97,6 @@ public class SensorManager {
             instance = new SensorManager(c.getApplicationContext());
         return instance;
     }
-
-    public void startListeningAndRequestPermissions(Activity activity, PermissionsEvent.OnEventListener eventListener){
-        PermissionsEvent.getInstance().startListening(eventListener);
-        new Permissions(activity).checkPermissions();
-
-    }
-
-    public void stopListeningForPermissions(PermissionsEvent.OnEventListener eventListener){
-        PermissionsEvent.getInstance().stopListening();
-    }
-
 
     public String getUserID() {
         return android.provider.Settings.Secure.ANDROID_ID;
