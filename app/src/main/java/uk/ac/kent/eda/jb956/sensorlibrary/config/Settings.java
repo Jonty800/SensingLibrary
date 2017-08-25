@@ -55,10 +55,18 @@ public class Settings {
     public static boolean SAVE_MAG_TO_DATABASE = true;
     public static final String SAVE_PATH = Environment.getExternalStorageDirectory().getPath() + "/" + appName;
 
+    public static void setPermissionCodes(String... permissionCodes) {
+        Settings.permissionCodes = permissionCodes;
+    }
+
+    public static String[] getPermissionCodes() {
+        return permissionCodes;
+    }
+
     /*
-     *  Permission codes for M+
-     */
-    public static String[] permissionCodes = new String[]{
+             *  Permission codes for M+
+             */
+    private static String[] permissionCodes = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
