@@ -158,10 +158,10 @@ public class WifiSensorManager implements SensingInterface {
     }
 
     private boolean sleepingTaskStarted = false;
-    void startSleepingTask(){
+    private void startSleepingTask(){
         if(sleepingTaskStarted)
             return;
-        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(sleepTask, AWAKE_DURATION);
+        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), AWAKE_DURATION);
         sleepingTaskStarted = true;
     }
 
@@ -173,7 +173,7 @@ public class WifiSensorManager implements SensingInterface {
             if (Settings.WIFI_ENABLED) {
                 Log.i(TAG, "Starting Wi-Fi Fingerprinting Service");
                 startSleepingTask();
-                addNewTask();
+                addNewSensingTask();
                 sensing = true;
             }
         } catch (Exception e) {
@@ -188,7 +188,7 @@ public class WifiSensorManager implements SensingInterface {
             return;
         try {
             if (Settings.WIFI_ENABLED) {
-                stopTask();
+                stopSensingTask();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -197,26 +197,23 @@ public class WifiSensorManager implements SensingInterface {
         Log.i(TAG, "Sensor stopped");
     }
 
-    Runnable sleepTask = new Runnable() {
-        @Override
-        public void run() {
-            if(sensing) {
-                Log.i(TAG, "Sleeping for " + SLEEP_DURATION);
-                stopSensing();
-                SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(sleepTask);
-                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(sleepTask, SLEEP_DURATION);
-            }else{
-                Log.i(TAG, "Sensing for " + AWAKE_DURATION);
-                startSensing();
-                SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(sleepTask);
-                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(this, AWAKE_DURATION);
+    Runnable getSleepTask() {
+        return new Runnable() {
+            @Override
+            public void run() {
+                if (sensing) {
+                    Log.i(TAG, "Sleeping for " + SLEEP_DURATION);
+                    stopSensing();
+                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), SLEEP_DURATION);
+                } else {
+                    Log.i(TAG, "Sensing for " + AWAKE_DURATION);
+                    startSensing();
+                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), AWAKE_DURATION);
+                }
             }
-        }
-    };
+        };
+    }
 
-    public static final String MSG_HEARTBEAT = "heartbeat.start";
-    public static final String MSG_SENDING = "sendingService.start";
-    public static boolean uploading = false;
     private WifiManager wifi;
     private long timeLastInitiated = 0;
     private boolean wasBroadcastReceiverTriggered = false;
@@ -265,15 +262,6 @@ public class WifiSensorManager implements SensingInterface {
             } else {
                 Log.i(TAG, "Scanned Wi-Fi list was empty - In Android 7+ this could be because location services are turned off");
             }
-
-            try {
-                //unregister this receiver
-                context.unregisterReceiver(receiver);
-                if (!uploading)
-                    stopTask();
-            } catch (Exception e) { //catch any errors
-                e.printStackTrace();
-            }
         }
     };
 
@@ -286,35 +274,11 @@ public class WifiSensorManager implements SensingInterface {
         return Math.pow(10.0, exp);
     }
 
-    public void startActionWithCode(String code) {
-        addNewTask();
-            switch (code) {
-                case MSG_HEARTBEAT:
-                    sendHeartbeat();
-                    break;
-                case MSG_SENDING: //TODO IMPLEMENT THIS
-                    if (!checkPermissions()) {
-                        Log.i(TAG, "Ending SendingService: No permissions");
-                    } else {
-                        uploading = true;
-                        //TODO old code, cleanup
-                        if (SensorManager.getInstance(context).getRawHistoricData().size() > 0) {
-                            // SensorManager.getInstance(getApplication()).sendRequestXCompressed(SensorManager.getInstance(getApplication()).generateAverageFingerprint(), callback);
-                        }
-                    }
-                    break;
-                default:
-                    //Log no action
-                    Log.i(TAG, "No action was set in onStartCommand");
-                    break;
-            }
-    }
-
-    private void stopTask(){
+    private void stopSensingTask(){
         SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(task);
     }
 
-    private void addNewTask() {
+    private void addNewSensingTask() {
         checkWifiSettings();
         int next_delay = WifiSensorManager.getInstance(context).getSamplingRate();
         SensorManager.getInstance(context).getWorkerThread().postDelayedTask(task, next_delay);
@@ -323,7 +287,7 @@ public class WifiSensorManager implements SensingInterface {
     private Runnable task = new Runnable() {
         @Override
         public void run() {
-            sendHeartbeat();
+            requestWifiScan();
         }
     };
 
@@ -377,7 +341,7 @@ public class WifiSensorManager implements SensingInterface {
         return canProceed;
     }
 
-    private void sendHeartbeat() {
+    private void requestWifiScan() {
         if (!canAccessWifiSignals()) {
             Log.i(TAG, "Wi-Fi not enabled or not always available - ignoring sendHeartbeat");
             return;
@@ -394,7 +358,7 @@ public class WifiSensorManager implements SensingInterface {
         }
         timeLastInitiated = System.currentTimeMillis();
         wifi.startScan();
-        addNewTask();
+        addNewSensingTask();
     }
 
     private boolean sensing = false;
