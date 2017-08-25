@@ -1,5 +1,6 @@
 package uk.ac.kent.eda.jb956.sensorlibrary;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -100,9 +101,9 @@ public class SensorManager {
         return instance;
     }
 
-    public void startListeningAndRequestPermissions(PermissionsEvent.OnEventListener eventListener){
+    public void startListeningAndRequestPermissions(Activity activity, PermissionsEvent.OnEventListener eventListener){
         PermissionsEvent.getInstance().startListening(eventListener);
-        new Permissions(context).checkPermissions();
+        new Permissions(activity).checkPermissions();
 
     }
 
