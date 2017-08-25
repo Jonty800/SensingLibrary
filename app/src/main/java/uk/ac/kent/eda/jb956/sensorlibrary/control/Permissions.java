@@ -24,7 +24,7 @@ public class Permissions extends Activity {
         boolean ok = true;
         for (String permission : Settings.getPermissionCodes()) {
             if (ActivityCompat.checkSelfPermission(act, permission) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
+                ActivityCompat.requestPermissions(act,
                         Settings.getPermissionCodes(),
                         PERMISSIONS_REQUEST);
                 ok = false;
