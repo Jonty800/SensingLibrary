@@ -307,7 +307,7 @@ public class WifiSensorManager implements SensingInterface {
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog,
                                                                 int id) {
-                                                SensorManager.getInstance(context).wifiManager.setWifiEnabled(true);
+                                                wifi.setWifiEnabled(true);
                                                 isDialogShowing = false;
                                             }
                                         })
@@ -317,7 +317,7 @@ public class WifiSensorManager implements SensingInterface {
                                                                 int id) {
                                                 isDialogShowing = false;
                                                 checkWifiSettings();
-                                                SensorManager.getInstance(context).wifiManager.setWifiEnabled(false);
+                                                wifi.setWifiEnabled(false);
                                             }
                                         });
                         AlertDialog alert = builder.create();
@@ -333,10 +333,10 @@ public class WifiSensorManager implements SensingInterface {
     }
 
     public boolean canAccessWifiSignals() {
-        boolean canProceed = SensorManager.getInstance(context).wifiManager.isWifiEnabled();
+        boolean canProceed = wifi.isWifiEnabled();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             canProceed = canProceed || ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) &&
-                    SensorManager.getInstance(context).wifiManager.isScanAlwaysAvailable());
+                    wifi.isScanAlwaysAvailable());
         }
         return canProceed;
     }

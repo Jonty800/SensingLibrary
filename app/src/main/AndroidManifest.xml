@@ -40,9 +40,6 @@
         </receiver>
 
         <service android:name="uk.ac.kent.eda.jb956.sensorlibrary.service.ActivityRecognizedService" />
-        <service
-            android:name="uk.ac.kent.eda.jb956.sensorlibrary.service.RecordingService"
-            android:exported="false" />
 
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for

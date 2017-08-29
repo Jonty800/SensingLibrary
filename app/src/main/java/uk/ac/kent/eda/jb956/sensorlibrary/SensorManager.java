@@ -35,7 +35,6 @@ import uk.ac.kent.eda.jb956.sensorlibrary.sensor.WifiSensorManager;
 public class SensorManager {
 
     private static SensorManager instance;
-    public final WifiManager wifiManager;
 
     private final Context context;
     private final String TAG = "SensorManager";
@@ -77,7 +76,6 @@ public class SensorManager {
         mSensorThread = new HandlerThread("Sensor thread", Thread.MAX_PRIORITY);
         mSensorThread.start();
         mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
-        wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         audioManager = AudioSensorManager.getInstance();
         accelerometerManager = AccelerometerManager.getInstance(context);
         gyroscopeManager = GyroscopeManager.getInstance(context);
