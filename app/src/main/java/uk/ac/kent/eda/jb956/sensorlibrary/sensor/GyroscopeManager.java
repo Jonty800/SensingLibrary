@@ -191,7 +191,7 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
     }
 
     @Override
-    public void setSaveToCSV(boolean save) {
+    public void setSaveToDatabase(boolean save) {
         Settings.SAVE_GYRO_TO_DATABASE = save;
     }
 

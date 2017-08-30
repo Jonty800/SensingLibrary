@@ -103,7 +103,7 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
     }
 
     @Override
-    public void setSaveToCSV(boolean save) {
+    public void setSaveToDatabase(boolean save) {
         Settings.SAVE_ACCELEROMETER_TO_DATABASE = save;
     }
 

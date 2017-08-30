@@ -183,7 +183,7 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
     }
 
     @Override
-    public void setSaveToCSV(boolean save) {
+    public void setSaveToDatabase(boolean save) {
         Settings.SAVE_HUMIDITY_TO_DATABASE = save;
     }
 

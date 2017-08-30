@@ -190,7 +190,7 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
     }
 
     @Override
-    public void setSaveToCSV(boolean save) {
+    public void setSaveToDatabase(boolean save) {
         Settings.SAVE_MAG_TO_DATABASE = save;
     }
 

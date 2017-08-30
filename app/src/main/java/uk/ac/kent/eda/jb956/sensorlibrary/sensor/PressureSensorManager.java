@@ -183,7 +183,7 @@ public class PressureSensorManager implements SensingInterface, SensorEventListe
     }
 
     @Override
-    public void setSaveToCSV(boolean save) {
+    public void setSaveToDatabase(boolean save) {
         Settings.SAVE_PRESSURE_TO_DATABASE = save;
     }
 

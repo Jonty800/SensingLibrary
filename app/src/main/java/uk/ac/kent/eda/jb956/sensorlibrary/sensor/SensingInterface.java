@@ -40,7 +40,7 @@ interface SensingInterface {
 
     void removeAllDataFromDatabase();
 
-    void setSaveToCSV(boolean save);
+    void setSaveToDatabase(boolean save);
 
     void setEnabled(boolean enabled);
 

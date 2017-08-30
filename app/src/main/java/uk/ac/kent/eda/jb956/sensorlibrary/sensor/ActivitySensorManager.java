@@ -145,7 +145,7 @@ public class ActivitySensorManager implements SensingInterface, GoogleApiClient.
     }
 
     @Override
-    public void setSaveToCSV(boolean save) {
+    public void setSaveToDatabase(boolean save) {
         Settings.SAVE_WIFI_TO_DATABASE = save;
     }
 

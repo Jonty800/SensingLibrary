@@ -250,7 +250,7 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
     }
 
     @Override
-    public void setSaveToCSV(boolean save) {
+    public void setSaveToDatabase(boolean save) {
         Settings.SAVE_LIGHT_TO_DATABASE = save;
     }
 
