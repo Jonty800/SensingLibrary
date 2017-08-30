@@ -41,7 +41,7 @@ public class WifiSensorManager implements SensingInterface {
     private static WifiSensorManager instance;
     private final Context context;
     public static int SAMPLING_RATE = 10000; //ms
-    public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
+   // public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
     public static int SLEEP_DURATION = 20000; //ms
     public static int AWAKE_DURATION = 30000; //ms
 
@@ -197,7 +197,7 @@ public class WifiSensorManager implements SensingInterface {
         Log.i(TAG, "Sensor stopped");
     }
 
-    Runnable getSleepTask() {
+    private Runnable getSleepTask() {
         return new Runnable() {
             @Override
             public void run() {
