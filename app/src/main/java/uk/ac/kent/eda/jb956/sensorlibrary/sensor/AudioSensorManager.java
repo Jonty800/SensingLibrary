@@ -61,6 +61,7 @@ public class AudioSensorManager {
             };
             dispatcher.addAudioProcessor(processor);
             sensing = true;
+            dispatcher.run();
             Log.i(TAG, "Started Audio Sensing at " + getSamplingRate() + " Hz");
         }else{
             Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
@@ -70,6 +71,7 @@ public class AudioSensorManager {
     public void stopSensing() {
         if (!isSensing())
             return;
+        Log.i(TAG, "Stopped Audio Sensing");
         dispatcher.stop();
         sensing = false;
     }
