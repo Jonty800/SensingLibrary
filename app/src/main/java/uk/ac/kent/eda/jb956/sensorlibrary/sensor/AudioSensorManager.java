@@ -39,8 +39,7 @@ public class AudioSensorManager {
         if (isSensing())
             return;
         if (Settings.AUDIO_ENABLED) {
-            Thread mainThread = new Thread(dispatcher, "Audio Dispatcher");
-            mainThread.start();
+
             dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(RECORDER_SAMPLERATE, BUFFER_SIZE, 0);
             AudioProcessor processor = new AudioProcessor() {
                 @Override
@@ -61,7 +60,7 @@ public class AudioSensorManager {
             };
             dispatcher.addAudioProcessor(processor);
             sensing = true;
-            dispatcher.run();
+            new Thread(dispatcher, "Audio Dispatcher").start();
             Log.i(TAG, "Started Audio Sensing at " + getSamplingRate() + " Hz");
         }else{
             Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
