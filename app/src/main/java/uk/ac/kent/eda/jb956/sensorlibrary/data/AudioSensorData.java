@@ -7,5 +7,6 @@ package uk.ac.kent.eda.jb956.sensorlibrary.data;
 
 public class AudioSensorData extends SensorData {
     public float[] buffer;
+    public byte[] byte_buffer;
     public int bufferSize;
 }

@@ -47,6 +47,7 @@ public class AudioSensorManager {
                     sensorData.timestamp = System.currentTimeMillis();
                     sensorData.buffer = audioEvent.getFloatBuffer();
                     sensorData.bufferSize = getBufferSize();
+                    sensorData.byte_buffer = audioEvent.getByteBuffer();
                     if (sensorEvent != null)
                         sensorEvent.onDataSensed(sensorData);
                     return true;
