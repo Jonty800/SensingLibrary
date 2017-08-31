@@ -1,5 +1,7 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
 
+import android.util.Log;
+
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
@@ -59,6 +61,9 @@ public class AudioSensorManager {
             };
             dispatcher.addAudioProcessor(processor);
             sensing = true;
+            Log.i(TAG, "Started Audio Sensing at " + getSamplingRate() + " Hz");
+        }else{
+            Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         }
     }
 
