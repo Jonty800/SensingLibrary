@@ -85,6 +85,7 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
+                    getSensorEventListener().onSensingStarted();
                 } else {
                     Log.i(TAG, "Cannot calculate Humidity, as humidity sensor is not available!");
                 }
@@ -100,8 +101,10 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
         if (!isSensing())
             return;
         try {
-            if (Settings.HUMIDITY_ENABLED)
+            if (Settings.HUMIDITY_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
+                getSensorEventListener().onSensingStopped();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

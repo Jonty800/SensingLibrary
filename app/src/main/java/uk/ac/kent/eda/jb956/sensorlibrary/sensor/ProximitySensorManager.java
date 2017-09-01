@@ -85,6 +85,7 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
                     sensing = true;
+                    getSensorEventListener().onSensingStarted();
                 } else {
                     Log.i(TAG, "Cannot calculate Proximity, as Proximity sensor is not available!");
                 }
@@ -101,8 +102,10 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
         if (!isSensing())
             return;
         try {
-            if (Settings.PROXIMITY_ENABLED)
+            if (Settings.PROXIMITY_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
+                getSensorEventListener().onSensingStopped();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

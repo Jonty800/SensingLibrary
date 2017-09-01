@@ -157,14 +157,6 @@ public class WifiSensorManager implements SensingInterface {
         Settings.SAVE_WIFI_TO_DATABASE = save;
     }
 
-    private boolean sleepingTaskStarted = false;
-    private void startSleepingTask(){
-        if(sleepingTaskStarted)
-            return;
-        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), AWAKE_DURATION);
-        sleepingTaskStarted = true;
-    }
-
     @Override
     public void startSensing() {
         if (isSensing())
@@ -175,6 +167,7 @@ public class WifiSensorManager implements SensingInterface {
                 startSleepingTask();
                 addNewSensingTask();
                 sensing = true;
+                getSensorEventListener().onSensingStarted();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -189,6 +182,7 @@ public class WifiSensorManager implements SensingInterface {
         try {
             if (Settings.WIFI_ENABLED) {
                 stopSensingTask();
+                getSensorEventListener().onSensingStopped();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -197,6 +191,13 @@ public class WifiSensorManager implements SensingInterface {
         Log.i(TAG, "Sensor stopped");
     }
 
+    private boolean sleepingTaskStarted = false;
+    private void startSleepingTask(){
+        if(sleepingTaskStarted)
+            return;
+        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), AWAKE_DURATION);
+        sleepingTaskStarted = true;
+    }
     private Runnable getSleepTask() {
         return new Runnable() {
             @Override

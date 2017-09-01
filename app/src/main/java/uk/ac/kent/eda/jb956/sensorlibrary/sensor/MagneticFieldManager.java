@@ -85,6 +85,7 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
+                    getSensorEventListener().onSensingStarted();
                 } else {
                     Log.i(TAG, "Cannot calculate Magnetic Field data, as Magnetic Field sensor is not available!");
                 }
@@ -110,8 +111,10 @@ public class MagneticFieldManager implements SensingInterface, SensorEventListen
         if (!isSensing())
             return;
         try {
-            if (Settings.MAG_ENABLED)
+            if (Settings.MAG_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
+                getSensorEventListener().onSensingStopped();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

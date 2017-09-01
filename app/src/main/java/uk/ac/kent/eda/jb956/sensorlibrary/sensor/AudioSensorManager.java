@@ -1,11 +1,13 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
 
+import android.content.Context;
 import android.util.Log;
 
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
 import be.tarsos.dsp.io.android.AudioDispatcherFactory;
+import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.AudioSensorData;
@@ -19,19 +21,26 @@ public class AudioSensorManager {
     private static int RECORDER_SAMPLERATE = 16000;
     private static int BUFFER_SIZE = 1024;
 
+    private static int SLEEP_DURATION = 20000;
+    private static int AWAKE_DURATION = 10000;
+
+    public AudioSensorManager(Context context) {
+        this.context = context;
+    }
+
     public AudioDispatcher getAudioDispatcher() {
         return dispatcher;
     }
 
     private AudioDispatcher dispatcher;
-
+    private Context context;
     private final String TAG = "AudioSensorManager";
     private static AudioSensorManager instance;
     boolean sensing = false;
 
-    public static synchronized AudioSensorManager getInstance() {
+    public static synchronized AudioSensorManager getInstance(Context context) {
         if (instance == null)
-            instance = new AudioSensorManager();
+            instance = new AudioSensorManager(context);
         return instance;
     }
 
@@ -39,32 +48,63 @@ public class AudioSensorManager {
         if (isSensing())
             return;
         if (Settings.AUDIO_ENABLED) {
-
-            dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(RECORDER_SAMPLERATE, BUFFER_SIZE, 0);
-            AudioProcessor processor = new AudioProcessor() {
-                @Override
-                public boolean process(final AudioEvent audioEvent) {
-                    AudioSensorData sensorData = new AudioSensorData();
-                    sensorData.timestamp = System.currentTimeMillis();
-                    sensorData.buffer = audioEvent.getFloatBuffer();
-                    sensorData.bufferSize = getBufferSize();
-                    sensorData.byte_buffer = audioEvent.getByteBuffer();
-                    if (sensorEvent != null)
-                        sensorEvent.onDataSensed(sensorData);
-                    return true;
-                }
-
-                @Override
-                public void processingFinished() {
-                }
-            };
-            dispatcher.addAudioProcessor(processor);
-            sensing = true;
-            new Thread(dispatcher, "Audio Dispatcher").start();
-            Log.i(TAG, "Started Audio Sensing at " + getSamplingRate() + " Hz");
+            startSleepingTask();
+            addNewSensingTask();
+            getSensorEventListener().onSensingStarted();
         }else{
             Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         }
+    }
+
+    private void addNewSensingTask() {
+        dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(RECORDER_SAMPLERATE, BUFFER_SIZE, 0);
+        dispatcher.addAudioProcessor(getAudioProcessor());
+        sensing = true;
+        new Thread(dispatcher, "Audio Dispatcher").start();
+        Log.i(TAG, "Started Audio Sensing at " + getSamplingRate() + " Hz");
+    }
+
+    private AudioProcessor getAudioProcessor() {
+        return new AudioProcessor() {
+            public boolean process ( final AudioEvent audioEvent){
+                AudioSensorData sensorData = new AudioSensorData();
+                sensorData.timestamp = System.currentTimeMillis();
+                sensorData.buffer = audioEvent.getFloatBuffer();
+                sensorData.bufferSize = getBufferSize();
+                sensorData.byte_buffer = audioEvent.getByteBuffer();
+                if (sensorEvent != null)
+                    sensorEvent.onDataSensed(sensorData);
+                return true;
+            }
+
+            @Override
+            public void processingFinished () {
+            }
+        };
+    }
+
+    private boolean sleepingTaskStarted = false;
+    private void startSleepingTask(){
+        if(sleepingTaskStarted)
+            return;
+        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), AWAKE_DURATION);
+        sleepingTaskStarted = true;
+    }
+    private Runnable getSleepTask() {
+        return new Runnable() {
+            @Override
+            public void run() {
+                if (sensing) {
+                    Log.i(TAG, "Sleeping for " + SLEEP_DURATION);
+                    stopSensing();
+                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), SLEEP_DURATION);
+                } else {
+                    Log.i(TAG, "Sensing for " + AWAKE_DURATION);
+                    startSensing();
+                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), AWAKE_DURATION);
+                }
+            }
+        };
     }
 
     public void stopSensing() {
@@ -73,6 +113,7 @@ public class AudioSensorManager {
         Log.i(TAG, "Stopped Audio Sensing");
         dispatcher.stop();
         sensing = false;
+        getSensorEventListener().onSensingStopped();
     }
 
     public boolean isSensing() {

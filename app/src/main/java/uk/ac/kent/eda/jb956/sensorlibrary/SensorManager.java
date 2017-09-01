@@ -76,7 +76,7 @@ public class SensorManager {
         mSensorThread = new HandlerThread("Sensor thread", Thread.MAX_PRIORITY);
         mSensorThread.start();
         mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
-        audioManager = AudioSensorManager.getInstance();
+        audioManager = AudioSensorManager.getInstance(context);
         accelerometerManager = AccelerometerManager.getInstance(context);
         gyroscopeManager = GyroscopeManager.getInstance(context);
         proximityManager = ProximitySensorManager.getInstance(context);

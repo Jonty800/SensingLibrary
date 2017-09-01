@@ -85,6 +85,7 @@ public class TemperatureSensorManager implements SensingInterface, SensorEventLi
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
+                    getSensorEventListener().onSensingStarted();
                 } else {
                     Log.i(TAG, "Cannot calculate Ambient Temperature, as Ambient Temperature sensor is not available!");
                 }
@@ -100,8 +101,10 @@ public class TemperatureSensorManager implements SensingInterface, SensorEventLi
         if (!isSensing())
             return;
         try {
-            if (Settings.TEMP_ENABLED)
+            if (Settings.TEMP_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
+                getSensorEventListener().onSensingStopped();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

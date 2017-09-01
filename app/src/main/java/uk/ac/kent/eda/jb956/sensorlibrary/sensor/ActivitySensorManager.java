@@ -156,6 +156,7 @@ public class ActivitySensorManager implements SensingInterface, GoogleApiClient.
             return;
         try {
             if (Settings.ACTIVITY_ENABLED) {
+                getSensorEventListener().onSensingStarted();
                 mApiClient = new GoogleApiClient.Builder(context)
                         .addApi(ActivityRecognition.API)
                         .addConnectionCallbacks(this)
@@ -178,6 +179,7 @@ public class ActivitySensorManager implements SensingInterface, GoogleApiClient.
         try {
             if (Settings.WIFI_ENABLED) {
                 mApiClient.disconnect();
+                getSensorEventListener().onSensingStopped();
             }
         } catch (Exception e) {
             e.printStackTrace();
