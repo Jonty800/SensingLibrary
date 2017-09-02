@@ -136,12 +136,12 @@ public class AudioSensorManager {
         return RECORDER_SAMPLERATE;
     }
 
-    public void setSensingWindowDuration() {
-
+    public void setSensingWindowDuration(int duration) {
+        AWAKE_DURATION = duration;
     }
 
-    public void setSleepingDuration() {
-
+    public void setSleepingDuration(int duration) {
+        SLEEP_DURATION = duration;
     }
 
     private SensingEvent sensorEvent = null;

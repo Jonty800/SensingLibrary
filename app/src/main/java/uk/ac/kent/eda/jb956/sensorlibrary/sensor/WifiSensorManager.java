@@ -344,7 +344,7 @@ public class WifiSensorManager implements SensingInterface {
 
     private void requestWifiScan() {
         if (!canAccessWifiSignals()) {
-            Log.i(TAG, "Wi-Fi not enabled or not always available - ignoring sendHeartbeat");
+            Log.i(TAG, "Wi-Fi not enabled or not always available - ignoring requestWifiScan");
             return;
         }
         if (!checkPermissions()) {
