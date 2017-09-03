@@ -99,12 +99,12 @@ public class AudioSensorManager {
             if (sensing) {
                 currentTask = sleepTask;
                 Log.i(TAG, "Sleeping for " + SLEEP_DURATION);
-                stopSensing();
+                sleep();
                 SensorManager.getInstance(context).getWorkerThread().postDelayedTask(currentTask, SLEEP_DURATION);
             } else {
                 currentTask = sleepTask;
                 Log.i(TAG, "Sensing for " + AWAKE_DURATION);
-                startSensing();
+                wake();
                 SensorManager.getInstance(context).getWorkerThread().postDelayedTask(currentTask, AWAKE_DURATION);
             }
         }
@@ -118,6 +118,21 @@ public class AudioSensorManager {
         sensing = false;
         stopSensingTask();
         getSensorEventListener().onSensingStopped();
+        sleepingTaskStarted = false;
+    }
+
+    private void sleep(){
+        if (!isSensing())
+            return;
+        Log.i(TAG, "Stopped Audio Sensing");
+        dispatcher.stop();
+        sensing = false;
+        stopSensingTask();
+        getSensorEventListener().onSensingStopped();
+    }
+
+    private void wake(){
+        startSensing();
     }
 
     private void stopSensingTask(){
