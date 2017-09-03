@@ -122,8 +122,10 @@ public class AudioSensorManager {
     }
 
     private void stopSensingTask(){
-        if(currentTask!=null)
+        if(currentTask!=null) {
             SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(currentTask);
+            sleepingTaskStarted = false;
+        }
     }
 
     public boolean isSensing() {
