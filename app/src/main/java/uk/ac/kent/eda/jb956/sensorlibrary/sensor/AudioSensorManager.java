@@ -50,6 +50,7 @@ public class AudioSensorManager {
         if (Settings.AUDIO_ENABLED) {
             startSleepingTask();
             addNewSensingTask();
+            sensing = true;
             getSensorEventListener().onSensingStarted();
         }else{
             Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
@@ -87,29 +88,27 @@ public class AudioSensorManager {
     private void startSleepingTask(){
         if(sleepingTaskStarted)
             return;
-        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), AWAKE_DURATION);
+        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(sleepTask, AWAKE_DURATION);
         sleepingTaskStarted = true;
     }
 
     Runnable currentTask = null;
-    private Runnable getSleepTask() {
-        return new Runnable() {
-            @Override
-            public void run() {
-                if (sensing) {
-                    currentTask = getSleepTask();
-                    Log.i(TAG, "Sleeping for " + SLEEP_DURATION);
-                    stopSensing();
-                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(currentTask, SLEEP_DURATION);
-                } else {
-                    currentTask = getSleepTask();
-                    Log.i(TAG, "Sensing for " + AWAKE_DURATION);
-                    startSensing();
-                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(currentTask, AWAKE_DURATION);
-                }
+    private Runnable sleepTask = new Runnable() {
+        @Override
+        public void run() {
+            if (sensing) {
+                currentTask = sleepTask;
+                Log.i(TAG, "Sleeping for " + SLEEP_DURATION);
+                stopSensing();
+                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(currentTask, SLEEP_DURATION);
+            } else {
+                currentTask = sleepTask;
+                Log.i(TAG, "Sensing for " + AWAKE_DURATION);
+                startSensing();
+                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(currentTask, AWAKE_DURATION);
             }
-        };
-    }
+        }
+    };
 
     public void stopSensing() {
         if (!isSensing())
@@ -124,7 +123,6 @@ public class AudioSensorManager {
     private void stopSensingTask(){
         if(currentTask!=null) {
             SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(currentTask);
-            sleepingTaskStarted = false;
         }
     }
 
