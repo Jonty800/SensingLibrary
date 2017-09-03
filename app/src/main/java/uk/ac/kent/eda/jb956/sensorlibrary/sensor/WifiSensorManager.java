@@ -188,7 +188,27 @@ public class WifiSensorManager implements SensingInterface {
             e.printStackTrace();
         }
         sensing = false;
+        sleepingTaskStarted = false;
         Log.i(TAG, "Sensor stopped");
+    }
+
+    private void sleep(){
+        if (!isSensing())
+            return;
+        try {
+            if (Settings.WIFI_ENABLED) {
+                stopSensingTask();
+                getSensorEventListener().onSensingStopped();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        sensing = false;
+        Log.i(TAG, "Sensor stopped");
+    }
+
+    private void wake(){
+        startSensing();
     }
 
     private boolean sleepingTaskStarted = false;
@@ -204,11 +224,11 @@ public class WifiSensorManager implements SensingInterface {
             public void run() {
                 if (sensing) {
                     Log.i(TAG, "Sleeping for " + SLEEP_DURATION);
-                    stopSensing();
+                    sleep();
                     SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), SLEEP_DURATION);
                 } else {
                     Log.i(TAG, "Sensing for " + AWAKE_DURATION);
-                    startSensing();
+                    wake();
                     SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), AWAKE_DURATION);
                 }
             }
