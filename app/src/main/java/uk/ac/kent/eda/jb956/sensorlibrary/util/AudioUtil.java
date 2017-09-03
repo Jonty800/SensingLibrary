@@ -43,8 +43,8 @@ public class AudioUtil {
         return power;
     }
 
-    private double prior;
-    public void applyPreemphasis(float[] in, double preemphasisFactor) {
+    private static double prior;
+    public static void applyPreemphasis(float[] in, double preemphasisFactor) {
         // set the prior value for the next Audio
         double nextPrior = prior;
         if (in.length > 0) {
@@ -64,7 +64,7 @@ public class AudioUtil {
         prior = nextPrior;
     }
 
-    public float[] getMFCCFromInputBuffer(float[] input, int samplingRate, int numOfCep) {
+    public static float[] getMFCCFromInputBuffer(float[] input, int samplingRate, int numOfCep) {
         MFCC mfcc = new MFCC(input.length, samplingRate, numOfCep, 40, 133.3334f, ((float) samplingRate) / 2f);
         // Magnitude Spectrum
         float bin[] = mfcc.magnitudeSpectrum(input);
@@ -76,7 +76,7 @@ public class AudioUtil {
         return mfcc.cepCoefficients(f);
     }
 
-    public float[] getMagnitudeSpectrum(float frame[]){
+    public static float[] getMagnitudeSpectrum(float frame[]){
         float magSpectrum[] = new float[frame.length];
         FFT fft = new FFT(frame.length, new HammingWindow());
         // calculate FFT for current frame
@@ -92,7 +92,7 @@ public class AudioUtil {
         return magSpectrum;
     }
 
-    public int[] getTopMagnitudes(float[] bins, int numberOfMagnitudes, float samplingRate) {
+    public static int[] getTopMagnitudes(float[] bins, int numberOfMagnitudes, float samplingRate) {
         double numOfBins = bins.length;
         List<Float> target = new ArrayList<>();
         double freqPerBin = (double) samplingRate / numOfBins;
@@ -107,7 +107,7 @@ public class AudioUtil {
         return indexesOfTopElements(subsample, numberOfMagnitudes);
     }
 
-    public float[] subsample(List<Float> input, int amount){
+    public static float[] subsample(List<Float> input, int amount){
         int count = 0;
         float[] target2 = new float[input.size()];
         for (int i = 0; i < target2.length; i += amount) {
@@ -120,7 +120,7 @@ public class AudioUtil {
         return Arrays.copyOf(target2, count);
     }
 
-    public float[] subsample(float[] input, int amount){
+    public static float[] subsample(float[] input, int amount){
         int count = 0;
         float[] target2 = new float[input.length];
         for (int i = 0; i < target2.length; i += amount) {
@@ -133,7 +133,7 @@ public class AudioUtil {
         return Arrays.copyOf(target2, count);
     }
 
-    private int[] indexesOfTopElements(float[] orig, int N) {
+    private static int[] indexesOfTopElements(float[] orig, int N) {
         float[] copy = Arrays.copyOf(orig, orig.length);
         Arrays.sort(copy);
         float[] honey = Arrays.copyOfRange(copy, copy.length - N, copy.length);
@@ -150,7 +150,7 @@ public class AudioUtil {
         return result;
     }
 
-    private float arrayAverage(float[] marks) {
+    private static float arrayAverage(float[] marks) {
         float sum = 0;
         if (marks.length != 0) {
             for (float mark : marks) {
@@ -161,7 +161,7 @@ public class AudioUtil {
         return sum;
     }
 
-    private float arrayAverage(List<Float> marks) {
+    private static float arrayAverage(List<Float> marks) {
         float sum = 0;
         if (!marks.isEmpty()) {
             for (float mark : marks) {
