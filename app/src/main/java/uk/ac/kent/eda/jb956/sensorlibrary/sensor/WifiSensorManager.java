@@ -218,6 +218,7 @@ public class WifiSensorManager implements SensingInterface {
         SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), AWAKE_DURATION);
         sleepingTaskStarted = true;
     }
+
     private Runnable getSleepTask() {
         return new Runnable() {
             @Override

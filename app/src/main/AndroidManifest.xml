@@ -39,6 +39,7 @@
             </intent-filter>
         </receiver>
 
+        <service android:name="uk.ac.kent.eda.jb956.sensorlibrary.service.SensingService" />
         <service android:name="uk.ac.kent.eda.jb956.sensorlibrary.service.ActivityRecognizedService" />
 
         <!--

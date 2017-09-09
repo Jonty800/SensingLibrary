@@ -1,6 +1,8 @@
 package uk.ac.kent.eda.jb956.sensorlibrary;
 
+import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +10,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.support.v7.app.NotificationCompat;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,6 +29,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.sensor.PressureSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ProximitySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.TemperatureSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.WifiSensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.service.SensingService;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -39,32 +43,6 @@ public class SensorManager {
     private final Context context;
     private final String TAG = "SensorManager";
 
-    private final AudioSensorManager audioManager;
-    private final AccelerometerManager accelerometerManager;
-    private final GyroscopeManager gyroscopeManager;
-    private final ProximitySensorManager proximityManager;
-    private final LightSensorManager lightSensorManager;
-    private final HumiditySensorManager humiditySensorManager;
-    private final PressureSensorManager pressureSensorManager;
-    private final TemperatureSensorManager temperatureSensorManager;
-    private final MagneticFieldManager magneticFieldManager;
-    private final WifiSensorManager wifiSensorManager;
-    private final ActivitySensorManager activitySensorManager;
-    private final List<WifiData> rawHistoricData = new ArrayList<>();
-
-    public WorkerThread getWorkerThread() {
-        return workerThread;
-    }
-
-    private WorkerThread workerThread;
-
-    private HandlerThread mSensorThread;
-    private Handler mSensorHandler;
-
-    public synchronized List<WifiData> getRawHistoricData() {
-        return rawHistoricData;
-    }
-
     /**
      * Upon creation of this singleton class, it will attempt to start the
      * Audio recording instance, accelerometer, gyroscope and activity instance
@@ -76,17 +54,6 @@ public class SensorManager {
         mSensorThread = new HandlerThread("Sensor thread", Thread.MAX_PRIORITY);
         mSensorThread.start();
         mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
-        audioManager = AudioSensorManager.getInstance(context);
-        accelerometerManager = AccelerometerManager.getInstance(context);
-        gyroscopeManager = GyroscopeManager.getInstance(context);
-        proximityManager = ProximitySensorManager.getInstance(context);
-        lightSensorManager = LightSensorManager.getInstance(context);
-        humiditySensorManager = HumiditySensorManager.getInstance(context);
-        pressureSensorManager = PressureSensorManager.getInstance(context);
-        temperatureSensorManager = TemperatureSensorManager.getInstance(context);
-        magneticFieldManager = MagneticFieldManager.getInstance(context);
-        wifiSensorManager = WifiSensorManager.getInstance(context);
-        activitySensorManager = ActivitySensorManager.getInstance(context);
         workerThread =  WorkerThread.create();
     }
 
@@ -96,39 +63,14 @@ public class SensorManager {
         return instance;
     }
 
-    public String getUserID() {
-        return android.provider.Settings.Secure.ANDROID_ID;
+    public void startSensingService(){
+        Intent i = new Intent(context, SensingService.class);
+        context.startService(i);
     }
 
-    /**
-     * Attempts to start the Gyro, Wifi and Acc sensors. Will not start if Settings class forbids it
-     */
-    public void startAllSensors() {
-        gyroscopeManager.startSensing();
-        accelerometerManager.startSensing();
-        proximityManager.startSensing();
-        lightSensorManager.startSensing();
-        humiditySensorManager.startSensing();
-        pressureSensorManager.startSensing();
-        temperatureSensorManager.startSensing();
-        magneticFieldManager.startSensing();
-        wifiSensorManager.startSensing();
-        activitySensorManager.startSensing();
-        audioManager.startSensing();
-    }
-
-    public void stopAllSensors() {
-        gyroscopeManager.stopSensing();
-        accelerometerManager.stopSensing();
-        proximityManager.stopSensing();
-        lightSensorManager.stopSensing();
-        humiditySensorManager.stopSensing();
-        pressureSensorManager.stopSensing();
-        temperatureSensorManager.stopSensing();
-        magneticFieldManager.stopSensing();
-        wifiSensorManager.stopSensing();
-        activitySensorManager.stopSensing();
-        audioManager.stopSensing();
+    public void stopSensingService(){
+        Intent i = new Intent(context, SensingService.class);
+        context.stopService(i);
     }
 
     /**
@@ -167,6 +109,14 @@ public class SensorManager {
             e.printStackTrace();
         }
     }
+
+    public WorkerThread getWorkerThread() {
+        return workerThread;
+    }
+    private WorkerThread workerThread;
+
+    private HandlerThread mSensorThread;
+    private Handler mSensorHandler;
 
     public Handler getmSensorHandler() {
         return mSensorHandler;
