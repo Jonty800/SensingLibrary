@@ -266,8 +266,6 @@ public class WifiSensorManager implements SensingInterface {
                         //ACRA.getErrorReporter().handleSilentException(new Exception("Bssid: " + wd.bssid + " | Timestamp: " + wd.timestamp + " | SystemClock.elapsedRealtime(): " + SystemClock.elapsedRealtime() + " | r.timestamp: " + r.timestamp));
                         //}
                         unparsedResults.add(wd);
-                        if (Settings.SAVE_WIFI_TO_DATABASE)
-                            MySQLiteHelper.getInstance(context).addToWifi(wd);
                     }
                 }
 
@@ -275,7 +273,8 @@ public class WifiSensorManager implements SensingInterface {
                 for (WifiData sensorData : unparsedResults) {
                     if (sensorData.timestamp <= System.currentTimeMillis() && sensorData.timestamp >= timeLastInitiated) {
                         //NetworkCache.getInstance().getFingerprintData().add(wd);
-                        SensorManager.getInstance(context).getRawHistoricData().add(sensorData);
+                        if (Settings.SAVE_WIFI_TO_DATABASE)
+                            MySQLiteHelper.getInstance(context).addToWifi(sensorData);
                         currentEntries.add(sensorData);
                         WifiSensorManager.getInstance(c).getSensorEventListener().onDataSensed(sensorData);
                     }
