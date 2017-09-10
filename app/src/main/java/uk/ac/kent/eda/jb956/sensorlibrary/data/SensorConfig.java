@@ -15,7 +15,7 @@ public class SensorConfig implements Serializable{
 
     public AudioConfig audioConfig = new AudioConfig();
 
-    public class AudioConfig{
+    public class AudioConfig implements Serializable{
         public int BUFFER_SIZE = 2000;
         public int RECORDER_SAMPLERATE = 16000;
     }
