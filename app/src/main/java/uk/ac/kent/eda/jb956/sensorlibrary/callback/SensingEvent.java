@@ -31,9 +31,20 @@ public class SensingEvent {
             mOnEventListener.onSensingStopped();
     }
 
+    public void onSensingPaused() {
+        if (mOnEventListener != null)
+            mOnEventListener.onSensingPaused();
+    }
+    public void onSensingResumed() {
+        if (mOnEventListener != null)
+            mOnEventListener.onSensingResumed();
+    }
+
     public interface OnEventListener {
         void onDataSensed(SensorData sensorData);
         void onSensingStarted();
         void onSensingStopped();
+        void onSensingPaused();
+        void onSensingResumed();
     }
 }

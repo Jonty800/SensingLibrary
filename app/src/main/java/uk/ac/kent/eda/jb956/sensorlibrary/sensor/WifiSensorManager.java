@@ -190,22 +190,28 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
     }
 
     private void sleep(){
-        if (!isSensing())
-            return;
         try {
             if (Settings.WIFI_ENABLED) {
                 stopSensingTask();
-                getSensorEventListener().onSensingStopped();
+                getSensorEventListener().onSensingPaused();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        sensing = false;
-        Log.i(TAG, "Sensor stopped");
+        Log.i(TAG, "Sensor paused");
     }
 
     private void wake(){
-        startSensing();
+        try {
+            if (Settings.WIFI_ENABLED) {
+                Log.i(TAG, "Resuming Wi-Fi Fingerprinting Service");
+                startSleepingTask();
+                addNewSensingTask();
+                getSensorEventListener().onSensingResumed();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean sleepingTaskStarted = false;

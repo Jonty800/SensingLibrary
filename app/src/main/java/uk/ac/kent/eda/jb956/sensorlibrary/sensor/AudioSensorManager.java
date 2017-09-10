@@ -120,17 +120,18 @@ public class AudioSensorManager extends BaseSensor {
     }
 
     private void sleep(){
-        if (!isSensing())
-            return;
-        Log.i(TAG, "Stopped Audio Sensing");
+        Log.i(TAG, "Pausing Audio Sensing");
         dispatcher.stop();
-        sensing = false;
         stopSensingTask();
-        getSensorEventListener().onSensingStopped();
+        getSensorEventListener().onSensingPaused();
     }
 
     private void wake(){
-        startSensing();
+        if (Settings.AUDIO_ENABLED) {
+            startSleepingTask();
+            addNewSensingTask();
+            getSensorEventListener().onSensingResumed();
+        }
     }
 
     private void stopSensingTask(){
