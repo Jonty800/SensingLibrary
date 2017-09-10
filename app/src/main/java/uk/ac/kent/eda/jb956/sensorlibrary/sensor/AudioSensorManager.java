@@ -92,7 +92,7 @@ public class AudioSensorManager extends BaseSensor {
     private Runnable sleepTask = new Runnable() {
         @Override
         public void run() {
-            if (sleeping) {
+            if (!sleeping) {
                 currentTask = sleepTask;
                 Log.i(TAG, "Sleeping for " + getSleepWindowSize());
                 sleep();

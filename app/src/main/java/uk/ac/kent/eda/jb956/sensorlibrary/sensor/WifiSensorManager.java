@@ -229,7 +229,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
         return new Runnable() {
             @Override
             public void run() {
-                if (sleeping) {
+                if (!sleeping) {
                     Log.i(TAG, "Sleeping for " + getSleepWindowSize());
                     sleep();
                     SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), getSleepWindowSize());
