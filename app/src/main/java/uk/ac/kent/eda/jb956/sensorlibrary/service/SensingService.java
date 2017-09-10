@@ -1,16 +1,13 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.service;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.hardware.Sensor;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
@@ -75,7 +72,7 @@ public class SensingService extends Service {
         activitySensorManager = ActivitySensorManager.getInstance(this);
 
         //TODO test this
-       /* Intent notificationIntent = new Intent(this, SensingService.class);
+        Intent notificationIntent = new Intent(this, SensingService.class);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
@@ -86,7 +83,7 @@ public class SensingService extends Service {
                 .setContentText("Desc")
                 .setContentIntent(pendingIntent).build();
 
-       startForeground(1337, notification); */
+       startForeground(1337, notification);
     }
 
     /**
@@ -200,7 +197,7 @@ public class SensingService extends Service {
                         Log.i(TAG, "Invalid sensor ID");
                 }
         }
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     @Override
