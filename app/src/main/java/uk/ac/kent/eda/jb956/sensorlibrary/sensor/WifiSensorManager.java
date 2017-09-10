@@ -189,7 +189,9 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
         return this;
     }
 
+    boolean sleeping = false;
     private void sleep(){
+        sleeping = true;
         try {
             if (Settings.WIFI_ENABLED) {
                 stopSensingTask();
@@ -202,6 +204,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
     }
 
     private void wake(){
+        sleeping = false;
         try {
             if (Settings.WIFI_ENABLED) {
                 Log.i(TAG, "Resuming Wi-Fi Fingerprinting Service");
@@ -226,7 +229,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
         return new Runnable() {
             @Override
             public void run() {
-                if (sensing) {
+                if (sleeping) {
                     Log.i(TAG, "Sleeping for " + getSleepWindowSize());
                     sleep();
                     SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), getSleepWindowSize());

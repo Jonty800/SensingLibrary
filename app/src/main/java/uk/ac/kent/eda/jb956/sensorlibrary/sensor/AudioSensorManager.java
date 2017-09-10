@@ -56,30 +56,29 @@ public class AudioSensorManager extends BaseSensor {
 
     private void addNewSensingTask() {
         dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(getSamplingRate(), getBufferSize(), 0);
-        dispatcher.addAudioProcessor(getAudioProcessor());
+        dispatcher.addAudioProcessor(audioProcessor);
         sensing = true;
         new Thread(dispatcher, "Audio Dispatcher").start();
         Log.i(TAG, "Started Audio Sensing at " + getSamplingRate() + " Hz with buffer size " + getBufferSize());
     }
 
-    private AudioProcessor getAudioProcessor() {
-        return new AudioProcessor() {
-            public boolean process ( final AudioEvent audioEvent){
-                AudioSensorData sensorData = new AudioSensorData();
-                sensorData.timestamp = System.currentTimeMillis();
-                sensorData.buffer = audioEvent.getFloatBuffer();
-                sensorData.bufferSize = getBufferSize();
-                sensorData.byte_buffer = audioEvent.getByteBuffer();
-                if (sensorEvent != null)
-                    sensorEvent.onDataSensed(sensorData);
-                return true;
-            }
+    private AudioProcessor audioProcessor = new AudioProcessor() {
+        @Override
+        public boolean process ( final AudioEvent audioEvent){
+            AudioSensorData sensorData = new AudioSensorData();
+            sensorData.timestamp = System.currentTimeMillis();
+            sensorData.buffer = audioEvent.getFloatBuffer();
+            sensorData.bufferSize = getBufferSize();
+            sensorData.byte_buffer = audioEvent.getByteBuffer();
+            if (sensorEvent != null)
+                sensorEvent.onDataSensed(sensorData);
+            return true;
+        }
 
-            @Override
-            public void processingFinished () {
-            }
-        };
-    }
+        @Override
+        public void processingFinished () {
+        }
+    };
 
     private boolean sleepingTaskStarted = false;
     private void startSleepingTask(){
@@ -93,7 +92,7 @@ public class AudioSensorManager extends BaseSensor {
     private Runnable sleepTask = new Runnable() {
         @Override
         public void run() {
-            if (sensing) {
+            if (sleeping) {
                 currentTask = sleepTask;
                 Log.i(TAG, "Sleeping for " + getSleepWindowSize());
                 sleep();
@@ -106,6 +105,8 @@ public class AudioSensorManager extends BaseSensor {
             }
         }
     };
+
+    boolean sleeping = false;
 
     public AudioSensorManager stopSensing() {
         if (!isSensing())
@@ -120,13 +121,15 @@ public class AudioSensorManager extends BaseSensor {
     }
 
     private void sleep(){
+        sleeping = true;
         Log.i(TAG, "Pausing Audio Sensing");
-        dispatcher.stop();
         stopSensingTask();
         getSensorEventListener().onSensingPaused();
+
     }
 
     private void wake(){
+        sleeping = false;
         if (Settings.AUDIO_ENABLED) {
             startSleepingTask();
             addNewSensingTask();
@@ -136,6 +139,8 @@ public class AudioSensorManager extends BaseSensor {
 
     private void stopSensingTask(){
         if(currentTask!=null) {
+            if(getAudioDispatcher()!=null)
+                getAudioDispatcher().stop();
             SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(currentTask);
         }
     }
