@@ -16,6 +16,7 @@ import java.util.List;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.LightSensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 
@@ -160,6 +161,12 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                 }
             }
         }
+    }
+
+    @Override
+    public LightSensorManager withConfig(SensorConfig config){
+        super.withConfig(config);
+        return this;
     }
 
     @Override

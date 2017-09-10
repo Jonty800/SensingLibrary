@@ -15,6 +15,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 
@@ -100,6 +101,12 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
         }
         sensing = false;
         Log.i(TAG, "Sensor stopped");
+        return this;
+    }
+
+    @Override
+    public HumiditySensorManager withConfig(SensorConfig config){
+        super.withConfig(config);
         return this;
     }
 

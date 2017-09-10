@@ -14,6 +14,7 @@ import java.util.List;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
@@ -121,6 +122,12 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
 
     private long lastUpdate = 0;
     private SensorData lastEntry = null;
+
+    @Override
+    public MagneticFieldManager withConfig(SensorConfig config){
+        super.withConfig(config);
+        return this;
+    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {

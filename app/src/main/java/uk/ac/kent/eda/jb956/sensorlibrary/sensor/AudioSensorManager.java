@@ -11,6 +11,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.AudioSensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -136,6 +137,12 @@ public class AudioSensorManager extends BaseSensor {
         if(currentTask!=null) {
             SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(currentTask);
         }
+    }
+
+    @Override
+    public AudioSensorManager withConfig(SensorConfig config){
+        super.withConfig(config);
+        return this;
     }
 
     public boolean isSensing() {

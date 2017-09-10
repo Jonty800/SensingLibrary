@@ -128,34 +128,34 @@ public class SensingService extends Service {
         if(exec.equalsIgnoreCase("start")) {
             switch (sensorId) {
                 case Sensor.TYPE_GYROSCOPE:
-                    gyroscopeManager.startSensing().withConfig(config);
+                    gyroscopeManager.withConfig(config).startSensing();
                     break;
                 case Sensor.TYPE_ACCELEROMETER:
-                    accelerometerManager.startSensing().withConfig(config);
+                    accelerometerManager.withConfig(config).startSensing();
                     break;
                 case Sensor.TYPE_PROXIMITY:
-                    proximityManager.startSensing().withConfig(config);
+                    proximityManager.withConfig(config).startSensing();
                     break;
                 case Sensor.TYPE_LIGHT:
-                    lightSensorManager.startSensing().withConfig(config);
+                    lightSensorManager.withConfig(config).startSensing();
                     break;
                 case Sensor.TYPE_RELATIVE_HUMIDITY:
-                    humiditySensorManager.startSensing().withConfig(config);
+                    humiditySensorManager.withConfig(config).startSensing();
                     break;
                 case Sensor.TYPE_PRESSURE:
-                    pressureSensorManager.startSensing().withConfig(config);
+                    pressureSensorManager.withConfig(config).startSensing();
                     break;
                 case Sensor.TYPE_AMBIENT_TEMPERATURE:
-                    temperatureSensorManager.startSensing().withConfig(config);
+                    temperatureSensorManager.withConfig(config).startSensing();
                     break;
                 case Sensor.TYPE_MAGNETIC_FIELD:
-                    magneticFieldManager.startSensing().withConfig(config);
+                    magneticFieldManager.withConfig(config).startSensing();
                     break;
                 case Util.TYPE_WIFI:
-                    wifiSensorManager.startSensing().withConfig(config);
+                    wifiSensorManager.withConfig(config).startSensing();
                     break;
                 case Util.TYPE_AUDIO:
-                    audioManager.startSensing().withConfig(config);
+                    audioManager.withConfig(config).startSensing();
                     break;
 
                 default:

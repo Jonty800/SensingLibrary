@@ -14,6 +14,7 @@ import java.util.List;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
@@ -114,6 +115,12 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
         Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
         Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
+    }
+
+    @Override
+    public AccelerometerManager withConfig(SensorConfig config){
+        super.withConfig(config);
+        return this;
     }
 
     @Override

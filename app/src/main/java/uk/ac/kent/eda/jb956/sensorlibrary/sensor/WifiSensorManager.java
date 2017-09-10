@@ -26,6 +26,7 @@ import java.util.List;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
@@ -76,6 +77,12 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
         if (sensorEvent == null)
             sensorEvent = new SensingEvent();
         return sensorEvent;
+    }
+
+    @Override
+    public WifiSensorManager withConfig(SensorConfig config){
+        super.withConfig(config);
+        return this;
     }
 
     @Override

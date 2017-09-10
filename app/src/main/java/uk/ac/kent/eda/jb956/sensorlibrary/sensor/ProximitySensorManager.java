@@ -15,6 +15,7 @@ import java.util.List;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ProximitySensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 
@@ -154,6 +155,12 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
 
             }
         }
+    }
+
+    @Override
+    public ProximitySensorManager withConfig(SensorConfig config){
+        super.withConfig(config);
+        return this;
     }
 
     @Override
