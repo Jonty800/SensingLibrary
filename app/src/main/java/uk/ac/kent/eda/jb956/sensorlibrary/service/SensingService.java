@@ -11,9 +11,11 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
+import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.control.WorkerThread;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AccelerometerManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ActivitySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AudioSensorManager;
@@ -34,6 +36,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.Util;
 
 public class SensingService extends Service {
 
+    private static final String TAG = "SensingService";
     SensorManager sensorManager;
 
     private AudioSensorManager audioManager;
@@ -89,7 +92,7 @@ public class SensingService extends Service {
     /**
      * Attempts to start the Gyro, Wifi and Acc sensors. Will not start if Settings class forbids it
      */
-    public void startAllSensors() {
+   /* public void startAllSensors() {
         gyroscopeManager.startSensing();
         accelerometerManager.startSensing();
         proximityManager.startSensing();
@@ -115,52 +118,53 @@ public class SensingService extends Service {
         wifiSensorManager.stopSensing();
         activitySensorManager.stopSensing();
         audioManager.stopSensing();
-    }
+    }*/
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String exec = intent.getStringExtra("exec");
-        int[] types = intent.getIntArrayExtra("types");
+        int sensorId = intent.getIntExtra("type", -1);
+        SensorConfig config = (SensorConfig) intent.getSerializableExtra("config");
         if(exec.equalsIgnoreCase("start")) {
-            for (int type : types) {
-                switch (type) {
-                    case Sensor.TYPE_GYROSCOPE:
-                        gyroscopeManager.startSensing();
-                        break;
-                    case Sensor.TYPE_ACCELEROMETER:
-                        accelerometerManager.startSensing();
-                        break;
-                    case Sensor.TYPE_PROXIMITY:
-                        proximityManager.startSensing();
-                        break;
-                    case Sensor.TYPE_LIGHT:
-                        lightSensorManager.startSensing();
-                        break;
-                    case Sensor.TYPE_RELATIVE_HUMIDITY:
-                        humiditySensorManager.startSensing();
-                        break;
-                    case Sensor.TYPE_PRESSURE:
-                        pressureSensorManager.startSensing();
-                        break;
-                    case Sensor.TYPE_AMBIENT_TEMPERATURE:
-                        temperatureSensorManager.startSensing();
-                        break;
-                    case Sensor.TYPE_MAGNETIC_FIELD:
-                        magneticFieldManager.startSensing();
-                        break;
-                    case Util.TYPE_WIFI:
-                        wifiSensorManager.startSensing();
-                        break;
-                    case Util.TYPE_AUDIO:
-                        audioManager.startSensing();
-                        break;
+            switch (sensorId) {
+                case Sensor.TYPE_GYROSCOPE:
+                    gyroscopeManager.startSensing().withConfig(config);
+                    break;
+                case Sensor.TYPE_ACCELEROMETER:
+                    accelerometerManager.startSensing().withConfig(config);
+                    break;
+                case Sensor.TYPE_PROXIMITY:
+                    proximityManager.startSensing().withConfig(config);
+                    break;
+                case Sensor.TYPE_LIGHT:
+                    lightSensorManager.startSensing().withConfig(config);
+                    break;
+                case Sensor.TYPE_RELATIVE_HUMIDITY:
+                    humiditySensorManager.startSensing().withConfig(config);
+                    break;
+                case Sensor.TYPE_PRESSURE:
+                    pressureSensorManager.startSensing().withConfig(config);
+                    break;
+                case Sensor.TYPE_AMBIENT_TEMPERATURE:
+                    temperatureSensorManager.startSensing().withConfig(config);
+                    break;
+                case Sensor.TYPE_MAGNETIC_FIELD:
+                    magneticFieldManager.startSensing().withConfig(config);
+                    break;
+                case Util.TYPE_WIFI:
+                    wifiSensorManager.startSensing().withConfig(config);
+                    break;
+                case Util.TYPE_AUDIO:
+                    audioManager.startSensing().withConfig(config);
+                    break;
 
-                }
+                default:
+                    Log.i(TAG, "Invalid sensor ID");
             }
+
         }
         else if(exec.equalsIgnoreCase("stop")){
-            for (int type : types) {
-                switch (type) {
+                switch (sensorId) {
                     case Sensor.TYPE_GYROSCOPE:
                         gyroscopeManager.stopSensing();
                         break;
@@ -191,8 +195,10 @@ public class SensingService extends Service {
                     case Util.TYPE_AUDIO:
                         audioManager.stopSensing();
                         break;
+
+                    default:
+                        Log.i(TAG, "Invalid sensor ID");
                 }
-            }
         }
         return super.onStartCommand(intent, flags, startId);
     }

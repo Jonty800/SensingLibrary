@@ -1,11 +1,13 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.data;
 
+import java.io.Serializable;
+
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class SensorConfig {
+public class SensorConfig implements Serializable{
 
     public int SAMPLING_RATE = 100; //ms
     public int SLEEP_WINDOW_SIZE = 20000; //ms

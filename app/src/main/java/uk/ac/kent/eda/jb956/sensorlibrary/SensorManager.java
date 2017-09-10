@@ -14,13 +14,17 @@ import android.support.v7.app.NotificationCompat;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.control.WorkerThread;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AccelerometerManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ActivitySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AudioSensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.BaseSensor;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.GyroscopeManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.HumiditySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.LightSensorManager;
@@ -42,7 +46,6 @@ public class SensorManager {
 
     private final Context context;
     private final String TAG = "SensorManager";
-    public List<Integer> activeSensors = new ArrayList<>();
 
     /**
      * Upon creation of this singleton class, it will attempt to start the
@@ -64,25 +67,19 @@ public class SensorManager {
         return instance;
     }
 
-    public void startSensing(int[] sensors){
+    public void startSensor(int sensorId, SensorConfig config){
         Intent i = new Intent(context, SensingService.class);
-        i.putExtra("types", sensors);
+        i.putExtra("type", sensorId);
         i.putExtra("exec", "start");
-        for(int sensor : sensors){
-            if(!activeSensors.contains(sensor))
-                activeSensors.add(sensor);
-        }
+        i.putExtra("config", config);
         context.startService(i);
     }
 
-    public void stopSensing(int[] sensors){
+    public void stopSensor(int sensorId){
         Intent i = new Intent(context, SensingService.class);
-        i.putExtra("types", sensors);
+        i.putExtra("type", sensorId);
         i.putExtra("exec", "stop");
-        for(int sensor : sensors){
-            if(activeSensors.contains(sensor))
-                activeSensors.remove(sensor);
-        }
+
         context.startService(i);
     }
 

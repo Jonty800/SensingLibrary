@@ -10,16 +10,16 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 public class BaseSensor {
 
     SensorConfig config = new SensorConfig(); //load default
-    BaseSensor withConfig(SensorConfig config){ //replace default
+    public BaseSensor withConfig(SensorConfig config){ //replace default
         this.config = config;
         return this;
     }
-    BaseSensor withDefaultConfig(){ //load default
+    public BaseSensor withDefaultConfig(){ //load default
         this.config = new SensorConfig();
         return this;
     }
 
-    int getSamplingRateMicroseconds(){
+    public int getSamplingRateMicroseconds(){
         return config.SAMPLING_RATE * 1000;
     }
 
