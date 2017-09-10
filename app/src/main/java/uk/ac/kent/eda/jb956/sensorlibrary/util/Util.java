@@ -13,6 +13,9 @@ import uk.ac.kent.eda.jb956.sensorlibrary.sensor.TemperatureSensorManager;
 
 public class Util {
 
+    public static final int TYPE_WIFI = 101;
+    public static final int TYPE_AUDIO = 102;
+
     /*  Dv: Absolute humidity in grams/meter3
         m: Mass constant
         Tn: Temperature constant

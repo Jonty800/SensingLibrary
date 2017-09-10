@@ -1,0 +1,20 @@
+package uk.ac.kent.eda.jb956.sensorlibrary.data;
+
+/**
+ * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
+ * School of Engineering and Digital Arts, University of Kent
+ */
+
+public class SensorConfig {
+
+    public int SAMPLING_RATE = 100; //ms
+    public int SLEEP_WINDOW_SIZE = 20000; //ms
+    public int AWAKE_WINDOW_SIZE = 30000; //ms
+
+    public AudioConfig audioConfig = new AudioConfig();
+
+    public class AudioConfig{
+        public int BUFFER_SIZE = 2000;
+        public int RECORDER_SAMPLERATE = 16000;
+    }
+}

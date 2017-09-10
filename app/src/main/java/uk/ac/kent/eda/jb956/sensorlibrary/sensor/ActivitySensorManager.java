@@ -30,13 +30,11 @@ import uk.ac.kent.eda.jb956.sensorlibrary.service.ActivityRecognizedService;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class ActivitySensorManager implements SensingInterface, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class ActivitySensorManager extends BaseSensor implements SensingInterface, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private final String TAG = "ActivitySensorManager";
     private static ActivitySensorManager instance;
     private final Context context;
-    public static int SAMPLING_RATE = 1000; //ms
-    public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
     private GoogleApiClient mApiClient;
 
     public static synchronized ActivitySensorManager getInstance(Context context) {
@@ -48,6 +46,7 @@ public class ActivitySensorManager implements SensingInterface, GoogleApiClient.
     private ActivitySensorManager(Context context) {
         this.context = context.getApplicationContext();
         sensor = null;
+        setSamplingRate(1000);
     }
 
     private final Sensor sensor;
@@ -61,16 +60,6 @@ public class ActivitySensorManager implements SensingInterface, GoogleApiClient.
     @Override
     public SensorData getLastEntry() {
         return lastEntry;
-    }
-
-    @Override
-    public void setSamplingRate(int rate) {
-        SAMPLING_RATE = rate;
-    }
-
-    @Override
-    public int getSamplingRate() {
-        return SAMPLING_RATE;
     }
 
     private SensingEvent sensorEvent = null;
@@ -151,9 +140,9 @@ public class ActivitySensorManager implements SensingInterface, GoogleApiClient.
 
 
     @Override
-    public void startSensing() {
+    public ActivitySensorManager startSensing() {
         if (isSensing())
-            return;
+             return this;
         try {
             if (Settings.ACTIVITY_ENABLED) {
                 getSensorEventListener().onSensingStarted();
@@ -170,12 +159,13 @@ public class ActivitySensorManager implements SensingInterface, GoogleApiClient.
             e.printStackTrace();
         }
         Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
+        return this;
     }
 
     @Override
-    public void stopSensing() {
+    public ActivitySensorManager stopSensing() {
         if (!isSensing())
-            return;
+            return this;
         try {
             if (Settings.WIFI_ENABLED) {
                 mApiClient.disconnect();
@@ -186,6 +176,7 @@ public class ActivitySensorManager implements SensingInterface, GoogleApiClient.
         }
         sensing = false;
         Log.i(TAG, "Sensor stopped");
+        return this;
     }
 
     private boolean sensing = false;

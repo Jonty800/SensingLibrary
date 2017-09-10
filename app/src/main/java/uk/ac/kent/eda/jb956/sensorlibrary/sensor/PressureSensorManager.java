@@ -23,7 +23,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class PressureSensorManager implements SensingInterface, SensorEventListener {
+public class PressureSensorManager extends BaseSensor implements SensingInterface, SensorEventListener {
 
     private final String TAG = "PressureSensorManager";
     private static PressureSensorManager instance;
@@ -67,9 +67,9 @@ public class PressureSensorManager implements SensingInterface, SensorEventListe
     }
 
     @Override
-    public void startSensing() {
+    public PressureSensorManager startSensing() {
         if (isSensing())
-            return;
+            return this;
         try {
             if (Settings.PRESSURE_ENABLED) {
                 Log.i(TAG, "Registering listener...");
@@ -85,12 +85,13 @@ public class PressureSensorManager implements SensingInterface, SensorEventListe
             e.printStackTrace();
         }
         Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
+        return this;
     }
 
     @Override
-    public void stopSensing() {
+    public PressureSensorManager stopSensing() {
         if (!isSensing())
-            return;
+            return this;
         try {
             if (Settings.PRESSURE_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
@@ -101,6 +102,7 @@ public class PressureSensorManager implements SensingInterface, SensorEventListe
         }
         sensing = false;
         Log.i(TAG, "Sensor stopped");
+        return this;
     }
 
     private boolean sensing = false;

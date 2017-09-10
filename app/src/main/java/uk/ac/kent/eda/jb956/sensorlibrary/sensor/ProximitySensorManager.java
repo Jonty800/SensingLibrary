@@ -23,14 +23,12 @@ import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class ProximitySensorManager implements SensingInterface, SensorEventListener {
+public class ProximitySensorManager extends BaseSensor implements SensingInterface, SensorEventListener {
 
     private final String TAG = "ProximitySensorManager";
     private static ProximitySensorManager instance;
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
-    public static int SAMPLING_RATE_PROXIMITY = 100; //ms
-    public static final int SAMPLING_RATE_PROXIMITY_MICRO = SAMPLING_RATE_PROXIMITY * 1000;
 
     public static synchronized ProximitySensorManager getInstance(Context context) {
         if (instance == null)
@@ -56,16 +54,6 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
         return lastEntry;
     }
 
-    @Override
-    public void setSamplingRate(int rate) {
-        SAMPLING_RATE_PROXIMITY = rate;
-    }
-
-    @Override
-    public int getSamplingRate() {
-        return SAMPLING_RATE_PROXIMITY;
-    }
-
     private SensingEvent sensorEvent = null;
 
     @Override
@@ -76,9 +64,9 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
     }
 
     @Override
-    public void startSensing() {
+    public ProximitySensorManager startSensing() {
         if (isSensing())
-            return;
+            return this;
         try {
             if (Settings.PROXIMITY_ENABLED) {
                 Log.i(TAG, "Registering listener...");
@@ -95,12 +83,13 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
             e.printStackTrace();
         }
         Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
+        return this;
     }
 
     @Override
-    public void stopSensing() {
+    public ProximitySensorManager stopSensing() {
         if (!isSensing())
-            return;
+            return this;
         try {
             if (Settings.PROXIMITY_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
@@ -111,6 +100,7 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
         }
         sensing = false;
         Log.i(TAG, "Sensor stopped");
+        return this;
     }
 
     private boolean sensing = false;
@@ -142,7 +132,7 @@ public class ProximitySensorManager implements SensingInterface, SensorEventList
             Sensor mySensor = event.sensor;
             if (mySensor.getType() == Sensor.TYPE_PROXIMITY) {
                 // only allow one update every SAMPLING_RATE (ms).
-                if ((curTime - lastUpdate) > SAMPLING_RATE_PROXIMITY) {
+                if ((curTime - lastUpdate) > getSamplingRate()) {
                     lastUpdate = curTime;
                     float proximity = event.values[0]; //cm
                     ProximitySensorData sensorData = new ProximitySensorData();

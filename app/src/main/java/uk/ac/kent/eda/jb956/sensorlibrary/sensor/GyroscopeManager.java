@@ -23,14 +23,12 @@ import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class GyroscopeManager implements SensingInterface, SensorEventListener {
+public class GyroscopeManager extends BaseSensor implements SensingInterface, SensorEventListener {
 
     private final String TAG = "GyroscopeManager";
     private static GyroscopeManager instance;
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
-    public static int SAMPLING_RATE = 100; //ms
-    public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
 
 
     public static synchronized GyroscopeManager getInstance(Context context) {
@@ -54,16 +52,6 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
         return sensorEvent;
     }
 
-    @Override
-    public void setSamplingRate(int rate) {
-        SAMPLING_RATE = rate;
-    }
-
-    @Override
-    public int getSamplingRate() {
-        return SAMPLING_RATE;
-    }
-
     private final Sensor sensor;
 
     @Override
@@ -76,16 +64,18 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
         return lastEntry;
     }
 
+
+
     @Override
-    public void startSensing() {
+    public GyroscopeManager startSensing() {
         if (isSensing())
-            return;
+            return this;
         try {
             if (Settings.GYRO_ENABLED) {
                 getSensorEventListener().onSensingStarted();
                 Log.i(TAG, "Registering listener...");
                 if (sensor != null) {
-                    androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
+                    androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
                 } else {
                     Log.i(TAG, "Cannot calculate Gyroscope data, as gyroscope sensor is not available!");
@@ -95,12 +85,13 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
             e.printStackTrace();
         }
         Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
+        return this;
     }
 
     @Override
-    public void stopSensing() {
+    public GyroscopeManager stopSensing() {
         if (!isSensing())
-            return;
+            return this;
         try {
             if (Settings.GYRO_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
@@ -111,6 +102,7 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
         }
         sensing = false;
         Log.i(TAG, "Sensor stopped");
+        return this;
     }
 
     private boolean sensing = false;
@@ -131,7 +123,7 @@ public class GyroscopeManager implements SensingInterface, SensorEventListener {
             Sensor mySensor = event.sensor;
             if (mySensor.getType() == Sensor.TYPE_GYROSCOPE) {
                 // only allow one update every SAMPLING_RATE (ms).
-                if ((curTime - lastUpdate) > SAMPLING_RATE) {
+                if ((curTime - lastUpdate) > getSamplingRate()) {
                     lastUpdate = curTime;
                     float x = event.values[0];
                     float y = event.values[1];

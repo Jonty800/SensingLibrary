@@ -42,6 +42,7 @@ public class SensorManager {
 
     private final Context context;
     private final String TAG = "SensorManager";
+    public List<Integer> activeSensors = new ArrayList<>();
 
     /**
      * Upon creation of this singleton class, it will attempt to start the
@@ -63,8 +64,25 @@ public class SensorManager {
         return instance;
     }
 
-    public void startSensingService(){
+    public void startSensing(int[] sensors){
         Intent i = new Intent(context, SensingService.class);
+        i.putExtra("types", sensors);
+        i.putExtra("exec", "start");
+        for(int sensor : sensors){
+            if(!activeSensors.contains(sensor))
+                activeSensors.add(sensor);
+        }
+        context.startService(i);
+    }
+
+    public void stopSensing(int[] sensors){
+        Intent i = new Intent(context, SensingService.class);
+        i.putExtra("types", sensors);
+        i.putExtra("exec", "stop");
+        for(int sensor : sensors){
+            if(activeSensors.contains(sensor))
+                activeSensors.remove(sensor);
+        }
         context.startService(i);
     }
 

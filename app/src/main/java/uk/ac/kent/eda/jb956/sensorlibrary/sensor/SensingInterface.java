@@ -14,19 +14,15 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 
 interface SensingInterface {
 
-    void startSensing();
+    BaseSensor startSensing();
 
-    void stopSensing();
+    BaseSensor stopSensing();
 
     boolean isSensing();
 
     Sensor getSensor();
 
     SensorData getLastEntry();
-
-    void setSamplingRate(int rate);
-
-    int getSamplingRate();
 
     SensingEvent getSensorEventListener();
 

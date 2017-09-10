@@ -35,15 +35,12 @@ import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class WifiSensorManager implements SensingInterface {
+public class WifiSensorManager extends BaseSensor implements SensingInterface  {
 
     private final String TAG = "WifiSensorManager";
     private static WifiSensorManager instance;
     private final Context context;
-    public static int SAMPLING_RATE = 10000; //ms
    // public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
-    public static int SLEEP_DURATION = 20000; //ms
-    public static int AWAKE_DURATION = 30000; //ms
 
     public static synchronized WifiSensorManager getInstance(Context context) {
         if (instance == null)
@@ -56,6 +53,7 @@ public class WifiSensorManager implements SensingInterface {
         sensor = null;
         if (wifi == null)
             wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        setSamplingRate(10000);
     }
 
     private final Sensor sensor;
@@ -69,16 +67,6 @@ public class WifiSensorManager implements SensingInterface {
     @Override
     public SensorData getLastEntry() {
         return lastEntry;
-    }
-
-    @Override
-    public void setSamplingRate(int rate) {
-        SAMPLING_RATE = rate;
-    }
-
-    @Override
-    public int getSamplingRate() {
-        return SAMPLING_RATE;
     }
 
     private SensingEvent sensorEvent = null;
@@ -113,12 +101,12 @@ public class WifiSensorManager implements SensingInterface {
 
     @Override
     public void setSensingWindowDuration(int duration) {
-        AWAKE_DURATION = duration;
+        config.AWAKE_WINDOW_SIZE = duration;
     }
 
     @Override
     public void setSleepingDuration(int duration) {
-        SLEEP_DURATION = duration;
+        config.SLEEP_WINDOW_SIZE = duration;
     }
 
     @Override
@@ -158,9 +146,9 @@ public class WifiSensorManager implements SensingInterface {
     }
 
     @Override
-    public void startSensing() {
+    public WifiSensorManager startSensing() {
         if (isSensing())
-            return;
+            return this;
         try {
             if (Settings.WIFI_ENABLED) {
                 Log.i(TAG, "Starting Wi-Fi Fingerprinting Service");
@@ -173,12 +161,13 @@ public class WifiSensorManager implements SensingInterface {
             e.printStackTrace();
         }
         Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
+        return this;
     }
 
     @Override
-    public void stopSensing() {
+    public WifiSensorManager stopSensing() {
         if (!isSensing())
-            return;
+            return this;
         try {
             if (Settings.WIFI_ENABLED) {
                 stopSensingTask();
@@ -190,6 +179,7 @@ public class WifiSensorManager implements SensingInterface {
         sensing = false;
         sleepingTaskStarted = false;
         Log.i(TAG, "Sensor stopped");
+        return this;
     }
 
     private void sleep(){
@@ -215,7 +205,7 @@ public class WifiSensorManager implements SensingInterface {
     private void startSleepingTask(){
         if(sleepingTaskStarted)
             return;
-        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), AWAKE_DURATION);
+        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), getAwakeWindowSize());
         sleepingTaskStarted = true;
     }
 
@@ -224,13 +214,13 @@ public class WifiSensorManager implements SensingInterface {
             @Override
             public void run() {
                 if (sensing) {
-                    Log.i(TAG, "Sleeping for " + SLEEP_DURATION);
+                    Log.i(TAG, "Sleeping for " + getSleepWindowSize());
                     sleep();
-                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), SLEEP_DURATION);
+                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), getSleepWindowSize());
                 } else {
-                    Log.i(TAG, "Sensing for " + AWAKE_DURATION);
+                    Log.i(TAG, "Sensing for " + getAwakeWindowSize());
                     wake();
-                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), AWAKE_DURATION);
+                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), getAwakeWindowSize());
                 }
             }
         };

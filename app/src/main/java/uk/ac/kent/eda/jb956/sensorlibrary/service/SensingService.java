@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.hardware.Sensor;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -24,6 +25,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.sensor.PressureSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ProximitySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.TemperatureSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.WifiSensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.Util;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -117,7 +119,81 @@ public class SensingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        startAllSensors();
+        String exec = intent.getStringExtra("exec");
+        int[] types = intent.getIntArrayExtra("types");
+        if(exec.equalsIgnoreCase("start")) {
+            for (int type : types) {
+                switch (type) {
+                    case Sensor.TYPE_GYROSCOPE:
+                        gyroscopeManager.startSensing();
+                        break;
+                    case Sensor.TYPE_ACCELEROMETER:
+                        accelerometerManager.startSensing();
+                        break;
+                    case Sensor.TYPE_PROXIMITY:
+                        proximityManager.startSensing();
+                        break;
+                    case Sensor.TYPE_LIGHT:
+                        lightSensorManager.startSensing();
+                        break;
+                    case Sensor.TYPE_RELATIVE_HUMIDITY:
+                        humiditySensorManager.startSensing();
+                        break;
+                    case Sensor.TYPE_PRESSURE:
+                        pressureSensorManager.startSensing();
+                        break;
+                    case Sensor.TYPE_AMBIENT_TEMPERATURE:
+                        temperatureSensorManager.startSensing();
+                        break;
+                    case Sensor.TYPE_MAGNETIC_FIELD:
+                        magneticFieldManager.startSensing();
+                        break;
+                    case Util.TYPE_WIFI:
+                        wifiSensorManager.startSensing();
+                        break;
+                    case Util.TYPE_AUDIO:
+                        audioManager.startSensing();
+                        break;
+
+                }
+            }
+        }
+        else if(exec.equalsIgnoreCase("stop")){
+            for (int type : types) {
+                switch (type) {
+                    case Sensor.TYPE_GYROSCOPE:
+                        gyroscopeManager.stopSensing();
+                        break;
+                    case Sensor.TYPE_ACCELEROMETER:
+                        accelerometerManager.stopSensing();
+                        break;
+                    case Sensor.TYPE_PROXIMITY:
+                        proximityManager.stopSensing();
+                        break;
+                    case Sensor.TYPE_LIGHT:
+                        lightSensorManager.stopSensing();
+                        break;
+                    case Sensor.TYPE_RELATIVE_HUMIDITY:
+                        humiditySensorManager.stopSensing();
+                        break;
+                    case Sensor.TYPE_PRESSURE:
+                        pressureSensorManager.stopSensing();
+                        break;
+                    case Sensor.TYPE_AMBIENT_TEMPERATURE:
+                        temperatureSensorManager.stopSensing();
+                        break;
+                    case Sensor.TYPE_MAGNETIC_FIELD:
+                        magneticFieldManager.stopSensing();
+                        break;
+                    case Util.TYPE_WIFI:
+                        wifiSensorManager.stopSensing();
+                        break;
+                    case Util.TYPE_AUDIO:
+                        audioManager.stopSensing();
+                        break;
+                }
+            }
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 

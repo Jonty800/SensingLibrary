@@ -23,14 +23,12 @@ import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class HumiditySensorManager implements SensingInterface, SensorEventListener {
+public class HumiditySensorManager extends BaseSensor implements SensingInterface, SensorEventListener {
 
     private final String TAG = "HumiditySensorManager";
     private static HumiditySensorManager instance;
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
-    public static int SAMPLING_RATE = 1000; //ms
-    public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
 
     public static synchronized HumiditySensorManager getInstance(Context context) {
         if (instance == null)
@@ -42,6 +40,7 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+        setSamplingRate(1000);
     }
 
     private SensingEvent sensorEvent = null;
@@ -66,24 +65,14 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
     }
 
     @Override
-    public void setSamplingRate(int rate) {
-        SAMPLING_RATE = rate;
-    }
-
-    @Override
-    public int getSamplingRate() {
-        return SAMPLING_RATE;
-    }
-
-    @Override
-    public void startSensing() {
+    public HumiditySensorManager startSensing() {
         if (isSensing())
-            return;
+            return this;
         try {
             if (Settings.HUMIDITY_ENABLED) {
                 Log.i(TAG, "Registering listener...");
                 if (sensor != null) {
-                    androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
+                    androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
                     getSensorEventListener().onSensingStarted();
                 } else {
@@ -94,12 +83,13 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
             e.printStackTrace();
         }
         Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
+        return this;
     }
 
     @Override
-    public void stopSensing() {
+    public HumiditySensorManager stopSensing() {
         if (!isSensing())
-            return;
+            return this;
         try {
             if (Settings.HUMIDITY_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
@@ -110,6 +100,7 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
         }
         sensing = false;
         Log.i(TAG, "Sensor stopped");
+        return this;
     }
 
     private boolean sensing = false;
@@ -130,7 +121,7 @@ public class HumiditySensorManager implements SensingInterface, SensorEventListe
             Sensor mySensor = event.sensor;
             if (mySensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
                 // only allow one update every SAMPLING_RATE (ms).
-                if ((curTime - lastUpdate) > SAMPLING_RATE) {
+                if ((curTime - lastUpdate) > getSamplingRate()) {
                     lastUpdate = curTime;
                     float millibars_of_pressure = event.values[0];
                     PressureSensorData sensorData = new PressureSensorData();

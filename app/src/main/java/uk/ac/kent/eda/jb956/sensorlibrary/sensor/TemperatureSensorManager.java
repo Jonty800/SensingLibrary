@@ -23,14 +23,12 @@ import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class TemperatureSensorManager implements SensingInterface, SensorEventListener {
+public class TemperatureSensorManager extends BaseSensor implements SensingInterface, SensorEventListener {
 
     private final String TAG = "TemperatureSensor";
     private static TemperatureSensorManager instance;
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
-    public static int SAMPLING_RATE = 1000; //ms
-    public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
 
     public static synchronized TemperatureSensorManager getInstance(Context context) {
         if (instance == null)
@@ -42,6 +40,7 @@ public class TemperatureSensorManager implements SensingInterface, SensorEventLi
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        setSamplingRate(1000);
     }
 
     private SensingEvent sensorEvent = null;
@@ -66,24 +65,14 @@ public class TemperatureSensorManager implements SensingInterface, SensorEventLi
     }
 
     @Override
-    public void setSamplingRate(int rate) {
-        SAMPLING_RATE = rate;
-    }
-
-    @Override
-    public int getSamplingRate() {
-        return SAMPLING_RATE;
-    }
-
-    @Override
-    public void startSensing() {
+    public TemperatureSensorManager startSensing() {
         if (isSensing())
-            return;
+            return this;
         try {
             if (Settings.TEMP_ENABLED) {
                 Log.i(TAG, "Registering listener...");
                 if (sensor != null) {
-                    androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
+                    androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
                     getSensorEventListener().onSensingStarted();
                 } else {
@@ -94,12 +83,13 @@ public class TemperatureSensorManager implements SensingInterface, SensorEventLi
             e.printStackTrace();
         }
         Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
+        return this;
     }
 
     @Override
-    public void stopSensing() {
+    public TemperatureSensorManager stopSensing() {
         if (!isSensing())
-            return;
+            return this;
         try {
             if (Settings.TEMP_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
@@ -110,6 +100,7 @@ public class TemperatureSensorManager implements SensingInterface, SensorEventLi
         }
         sensing = false;
         Log.i(TAG, "Sensor stopped");
+        return this;
     }
 
     private boolean sensing = false;
@@ -130,7 +121,7 @@ public class TemperatureSensorManager implements SensingInterface, SensorEventLi
             Sensor mySensor = event.sensor;
             if (mySensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
                 // only allow one update every SAMPLING_RATE (ms).
-                if ((curTime - lastUpdate) > SAMPLING_RATE) {
+                if ((curTime - lastUpdate) > getSamplingRate()) {
                     lastUpdate = curTime;
                     float degreesC = event.values[0];
                     TemperatureSensorData sensorData = new TemperatureSensorData();

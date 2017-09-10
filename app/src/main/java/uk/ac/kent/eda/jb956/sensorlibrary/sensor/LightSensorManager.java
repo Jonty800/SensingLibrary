@@ -24,14 +24,12 @@ import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class LightSensorManager implements SensingInterface, SensorEventListener {
+public class LightSensorManager extends BaseSensor implements SensingInterface, SensorEventListener {
 
     private final String TAG = "LightSensorManager";
     private static LightSensorManager instance;
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
-    public static int SAMPLING_RATE = 100; //ms
-    public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
     private Handler mHandler;
 
     public static synchronized LightSensorManager getInstance(Context context) {
@@ -59,16 +57,6 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
         return lastEntry;
     }
 
-    @Override
-    public void setSamplingRate(int rate) {
-        SAMPLING_RATE = rate;
-    }
-
-    @Override
-    public int getSamplingRate() {
-        return SAMPLING_RATE;
-    }
-
     private SensingEvent sensorEvent = null;
 
     @Override
@@ -79,9 +67,9 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
     }
 
     @Override
-    public void startSensing() {
+    public LightSensorManager startSensing() {
         if (isSensing())
-            return;
+            return this;
         try {
             if (Settings.LIGHT_ENABLED) {
                 Log.i(TAG, "Registering listener...");
@@ -97,23 +85,24 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
             e.printStackTrace();
         }
         Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
-        if (Settings.POCKET_ENABLED) {
+        /*if (Settings.POCKET_ENABLED) {
             if (!Settings.PROXIMITY_ENABLED) {
                 Log.i(TAG, "PROXIMITY_ENABLED=false, ignoring pocket detection");
-                return;
+                return this;
             }
             if (!Settings.LIGHT_ENABLED) {
                 Log.i(TAG, "LIGHT_ENABLED=false, ignoring pocket detection");
-                return;
+                return this;
             }
             startRepeatingTask();
-        }
+        }*/
+        return this;
     }
 
     @Override
-    public void stopSensing() {
+    public LightSensorManager stopSensing() {
         if (!isSensing())
-            return;
+            return this;
         try {
             if (Settings.ACC_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
@@ -124,7 +113,10 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
         }
         sensing = false;
         Log.i(TAG, "Sensor stopped");
+        /*
         stopRepeatingTask();
+        */
+        return this;
     }
 
     private boolean sensing = false;
@@ -147,7 +139,7 @@ public class LightSensorManager implements SensingInterface, SensorEventListener
             Sensor mySensor = event.sensor;
             if (mySensor.getType() == Sensor.TYPE_LIGHT) {
                 // only allow one update every SAMPLING_RATE (ms).
-                if ((curTime - lastUpdate) > SAMPLING_RATE) {
+                if ((curTime - lastUpdate) > getSamplingRate()) {
                     lastUpdate = curTime;
                     double lx = event.values[0];
                     LightSensorData sensorData = new LightSensorData();

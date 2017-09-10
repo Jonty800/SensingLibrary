@@ -31,7 +31,8 @@ public class BootReceiver extends BroadcastReceiver {
                 }
             }
             if (ok) {
-                SensorManager.getInstance(context).startSensingService();
+                //TODO update this code and uncomment
+                //SensorManager.getInstance(context).startSensingService();
             }else{
                 Log.i(TAG, "Failed to start sensors: Permissions are missing!");
             }

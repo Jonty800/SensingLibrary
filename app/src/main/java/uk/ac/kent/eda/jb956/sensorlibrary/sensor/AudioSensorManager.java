@@ -17,12 +17,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.AudioSensorData;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class AudioSensorManager {
-    private static int RECORDER_SAMPLERATE = 16000;
-    private static int BUFFER_SIZE = 1024;
-
-    private static int SLEEP_DURATION = 20000;
-    private static int AWAKE_DURATION = 10000;
+public class AudioSensorManager extends BaseSensor {
 
     public AudioSensorManager(Context context) {
         this.context = context;
@@ -44,9 +39,9 @@ public class AudioSensorManager {
         return instance;
     }
 
-    public void startSensing() {
+    public AudioSensorManager startSensing() {
         if (isSensing())
-            return;
+            return this;
         if (Settings.AUDIO_ENABLED) {
             startSleepingTask();
             addNewSensingTask();
@@ -55,10 +50,11 @@ public class AudioSensorManager {
         }else{
             Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         }
+        return this;
     }
 
     private void addNewSensingTask() {
-        dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(RECORDER_SAMPLERATE, BUFFER_SIZE, 0);
+        dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(getSamplingRate(), getBufferSize(), 0);
         dispatcher.addAudioProcessor(getAudioProcessor());
         sensing = true;
         new Thread(dispatcher, "Audio Dispatcher").start();
@@ -88,7 +84,7 @@ public class AudioSensorManager {
     private void startSleepingTask(){
         if(sleepingTaskStarted)
             return;
-        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(sleepTask, AWAKE_DURATION);
+        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(sleepTask, getAwakeWindowSize());
         sleepingTaskStarted = true;
     }
 
@@ -98,27 +94,28 @@ public class AudioSensorManager {
         public void run() {
             if (sensing) {
                 currentTask = sleepTask;
-                Log.i(TAG, "Sleeping for " + SLEEP_DURATION);
+                Log.i(TAG, "Sleeping for " + getSleepWindowSize());
                 sleep();
-                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(currentTask, SLEEP_DURATION);
+                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(currentTask, getSleepWindowSize());
             } else {
                 currentTask = sleepTask;
-                Log.i(TAG, "Sensing for " + AWAKE_DURATION);
+                Log.i(TAG, "Sensing for " + getAwakeWindowSize());
                 wake();
-                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(currentTask, AWAKE_DURATION);
+                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(currentTask, getAwakeWindowSize());
             }
         }
     };
 
-    public void stopSensing() {
+    public AudioSensorManager stopSensing() {
         if (!isSensing())
-            return;
+            return this;
         Log.i(TAG, "Stopped Audio Sensing");
         dispatcher.stop();
         sensing = false;
         stopSensingTask();
         getSensorEventListener().onSensingStopped();
         sleepingTaskStarted = false;
+        return this;
     }
 
     private void sleep(){
@@ -145,28 +142,30 @@ public class AudioSensorManager {
         return sensing;
     }
 
+    @Override
     public void setSamplingRate(int rate) {
-        RECORDER_SAMPLERATE = rate;
+        config.audioConfig.RECORDER_SAMPLERATE = rate;
     }
 
     public void setBufferSize(int bufferSize) {
-        BUFFER_SIZE = bufferSize;
+        config.audioConfig.BUFFER_SIZE = bufferSize;
     }
 
     public int getBufferSize() {
-        return BUFFER_SIZE;
+        return config.audioConfig.BUFFER_SIZE;
     }
 
+    @Override
     public int getSamplingRate() {
-        return RECORDER_SAMPLERATE;
+        return config.audioConfig.RECORDER_SAMPLERATE;
     }
 
     public void setSensingWindowDuration(int duration) {
-        AWAKE_DURATION = duration;
+        config.AWAKE_WINDOW_SIZE = duration;
     }
 
     public void setSleepingDuration(int duration) {
-        SLEEP_DURATION = duration;
+        config.SLEEP_WINDOW_SIZE = duration;
     }
 
     private SensingEvent sensorEvent = null;

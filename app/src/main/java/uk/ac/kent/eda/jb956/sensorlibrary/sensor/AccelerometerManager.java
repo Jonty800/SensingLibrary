@@ -23,14 +23,12 @@ import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class AccelerometerManager implements SensingInterface, SensorEventListener {
+public class AccelerometerManager extends BaseSensor implements SensingInterface, SensorEventListener {
 
     private final String TAG = "AccelerometerManager";
     private static AccelerometerManager instance;
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
-    public static int SAMPLING_RATE = 100; //ms
-    public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
 
     public static synchronized AccelerometerManager getInstance(Context context) {
         if (instance == null)
@@ -54,16 +52,6 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
     @Override
     public SensorData getLastEntry() {
         return lastEntry;
-    }
-
-    @Override
-    public void setSamplingRate(int rate) {
-        SAMPLING_RATE = rate;
-    }
-
-    @Override
-    public int getSamplingRate() {
-        return SAMPLING_RATE;
     }
 
     private SensingEvent sensorEvent = null;
@@ -129,15 +117,15 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
     }
 
     @Override
-    public void startSensing() {
+    public AccelerometerManager startSensing() {
         if (isSensing())
-            return;
+            return this;
         try {
             if (Settings.ACC_ENABLED) {
                 getSensorEventListener().onSensingStarted();
                 Log.i(TAG, "Registering listener...");
                 if (sensor != null) {
-                    androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
+                    androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
                 } else {
                     Log.i(TAG, "Cannot calculate Accelerometer data, as Accelerometer sensor is not available!");
@@ -147,12 +135,13 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
             e.printStackTrace();
         }
         Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
+        return this;
     }
 
     @Override
-    public void stopSensing() {
+    public AccelerometerManager stopSensing() {
         if (!isSensing())
-            return;
+            return this;
         try {
             if (Settings.ACC_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
@@ -163,6 +152,7 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
         }
         sensing = false;
         Log.i(TAG, "Sensor stopped");
+        return this;
     }
 
     private boolean sensing = false;
@@ -183,7 +173,7 @@ public class AccelerometerManager implements SensingInterface, SensorEventListen
             Sensor mySensor = event.sensor;
             if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                 // only allow one update every SAMPLING_RATE (ms).
-                if ((curTime - lastUpdate) > SAMPLING_RATE) {
+                if ((curTime - lastUpdate) > getSamplingRate()) {
                     lastUpdate = curTime;
                     float x = event.values[0];
                     float y = event.values[1];
