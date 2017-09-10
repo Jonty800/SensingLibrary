@@ -139,8 +139,7 @@ public class AudioSensorManager extends BaseSensor {
 
     private void stopSensingTask(){
         if(currentTask!=null) {
-            if(getAudioDispatcher()!=null)
-                getAudioDispatcher().stop();
+            dispatcher.stop();
             SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(currentTask);
         }
     }
