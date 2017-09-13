@@ -51,7 +51,7 @@ public class BaseSensor {
 
     public void logInfo(String TAG, String text){
         if(config.logToConsole) {
-            logInfo(TAG, text);
+            Log.i(TAG, text);
         }
     }
 }
