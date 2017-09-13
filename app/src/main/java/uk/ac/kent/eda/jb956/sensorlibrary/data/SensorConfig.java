@@ -13,6 +13,7 @@ public class SensorConfig implements Serializable{
     public int SLEEP_WINDOW_SIZE = 20000; //ms
     public int AWAKE_WINDOW_SIZE = 30000; //ms
     public boolean saveToDatabase = true;
+    public boolean logToConsole = true;
 
     public AudioConfig audioConfig = new AudioConfig();
 

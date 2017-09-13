@@ -129,22 +129,22 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
     @Override
     public void removeDataFromDatabaseWithLimit(int limit) {
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
-        Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         if (limit == -1)
             database.execSQL("DELETE FROM wifi");
         else
             database.execSQL("DELETE FROM wifi WHERE id IN(SELECT id FROM wifi ORDER BY id ASC LIMIT " + limit + ")");
 
-        Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
     @Override
     public void removeDataFromDatabaseWithRange(long start, long end) {
         String dbName = "wifi";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
-        Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
-        Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
     @Override
@@ -153,7 +153,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
             return this;
         try {
             if (Settings.WIFI_ENABLED) {
-                Log.i(TAG, "Starting Wi-Fi Fingerprinting Service");
+                logInfo(TAG, "Starting Wi-Fi Fingerprinting Service");
                 startSleepingTask();
                 addNewSensingTask();
                 sensing = true;
@@ -162,7 +162,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
+        logInfo(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         return this;
     }
 
@@ -180,7 +180,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
         }
         sensing = false;
         sleepingTaskStarted = false;
-        Log.i(TAG, "Sensor stopped");
+        logInfo(TAG, "Sensor stopped");
         return this;
     }
 
@@ -195,14 +195,14 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.i(TAG, "Sensor paused");
+        logInfo(TAG, "Sensor paused");
     }
 
     private void wake(){
         sleeping = false;
         try {
             if (Settings.WIFI_ENABLED) {
-                Log.i(TAG, "Resuming Wi-Fi Fingerprinting Service");
+                logInfo(TAG, "Resuming Wi-Fi Fingerprinting Service");
                 startSleepingTask();
                 addNewSensingTask();
                 getSensorEventListener().onSensingResumed();
@@ -225,11 +225,11 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
             @Override
             public void run() {
                 if (!sleeping) {
-                    Log.i(TAG, "Sleeping for " + getSleepWindowSize());
+                    logInfo(TAG, "Sleeping for " + getSleepWindowSize());
                     sleep();
                     SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), getSleepWindowSize());
                 } else {
-                    Log.i(TAG, "Sensing for " + getAwakeWindowSize());
+                    logInfo(TAG, "Sensing for " + getAwakeWindowSize());
                     wake();
                     SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), getAwakeWindowSize());
                 }
@@ -247,7 +247,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
             List<ScanResult> results = wifi.getScanResults();
             //if 1 or more results found
             if (results.size() > 0) {
-                Log.i(TAG, "Inserting new Wi-Fi fingerprint");
+                logInfo(TAG, "Inserting new Wi-Fi fingerprint");
                 //filter anything except 2.4GHZ access points
                 List<WifiData> unparsedResults = new ArrayList<>();
                 for (ScanResult r : results) {
@@ -283,7 +283,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
                 }
 
             } else {
-                Log.i(TAG, "Scanned Wi-Fi list was empty - In Android 7+ this could be because location services are turned off");
+                logInfo(TAG, "Scanned Wi-Fi list was empty - In Android 7+ this could be because location services are turned off");
             }
         }
     };
@@ -366,11 +366,11 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
 
     private void requestWifiScan() {
         if (!canAccessWifiSignals()) {
-            Log.i(TAG, "Wi-Fi not enabled or not always available - ignoring requestWifiScan");
+            logInfo(TAG, "Wi-Fi not enabled or not always available - ignoring requestWifiScan");
             return;
         }
         if (!checkPermissions()) {
-            Log.i(TAG, "Missing permissions for access to Wi-Fi. Aborting.");
+            logInfo(TAG, "Missing permissions for access to Wi-Fi. Aborting.");
             return;
         }
         try {

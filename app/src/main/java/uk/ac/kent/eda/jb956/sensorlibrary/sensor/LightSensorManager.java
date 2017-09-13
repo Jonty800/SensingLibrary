@@ -73,19 +73,19 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
             return this;
         try {
             if (Settings.LIGHT_ENABLED) {
-                Log.i(TAG, "Registering listener...");
+                logInfo(TAG, "Registering listener...");
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
                     sensing = true;
                     getSensorEventListener().onSensingStarted();
                 } else {
-                    Log.i(TAG, "Cannot calculate Lux, as Light sensor is not available!");
+                    logInfo(TAG, "Cannot calculate Lux, as Light sensor is not available!");
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
+        logInfo(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         /*if (Settings.POCKET_ENABLED) {
             if (!Settings.PROXIMITY_ENABLED) {
                 Log.i(TAG, "PROXIMITY_ENABLED=false, ignoring pocket detection");
@@ -113,7 +113,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
             e.printStackTrace();
         }
         sensing = false;
-        Log.i(TAG, "Sensor stopped");
+        logInfo(TAG, "Sensor stopped");
         /*
         stopRepeatingTask();
         */
@@ -205,7 +205,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                     if(canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToPocket(inPocketDetectionHelper.getDetectionResult(), System.currentTimeMillis());
                     }
-                    Log.i(TAG, "PocketDetectionResult: " + inPocketDetectionHelper.getDetectionResult().toString());
+                    logInfo(TAG, "PocketDetectionResult: " + inPocketDetectionHelper.getDetectionResult().toString());
                     lastTimeCheckedHistory = System.currentTimeMillis();
                     ProximitySensorManager.getInstance(context).history.clear();
                     LightSensorManager.getInstance(context).history.clear();
@@ -258,22 +258,22 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
     public void removeDataFromDatabaseWithRange(long start, long end) {
         String dbName = "light";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
-        Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
-        Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
     @Override
     public void removeDataFromDatabaseWithLimit(int limit) {
         String dbName = "light";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
-        Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         if (limit == -1)
             database.execSQL("DELETE FROM " + dbName);
         else
             database.execSQL("DELETE FROM " + dbName + " WHERE id IN(SELECT id FROM " + dbName + " ORDER BY id ASC LIMIT " + limit + ")");
 
-        Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
     @Override

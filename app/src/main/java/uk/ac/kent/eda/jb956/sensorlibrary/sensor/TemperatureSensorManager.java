@@ -71,19 +71,19 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
             return this;
         try {
             if (Settings.TEMP_ENABLED) {
-                Log.i(TAG, "Registering listener...");
+                logInfo(TAG, "Registering listener...");
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
                     getSensorEventListener().onSensingStarted();
                 } else {
-                    Log.i(TAG, "Cannot calculate Ambient Temperature, as Ambient Temperature sensor is not available!");
+                    logInfo(TAG, "Cannot calculate Ambient Temperature, as Ambient Temperature sensor is not available!");
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
+        logInfo(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         return this;
     }
 
@@ -100,7 +100,7 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
             e.printStackTrace();
         }
         sensing = false;
-        Log.i(TAG, "Sensor stopped");
+        logInfo(TAG, "Sensor stopped");
         return this;
     }
 
@@ -194,21 +194,21 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
     public void removeDataFromDatabaseWithLimit(int limit) {
         String dbName = "temp";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
-        Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         if (limit == -1)
             database.execSQL("DELETE FROM " + dbName);
         else
             database.execSQL("DELETE FROM " + dbName + " WHERE id IN(SELECT id FROM " + dbName + " ORDER BY id ASC LIMIT " + limit + ")");
 
-        Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
     @Override
     public void removeDataFromDatabaseWithRange(long start, long end) {
         String dbName = "temp";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
-        Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
-        Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 }

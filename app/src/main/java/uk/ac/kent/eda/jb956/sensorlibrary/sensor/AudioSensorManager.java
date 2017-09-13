@@ -49,7 +49,7 @@ public class AudioSensorManager extends BaseSensor {
             sensing = true;
             getSensorEventListener().onSensingStarted();
         }else{
-            Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
+            logInfo(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         }
         return this;
     }
@@ -59,7 +59,7 @@ public class AudioSensorManager extends BaseSensor {
         dispatcher.addAudioProcessor(audioProcessor);
         sensing = true;
         new Thread(dispatcher, "Audio Dispatcher").start();
-        Log.i(TAG, "Started Audio Sensing at " + getSamplingRate() + " Hz with buffer size " + getBufferSize());
+        logInfo(TAG, "Started Audio Sensing at " + getSamplingRate() + " Hz with buffer size " + getBufferSize());
     }
 
     private AudioProcessor audioProcessor = new AudioProcessor() {
@@ -94,12 +94,12 @@ public class AudioSensorManager extends BaseSensor {
         public void run() {
             if (!sleeping) {
                 currentTask = sleepTask;
-                Log.i(TAG, "Sleeping for " + getSleepWindowSize());
+                logInfo(TAG, "Sleeping for " + getSleepWindowSize());
                 sleep();
                 SensorManager.getInstance(context).getWorkerThread().postDelayedTask(currentTask, getSleepWindowSize());
             } else {
                 currentTask = sleepTask;
-                Log.i(TAG, "Sensing for " + getAwakeWindowSize());
+                logInfo(TAG, "Sensing for " + getAwakeWindowSize());
                 wake();
                 SensorManager.getInstance(context).getWorkerThread().postDelayedTask(currentTask, getAwakeWindowSize());
             }
@@ -111,7 +111,7 @@ public class AudioSensorManager extends BaseSensor {
     public AudioSensorManager stopSensing() {
         if (!isSensing())
             return this;
-        Log.i(TAG, "Stopped Audio Sensing");
+        logInfo(TAG, "Stopped Audio Sensing");
         dispatcher.stop();
         sensing = false;
         stopSensingTask();
@@ -122,7 +122,7 @@ public class AudioSensorManager extends BaseSensor {
 
     private void sleep(){
         sleeping = true;
-        Log.i(TAG, "Pausing Audio Sensing");
+        logInfo(TAG, "Pausing Audio Sensing");
         stopSensingTask();
         getSensorEventListener().onSensingPaused();
 

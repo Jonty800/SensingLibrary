@@ -112,13 +112,13 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
     @Override
     public void removeDataFromDatabaseWithLimit(int limit) {
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
-        Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         if (limit == -1)
             database.execSQL("DELETE FROM act");
         else
             database.execSQL("DELETE FROM act WHERE id IN(SELECT id FROM act ORDER BY id ASC LIMIT " + limit + ")");
 
-        Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
     @Override
@@ -135,9 +135,9 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
     public void removeDataFromDatabaseWithRange(long start, long end) {
         String dbName = "act";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
-        Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
-        Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
     @Override
@@ -159,7 +159,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
+        logInfo(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         return this;
     }
 
@@ -176,7 +176,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
             e.printStackTrace();
         }
         sensing = false;
-        Log.i(TAG, "Sensor stopped");
+        logInfo(TAG, "Sensor stopped");
         return this;
     }
 
@@ -212,7 +212,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
     public void onConnectionSuspended(int i) {
         // The connection to Google Play services was lost for some reason. We call connect() to
         // attempt to re-establish the connection.
-        Log.i(TAG, "Connection suspended");
+        logInfo(TAG, "Connection suspended");
         mApiClient.connect();
         // removeActivityUpdates();
     }
@@ -226,7 +226,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
         // onConnectionFailed.
-        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
+        logInfo(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
         mApiClient.connect();
         sensing = false;
     }

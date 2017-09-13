@@ -1,5 +1,7 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
 
+import android.util.Log;
+
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 
 /**
@@ -45,5 +47,11 @@ public class BaseSensor {
 
     public void setSavetoDatabase(boolean save) {
         config.saveToDatabase = save;
+    }
+
+    public void logInfo(String TAG, String text){
+        if(config.logToConsole) {
+            logInfo(TAG, text);
+        }
     }
 }

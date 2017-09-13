@@ -78,18 +78,18 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         try {
             if (Settings.GYRO_ENABLED) {
                 getSensorEventListener().onSensingStarted();
-                Log.i(TAG, "Registering listener...");
+                logInfo(TAG, "Registering listener...");
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
                 } else {
-                    Log.i(TAG, "Cannot calculate Gyroscope data, as gyroscope sensor is not available!");
+                    logInfo(TAG, "Cannot calculate Gyroscope data, as gyroscope sensor is not available!");
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.i(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
+        logInfo(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         return this;
     }
 
@@ -106,7 +106,7 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
             e.printStackTrace();
         }
         sensing = false;
-        Log.i(TAG, "Sensor stopped");
+        logInfo(TAG, "Sensor stopped");
         return this;
     }
 
@@ -196,22 +196,22 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
     public void removeDataFromDatabaseWithLimit(int limit) {
         String dbName = "gyro";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
-        Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         if (limit == -1)
             database.execSQL("DELETE FROM " + dbName);
         else
             database.execSQL("DELETE FROM " + dbName + " WHERE id IN(SELECT id FROM " + dbName + " ORDER BY id ASC LIMIT " + limit + ")");
 
-        Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
     @Override
     public void removeDataFromDatabaseWithRange(long start, long end) {
         String dbName = "gyro";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
-        Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
-        Log.i(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
+        logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
     @Override
