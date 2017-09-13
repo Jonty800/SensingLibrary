@@ -24,8 +24,6 @@ interface SensingInterface {
 
     SensorData getLastEntry();
 
-    SensingEvent getSensorEventListener();
-
     List<SensorData> getDataFromRange(long start, long end);
 
     List<SensorData> getAllData();

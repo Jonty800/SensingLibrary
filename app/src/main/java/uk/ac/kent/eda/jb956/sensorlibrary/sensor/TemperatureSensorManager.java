@@ -45,15 +45,6 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
         setSamplingRate(1000);
     }
 
-    private SensingEvent sensorEvent = null;
-
-    @Override
-    public SensingEvent getSensorEventListener() {
-        if (sensorEvent == null)
-            sensorEvent = new SensingEvent();
-        return sensorEvent;
-    }
-
     private final Sensor sensor;
 
     @Override
@@ -76,7 +67,7 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
-                    getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
+                    getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
                 } else {
                     logInfo(TAG, "Cannot calculate Ambient Temperature, as Ambient Temperature sensor is not available!");
                 }
@@ -95,7 +86,7 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
         try {
             if (Settings.TEMP_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
+                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,8 +130,8 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
                     if(canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToTemperature(sensorData);
                     }
-                    if (sensorEvent != null)
-                        sensorEvent.onDataSensed(sensorData);
+                    if (getSensorEvent() != null)
+                        getSensorEvent().onDataSensed(sensorData);
                 }
             }
         }

@@ -43,16 +43,6 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
-
-    private SensingEvent sensorEvent = null;
-
-    @Override
-    public SensingEvent getSensorEventListener() {
-        if (sensorEvent == null)
-            sensorEvent = new SensingEvent();
-        return sensorEvent;
-    }
-
     private final Sensor sensor;
 
     @Override
@@ -75,7 +65,7 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
-                    getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD);
+                    getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD);
                 } else {
                     logInfo(TAG, "Cannot calculate Magnetic Field data, as Magnetic Field sensor is not available!");
                 }
@@ -104,7 +94,7 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
         try {
             if (Settings.MAG_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD);
+                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -152,8 +142,8 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
                     if(canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToMag(sensorData);
                     }
-                    if (sensorEvent != null)
-                        sensorEvent.onDataSensed(sensorData);
+                    if (getSensorEvent() != null)
+                        getSensorEvent().onDataSensed(sensorData);
                     //Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
                 }
             }

@@ -45,15 +45,6 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
         setSamplingRate(1000);
     }
 
-    private SensingEvent sensorEvent = null;
-
-    @Override
-    public SensingEvent getSensorEventListener() {
-        if (sensorEvent == null)
-            sensorEvent = new SensingEvent();
-        return sensorEvent;
-    }
-
     private final Sensor sensor;
 
     @Override
@@ -76,7 +67,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
-                    getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_HUMIDITY);
+                    getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_HUMIDITY);
                 } else {
                     logInfo(TAG, "Cannot calculate Humidity, as humidity sensor is not available!");
                 }
@@ -95,7 +86,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
         try {
             if (Settings.HUMIDITY_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_HUMIDITY);
+                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_HUMIDITY);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,8 +130,8 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
                     if(canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToHumidity(sensorData);
                     }
-                    if (sensorEvent != null)
-                        sensorEvent.onDataSensed(sensorData);
+                    if (getSensorEvent() != null)
+                        getSensorEvent().onDataSensed(sensorData);
                 }
             }
         }

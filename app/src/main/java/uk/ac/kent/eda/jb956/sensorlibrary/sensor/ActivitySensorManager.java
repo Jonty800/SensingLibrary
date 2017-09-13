@@ -67,13 +67,6 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
     private SensingEvent sensorEvent = null;
 
     @Override
-    public SensingEvent getSensorEventListener() {
-        if (sensorEvent == null)
-            sensorEvent = new SensingEvent();
-        return sensorEvent;
-    }
-
-    @Override
     public ActivitySensorManager withConfig(SensorConfig config){
         super.withConfig(config);
         return this;
@@ -147,7 +140,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
              return this;
         try {
             if (Settings.ACTIVITY_ENABLED) {
-                getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_ACTIVITY);
+                getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_ACTIVITY);
                 mApiClient = new GoogleApiClient.Builder(context)
                         .addApi(ActivityRecognition.API)
                         .addConnectionCallbacks(this)
@@ -171,7 +164,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
         try {
             if (Settings.WIFI_ENABLED) {
                 mApiClient.disconnect();
-                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_ACTIVITY);
+                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_ACTIVITY);
             }
         } catch (Exception e) {
             e.printStackTrace();

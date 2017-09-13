@@ -59,15 +59,6 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         return lastEntry;
     }
 
-    private SensingEvent sensorEvent = null;
-
-    @Override
-    public SensingEvent getSensorEventListener() {
-        if (sensorEvent == null)
-            sensorEvent = new SensingEvent();
-        return sensorEvent;
-    }
-
     @Override
     public LightSensorManager startSensing() {
         if (isSensing())
@@ -78,7 +69,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
                     sensing = true;
-                    getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_LIGHT);
+                    getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_LIGHT);
                 } else {
                     logInfo(TAG, "Cannot calculate Lux, as Light sensor is not available!");
                 }
@@ -108,7 +99,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         try {
             if (Settings.ACC_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_LIGHT);
+                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_LIGHT);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -159,8 +150,8 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                             temp.add(data);
                     }
                     history = new ArrayList<>(temp);
-                    if (sensorEvent != null)
-                        sensorEvent.onDataSensed(sensorData);
+                    if (getSensorEvent() != null)
+                        getSensorEvent().onDataSensed(sensorData);
                 }
             }
         }

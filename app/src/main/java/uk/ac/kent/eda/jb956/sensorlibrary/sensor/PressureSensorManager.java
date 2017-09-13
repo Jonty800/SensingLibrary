@@ -78,7 +78,7 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
-                    getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_PRESSURE);
+                    getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_PRESSURE);
                 } else {
                     logInfo(TAG, "Cannot calculate pressure, as pressure Sensor is not available!");
                 }
@@ -97,7 +97,7 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
         try {
             if (Settings.PRESSURE_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_PRESSURE);
+                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_PRESSURE);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -151,8 +151,8 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
                     if(canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToPressure(sensorData);
                     }
-                    if (sensorEvent != null)
-                        sensorEvent.onDataSensed(sensorData);
+                    if (getSensorEvent() != null)
+                        getSensorEvent().onDataSensed(sensorData);
                 }
             }
         }
@@ -176,15 +176,6 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
         }
         cur.close();
         return temp;
-    }
-
-    private SensingEvent sensorEvent = null;
-
-    @Override
-    public SensingEvent getSensorEventListener() {
-        if (sensorEvent == null)
-            sensorEvent = new SensingEvent();
-        return sensorEvent;
     }
 
     @Override

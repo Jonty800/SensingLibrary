@@ -8,6 +8,15 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
  */
 
 public class SensingEvent {
+
+    public static SensingEvent getInstance() {
+        if(instance == null)
+        instance = new SensingEvent();
+        return instance;
+    }
+
+    private static SensingEvent instance;
+
     private SensingEventListener sensingEventListener;
 
     public synchronized void subscribeToSensor(SensingEventListener listener) {

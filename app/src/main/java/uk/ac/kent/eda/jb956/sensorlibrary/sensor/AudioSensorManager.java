@@ -48,7 +48,7 @@ public class AudioSensorManager extends BaseSensor {
             startSleepingTask();
             addNewSensingTask();
             sensing = true;
-            getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_MICROPHONE);
+            getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_MICROPHONE);
         }else{
             logInfo(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         }
@@ -71,8 +71,8 @@ public class AudioSensorManager extends BaseSensor {
             sensorData.buffer = audioEvent.getFloatBuffer();
             sensorData.bufferSize = getBufferSize();
             sensorData.byte_buffer = audioEvent.getByteBuffer();
-            if (sensorEvent != null)
-                sensorEvent.onDataSensed(sensorData);
+            if (getSensorEvent() != null)
+                getSensorEvent().onDataSensed(sensorData);
             return true;
         }
 
@@ -116,7 +116,7 @@ public class AudioSensorManager extends BaseSensor {
         dispatcher.stop();
         sensing = false;
         stopSensingTask();
-        getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_MICROPHONE);
+        getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_MICROPHONE);
         sleepingTaskStarted = false;
         return this;
     }
@@ -125,7 +125,7 @@ public class AudioSensorManager extends BaseSensor {
         sleeping = true;
         logInfo(TAG, "Pausing Audio Sensing");
         stopSensingTask();
-        getSensorEventListener().onSensingPaused(SensorUtils.SENSOR_TYPE_MICROPHONE);
+        getSensorEvent().onSensingPaused(SensorUtils.SENSOR_TYPE_MICROPHONE);
 
     }
 
@@ -134,7 +134,7 @@ public class AudioSensorManager extends BaseSensor {
         if (Settings.AUDIO_ENABLED) {
             startSleepingTask();
             addNewSensingTask();
-            getSensorEventListener().onSensingResumed(SensorUtils.SENSOR_TYPE_MICROPHONE);
+            getSensorEvent().onSensingResumed(SensorUtils.SENSOR_TYPE_MICROPHONE);
         }
     }
 
@@ -179,14 +179,6 @@ public class AudioSensorManager extends BaseSensor {
 
     public void setSleepingDuration(int duration) {
         config.SLEEP_WINDOW_SIZE = duration;
-    }
-
-    private SensingEvent sensorEvent = null;
-
-    public SensingEvent getSensorEventListener() {
-        if (sensorEvent == null)
-            sensorEvent = new SensingEvent();
-        return sensorEvent;
     }
 
     public void setEnabled(boolean enabled) {

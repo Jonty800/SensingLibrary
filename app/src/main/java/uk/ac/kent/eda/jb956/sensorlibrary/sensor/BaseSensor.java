@@ -2,6 +2,7 @@ package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
 
 import android.util.Log;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 
 /**
@@ -53,5 +54,9 @@ public class BaseSensor {
         if(config.logToConsole) {
             Log.i(TAG, text);
         }
+    }
+
+    public SensingEvent getSensorEvent() {
+        return SensingEvent.getInstance();
     }
 }

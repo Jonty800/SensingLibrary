@@ -56,15 +56,6 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
         return lastEntry;
     }
 
-    private SensingEvent sensorEvent = null;
-
-    @Override
-    public SensingEvent getSensorEventListener() {
-        if (sensorEvent == null)
-            sensorEvent = new SensingEvent();
-        return sensorEvent;
-    }
-
     @Override
     public ProximitySensorManager startSensing() {
         if (isSensing())
@@ -75,7 +66,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
                     sensing = true;
-                    getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_PROXIMITY);
+                    getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_PROXIMITY);
                 } else {
                     logInfo(TAG, "Cannot calculate Proximity, as Proximity sensor is not available!");
                 }
@@ -95,7 +86,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
         try {
             if (Settings.PROXIMITY_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_PROXIMITY);
+                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_PROXIMITY);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -151,8 +142,8 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
                             temp.add(data);
                     }
                     history = new ArrayList<>(temp);
-                    if (sensorEvent != null)
-                        sensorEvent.onDataSensed(sensorData);
+                    if (getSensorEvent() != null)
+                        getSensorEvent().onDataSensed(sensorData);
                 }
                 // System.out.println(""+(System.currentTimeMillis() - lastTimeCheckedHistory));
 

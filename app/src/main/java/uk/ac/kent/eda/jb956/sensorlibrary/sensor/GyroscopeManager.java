@@ -44,16 +44,6 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
     }
-
-    private SensingEvent sensorEvent = null;
-
-    @Override
-    public SensingEvent getSensorEventListener() {
-        if (sensorEvent == null)
-            sensorEvent = new SensingEvent();
-        return sensorEvent;
-    }
-
     private final Sensor sensor;
 
     @Override
@@ -78,7 +68,7 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
             return this;
         try {
             if (Settings.GYRO_ENABLED) {
-                getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_GYROSCOPE);
+                getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_GYROSCOPE);
                 logInfo(TAG, "Registering listener...");
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
@@ -101,7 +91,7 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         try {
             if (Settings.GYRO_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_GYROSCOPE);
+                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_GYROSCOPE);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,8 +133,8 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
                     if(canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToGyro(sensorData);
                     }
-                    if (sensorEvent != null)
-                        sensorEvent.onDataSensed(sensorData);
+                    if (getSensorEvent() != null)
+                        getSensorEvent().onDataSensed(sensorData);
                     // Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
                 }
             }
