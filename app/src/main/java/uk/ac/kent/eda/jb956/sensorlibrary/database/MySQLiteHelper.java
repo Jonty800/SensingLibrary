@@ -794,7 +794,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void addToAcc(XYZSensorData data) {
-        if (Settings.SAVE_ACCELEROMETER_TO_DATABASE) {
             try {
                 SQLiteDatabase db = this.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -807,12 +806,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
         // db.close();
     }
 
     public void addToMag(XYZSensorData data) {
-        if (Settings.SAVE_MAG_TO_DATABASE) {
             try {
                 SQLiteDatabase db = this.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -825,12 +822,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
         // db.close();
     }
 
     public void addToLight(LightSensorData data) {
-        if (Settings.SAVE_LIGHT_TO_DATABASE) {
+
             try {
                 SQLiteDatabase db = this.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -841,11 +837,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 e.printStackTrace();
             }
             // db.close();
-        }
     }
 
     public void addToPocket(InPocketContext context, long ts) {
-        if (Settings.SAVE_POCKET_TO_DATABASE) {
             try {
                 SQLiteDatabase db = this.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -856,11 +850,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 e.printStackTrace();
             }
             // db.close();
-        }
     }
 
     public void addToPositions(PositionsData data) {
-        if (Settings.SAVE_POSITIONS_TO_DATABASE) {
+
             try {
                 SQLiteDatabase db = this.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -871,12 +864,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        // db.close();
     }
 
     public void addToHumidity(PressureSensorData data) {
-        if (Settings.SAVE_HUMIDITY_TO_DATABASE) {
             try {
                 SQLiteDatabase db = this.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -886,12 +876,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        // db.close();
     }
 
     public void addToPressure(PressureSensorData data) {
-        if (Settings.SAVE_PRESSURE_TO_DATABASE) {
             try {
                 SQLiteDatabase db = this.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -901,13 +888,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        // db.close();
     }
 
 
     public void addToActivity(ActivityData data) {
-        if (Settings.SAVE_ACTIVITY_TO_DATABASE) {
             try {
                 SQLiteDatabase db = this.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -918,12 +902,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            // db.close();
-        }
     }
 
     public void addToProximity(ProximitySensorData data) {
-        if (Settings.SAVE_PROXIMITY_TO_DATABASE) {
             try {
                 SQLiteDatabase db = this.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -933,8 +914,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            // db.close();
-        }
     }
 
     private void refreshFiles(File file) {
@@ -944,7 +923,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void addToWifi(WifiData data) {
-        if (Settings.SAVE_WIFI_TO_DATABASE) {
             try {
                 SQLiteDatabase db = this.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -956,12 +934,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            // db.close();
-        }
     }
 
     public void addToGyro(XYZSensorData data) {
-        if (Settings.SAVE_GYRO_TO_DATABASE) {
             try {
                 SQLiteDatabase db = this.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -973,12 +948,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            // db.close();
-        }
     }
 
     public void addToTemperature(TemperatureSensorData data) {
-        if (Settings.SAVE_TEMP_TO_DATABASE) {
             try {
                 SQLiteDatabase db = this.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -988,8 +960,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            // db.close();
-        }
     }
 
     public long getSize() {

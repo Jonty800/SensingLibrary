@@ -141,12 +141,6 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
     }
 
     @Override
-    public void setSaveToDatabase(boolean save) {
-        Settings.SAVE_WIFI_TO_DATABASE = save;
-    }
-
-
-    @Override
     public ActivitySensorManager startSensing() {
         if (isSensing())
              return this;

@@ -148,7 +148,9 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
                     history.add(sensorData);
-                    MySQLiteHelper.getInstance(context).addToLight(sensorData);
+                    if(canSaveToDatabase()) {
+                        MySQLiteHelper.getInstance(context).addToLight(sensorData);
+                    }
                     // Log.i(TAG, "Lx: " + lx);
                     List<LightSensorData> temp = new ArrayList<>();
                     for (LightSensorData data : history) {
@@ -200,8 +202,9 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                     // temp.add(pd.illuminance);
                     // }
                     inPocketDetectionHelper.lightValues = new ArrayList<>(temp);
-                    if (Settings.SAVE_POCKET_TO_DATABASE)
+                    if(canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToPocket(inPocketDetectionHelper.getDetectionResult(), System.currentTimeMillis());
+                    }
                     Log.i(TAG, "PocketDetectionResult: " + inPocketDetectionHelper.getDetectionResult().toString());
                     lastTimeCheckedHistory = System.currentTimeMillis();
                     ProximitySensorManager.getInstance(context).history.clear();
@@ -249,11 +252,6 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
     @Override
     public void removeAllDataFromDatabase() {
         removeDataFromDatabaseWithLimit(-1);
-    }
-
-    @Override
-    public void setSaveToDatabase(boolean save) {
-        Settings.SAVE_LIGHT_TO_DATABASE = save;
     }
 
     @Override

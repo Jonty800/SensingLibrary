@@ -36,8 +36,6 @@ interface SensingInterface {
 
     void removeAllDataFromDatabase();
 
-    void setSaveToDatabase(boolean save);
-
     void setEnabled(boolean enabled);
 
     void setSensingWindowDuration(int duration);

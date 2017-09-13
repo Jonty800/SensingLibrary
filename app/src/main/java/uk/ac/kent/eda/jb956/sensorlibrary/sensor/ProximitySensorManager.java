@@ -140,7 +140,9 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
                     sensorData.proximity = proximity;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
-                    MySQLiteHelper.getInstance(context).addToProximity(sensorData);
+                    if(canSaveToDatabase()) {
+                        MySQLiteHelper.getInstance(context).addToProximity(sensorData);
+                    }
                     history.add(sensorData);
                     List<ProximitySensorData> temp = new ArrayList<>();
                     for (ProximitySensorData data : history) {
@@ -204,11 +206,6 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
     @Override
     public void removeAllDataFromDatabase() {
         removeDataFromDatabaseWithLimit(-1);
-    }
-
-    @Override
-    public void setSaveToDatabase(boolean save) {
-        Settings.SAVE_PROXIMITY_TO_DATABASE = save;
     }
 
     @Override

@@ -139,7 +139,9 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
                     sensorData.Z = z;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
-                    MySQLiteHelper.getInstance(context).addToGyro(sensorData);
+                    if(canSaveToDatabase()) {
+                        MySQLiteHelper.getInstance(context).addToGyro(sensorData);
+                    }
                     if (sensorEvent != null)
                         sensorEvent.onDataSensed(sensorData);
                     // Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
@@ -188,11 +190,6 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
     @Override
     public void removeAllDataFromDatabase() {
         removeDataFromDatabaseWithLimit(-1);
-    }
-
-    @Override
-    public void setSaveToDatabase(boolean save) {
-        Settings.SAVE_GYRO_TO_DATABASE = save;
     }
 
     @Override

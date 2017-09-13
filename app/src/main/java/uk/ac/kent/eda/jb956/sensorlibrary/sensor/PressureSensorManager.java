@@ -147,7 +147,9 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
                     sensorData.pressure = pressure;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
-                    MySQLiteHelper.getInstance(context).addToPressure(sensorData);
+                    if(canSaveToDatabase()) {
+                        MySQLiteHelper.getInstance(context).addToPressure(sensorData);
+                    }
                     if (sensorEvent != null)
                         sensorEvent.onDataSensed(sensorData);
                 }
@@ -192,11 +194,6 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
     @Override
     public void removeAllDataFromDatabase() {
         removeDataFromDatabaseWithLimit(-1);
-    }
-
-    @Override
-    public void setSaveToDatabase(boolean save) {
-        Settings.SAVE_PRESSURE_TO_DATABASE = save;
     }
 
     @Override

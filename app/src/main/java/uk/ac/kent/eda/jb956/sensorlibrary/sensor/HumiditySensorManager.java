@@ -135,7 +135,9 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
                     sensorData.pressure = millibars_of_pressure;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
-                    MySQLiteHelper.getInstance(context).addToHumidity(sensorData);
+                    if(canSaveToDatabase()) {
+                        MySQLiteHelper.getInstance(context).addToHumidity(sensorData);
+                    }
                     if (sensorEvent != null)
                         sensorEvent.onDataSensed(sensorData);
                 }
@@ -181,11 +183,6 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
     @Override
     public void removeAllDataFromDatabase() {
         removeDataFromDatabaseWithLimit(-1);
-    }
-
-    @Override
-    public void setSaveToDatabase(boolean save) {
-        Settings.SAVE_HUMIDITY_TO_DATABASE = save;
     }
 
     @Override

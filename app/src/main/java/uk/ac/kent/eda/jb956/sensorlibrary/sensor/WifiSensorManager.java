@@ -148,11 +148,6 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
     }
 
     @Override
-    public void setSaveToDatabase(boolean save) {
-        Settings.SAVE_WIFI_TO_DATABASE = save;
-    }
-
-    @Override
     public WifiSensorManager startSensing() {
         if (isSensing())
             return this;
@@ -279,8 +274,9 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
                 for (WifiData sensorData : unparsedResults) {
                     if (sensorData.timestamp <= System.currentTimeMillis() && sensorData.timestamp >= timeLastInitiated) {
                         //NetworkCache.getInstance().getFingerprintData().add(wd);
-                        if (Settings.SAVE_WIFI_TO_DATABASE)
+                        if(canSaveToDatabase()) {
                             MySQLiteHelper.getInstance(context).addToWifi(sensorData);
+                        }
                         currentEntries.add(sensorData);
                         WifiSensorManager.getInstance(c).getSensorEventListener().onDataSensed(sensorData);
                     }

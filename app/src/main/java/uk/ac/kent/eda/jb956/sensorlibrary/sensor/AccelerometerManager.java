@@ -92,11 +92,6 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
     }
 
     @Override
-    public void setSaveToDatabase(boolean save) {
-        Settings.SAVE_ACCELEROMETER_TO_DATABASE = save;
-    }
-
-    @Override
     public void removeDataFromDatabaseWithLimit(int limit) {
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
         Log.i(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
@@ -191,7 +186,9 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
                     sensorData.Z = z;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
-                    MySQLiteHelper.getInstance(context).addToAcc(sensorData);
+                    if(canSaveToDatabase()) {
+                        MySQLiteHelper.getInstance(context).addToAcc(sensorData);
+                    }
                     if (sensorEvent != null)
                         sensorEvent.onDataSensed(sensorData);
                     //Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);

@@ -38,4 +38,12 @@ public class BaseSensor {
     public int getSleepWindowSize(){
         return config.SLEEP_WINDOW_SIZE;
     }
+
+    public boolean canSaveToDatabase(){
+        return config.saveToDatabase;
+    }
+
+    public void setSavetoDatabase(boolean save) {
+        config.saveToDatabase = save;
+    }
 }

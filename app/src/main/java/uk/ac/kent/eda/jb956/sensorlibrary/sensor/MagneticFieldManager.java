@@ -148,7 +148,9 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
                     sensorData.Z = z;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
-                    MySQLiteHelper.getInstance(context).addToMag(sensorData);
+                    if(canSaveToDatabase()) {
+                        MySQLiteHelper.getInstance(context).addToMag(sensorData);
+                    }
                     if (sensorEvent != null)
                         sensorEvent.onDataSensed(sensorData);
                     //Log.i(TAG, "X: " + x + " Y: " + y + " Z: " + z);
@@ -187,11 +189,6 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
     @Override
     public void removeAllDataFromDatabase() {
         removeDataFromDatabaseWithLimit(-1);
-    }
-
-    @Override
-    public void setSaveToDatabase(boolean save) {
-        Settings.SAVE_MAG_TO_DATABASE = save;
     }
 
     @Override

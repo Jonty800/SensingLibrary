@@ -135,7 +135,9 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
                     sensorData.degreesC = degreesC;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
-                    MySQLiteHelper.getInstance(context).addToTemperature(sensorData);
+                    if(canSaveToDatabase()) {
+                        MySQLiteHelper.getInstance(context).addToTemperature(sensorData);
+                    }
                     if (sensorEvent != null)
                         sensorEvent.onDataSensed(sensorData);
                 }
@@ -166,11 +168,6 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
         }
         cur.close();
         return temp;
-    }
-
-    @Override
-    public void setSaveToDatabase(boolean save) {
-        Settings.SAVE_TEMP_TO_DATABASE = save;
     }
 
     @Override
