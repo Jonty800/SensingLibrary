@@ -62,7 +62,8 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
         if (isSensing())
             return this;
         try {
-            if (Settings.TEMP_ENABLED) {
+            if (isEnabled()) {
+                super.startSensing();
                 logInfo(TAG, "Registering listener...");
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
@@ -84,7 +85,8 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
         if (!isSensing())
             return this;
         try {
-            if (Settings.TEMP_ENABLED) {
+            if (isEnabled()) {
+                super.stopSensing();
                 androidSensorManager.unregisterListener(this, getSensor());
                 getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
             }
@@ -160,11 +162,6 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
         }
         cur.close();
         return temp;
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        Settings.TEMP_ENABLED = enabled;
     }
 
     @Override

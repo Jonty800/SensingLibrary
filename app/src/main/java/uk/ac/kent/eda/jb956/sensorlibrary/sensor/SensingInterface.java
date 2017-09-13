@@ -14,10 +14,6 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 
 interface SensingInterface {
 
-    BaseSensor startSensing();
-
-    BaseSensor stopSensing();
-
     boolean isSensing();
 
     Sensor getSensor();
@@ -33,8 +29,6 @@ interface SensingInterface {
     void removeDataFromDatabaseWithRange(long start, long end);
 
     void removeAllDataFromDatabase();
-
-    void setEnabled(boolean enabled);
 
     void setSensingWindowDuration(int duration);
 

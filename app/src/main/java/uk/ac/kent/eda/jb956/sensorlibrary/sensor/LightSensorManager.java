@@ -64,7 +64,8 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         if (isSensing())
             return this;
         try {
-            if (Settings.LIGHT_ENABLED) {
+            if (isEnabled()) {
+                super.startSensing();
                 logInfo(TAG, "Registering listener...");
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
@@ -97,7 +98,8 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         if (!isSensing())
             return this;
         try {
-            if (Settings.ACC_ENABLED) {
+            if (isEnabled()) {
+                super.stopSensing();
                 androidSensorManager.unregisterListener(this, getSensor());
                 getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_LIGHT);
             }
@@ -266,11 +268,6 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
             database.execSQL("DELETE FROM " + dbName + " WHERE id IN(SELECT id FROM " + dbName + " ORDER BY id ASC LIMIT " + limit + ")");
 
         logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        Settings.LIGHT_ENABLED = enabled;
     }
 }
 

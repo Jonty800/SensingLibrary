@@ -89,11 +89,6 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
     }
 
     @Override
-    public void setEnabled(boolean enabled) {
-        Settings.WIFI_ENABLED = enabled;
-    }
-
-    @Override
     public List<SensorData> getAllData() {
         return getDataFromRange(0L, System.currentTimeMillis());
     }
@@ -139,7 +134,8 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
         if (isSensing())
              return this;
         try {
-            if (Settings.ACTIVITY_ENABLED) {
+            if (isEnabled()) {
+                super.startSensing();
                 getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_ACTIVITY);
                 mApiClient = new GoogleApiClient.Builder(context)
                         .addApi(ActivityRecognition.API)
@@ -161,8 +157,10 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
     public ActivitySensorManager stopSensing() {
         if (!isSensing())
             return this;
+
         try {
-            if (Settings.WIFI_ENABLED) {
+            if (isEnabled()) {
+                super.stopSensing();
                 mApiClient.disconnect();
                 getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_ACTIVITY);
             }

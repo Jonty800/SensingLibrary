@@ -44,7 +44,8 @@ public class AudioSensorManager extends BaseSensor {
     public AudioSensorManager startSensing() {
         if (isSensing())
             return this;
-        if (Settings.AUDIO_ENABLED) {
+        if (isEnabled()) {
+            super.startSensing();
             startSleepingTask();
             addNewSensingTask();
             sensing = true;
@@ -131,7 +132,7 @@ public class AudioSensorManager extends BaseSensor {
 
     private void wake(){
         sleeping = false;
-        if (Settings.AUDIO_ENABLED) {
+        if (isEnabled()) {
             startSleepingTask();
             addNewSensingTask();
             getSensorEvent().onSensingResumed(SensorUtils.SENSOR_TYPE_MICROPHONE);
@@ -140,8 +141,9 @@ public class AudioSensorManager extends BaseSensor {
 
     private void stopSensingTask(){
         if(currentTask!=null) {
-            dispatcher.stop();
             SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(currentTask);
+            if(!dispatcher.isStopped())
+                dispatcher.stop(); //should happen in stopSensing()
         }
     }
 
@@ -179,9 +181,5 @@ public class AudioSensorManager extends BaseSensor {
 
     public void setSleepingDuration(int duration) {
         config.SLEEP_WINDOW_SIZE = duration;
-    }
-
-    public void setEnabled(boolean enabled) {
-        Settings.AUDIO_ENABLED = enabled;
     }
 }

@@ -21,23 +21,6 @@ public class Settings {
      */
     public static final int DATABASE_VERSION = 3;
 
-    /*
-     * Sensor toggles
-     */
-    public static boolean ACC_ENABLED = false;
-    public static boolean GYRO_ENABLED = false;
-    public static boolean WIFI_ENABLED = false;
-    public static boolean ACTIVITY_ENABLED = false;
-    public static boolean LIGHT_ENABLED = false;
-    public static boolean PROXIMITY_ENABLED = false;
-    public static boolean POCKET_ENABLED = false;
-    public static boolean HUMIDITY_ENABLED = false;
-    public static boolean PRESSURE_ENABLED = false;
-    public static boolean TEMP_ENABLED = false;
-    public static boolean MAG_ENABLED = false;
-    public static boolean AUDIO_ENABLED = false;
-    public static boolean GPS_ENABLED = false; //TODO implement GPS
-
     public static final String SAVE_PATH = Environment.getExternalStorageDirectory().getPath() + "/" + appName;
 
     public static void setPermissionCodes(String... permissionCodes) {

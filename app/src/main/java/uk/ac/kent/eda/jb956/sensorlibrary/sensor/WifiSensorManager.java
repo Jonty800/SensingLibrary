@@ -94,11 +94,6 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
     }
 
     @Override
-    public void setEnabled(boolean enabled) {
-        Settings.WIFI_ENABLED = enabled;
-    }
-
-    @Override
     public void setSensingWindowDuration(int duration) {
         config.AWAKE_WINDOW_SIZE = duration;
     }
@@ -144,7 +139,8 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
         if (isSensing())
             return this;
         try {
-            if (Settings.WIFI_ENABLED) {
+            if (isEnabled()) {
+                super.startSensing();
                 logInfo(TAG, "Starting Wi-Fi Fingerprinting Service");
                 startSleepingTask();
                 addNewSensingTask();
@@ -163,7 +159,8 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
         if (!isSensing())
             return this;
         try {
-            if (Settings.WIFI_ENABLED) {
+            if (isEnabled()) {
+                super.stopSensing();
                 stopSensingTask();
                 getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
             }
@@ -180,7 +177,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
     private void sleep(){
         sleeping = true;
         try {
-            if (Settings.WIFI_ENABLED) {
+            if (isEnabled()) {
                 stopSensingTask();
                 getSensorEvent().onSensingPaused(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
             }
@@ -193,7 +190,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
     private void wake(){
         sleeping = false;
         try {
-            if (Settings.WIFI_ENABLED) {
+            if (isEnabled()) {
                 logInfo(TAG, "Resuming Wi-Fi Fingerprinting Service");
                 startSleepingTask();
                 addNewSensingTask();

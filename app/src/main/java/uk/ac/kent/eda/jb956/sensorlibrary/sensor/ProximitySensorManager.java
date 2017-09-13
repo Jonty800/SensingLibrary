@@ -61,7 +61,8 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
         if (isSensing())
             return this;
         try {
-            if (Settings.PROXIMITY_ENABLED) {
+            if (isEnabled()) {
+                super.startSensing();
                 logInfo(TAG, "Registering listener...");
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
@@ -84,7 +85,8 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
         if (!isSensing())
             return this;
         try {
-            if (Settings.PROXIMITY_ENABLED) {
+            if (isEnabled()) {
+                super.stopSensing();
                 androidSensorManager.unregisterListener(this, getSensor());
                 getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_PROXIMITY);
             }
@@ -207,11 +209,6 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
         logInfo(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
         logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        Settings.PROXIMITY_ENABLED = enabled;
     }
 }
 

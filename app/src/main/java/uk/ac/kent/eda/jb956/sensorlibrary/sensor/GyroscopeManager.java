@@ -67,7 +67,8 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         if (isSensing())
             return this;
         try {
-            if (Settings.GYRO_ENABLED) {
+            if (isEnabled()) {
+                super.startSensing();
                 getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_GYROSCOPE);
                 logInfo(TAG, "Registering listener...");
                 if (sensor != null) {
@@ -89,7 +90,8 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         if (!isSensing())
             return this;
         try {
-            if (Settings.GYRO_ENABLED) {
+            if (isEnabled()) {
+                super.stopSensing();
                 androidSensorManager.unregisterListener(this, getSensor());
                 getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_GYROSCOPE);
             }
@@ -203,10 +205,5 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         logInfo(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
         logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        Settings.GYRO_ENABLED = enabled;
     }
 }

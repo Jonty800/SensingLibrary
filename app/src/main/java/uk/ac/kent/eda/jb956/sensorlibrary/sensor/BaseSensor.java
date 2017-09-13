@@ -59,4 +59,23 @@ public class BaseSensor {
     public SensingEvent getSensorEvent() {
         return SensingEvent.getInstance();
     }
+
+    public BaseSensor startSensing(){
+        setEnabled(true);
+        return this;
+    }
+
+    BaseSensor stopSensing(){
+        setEnabled(false);
+        return this;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public boolean enabled = false;
+    void setEnabled(boolean enabled){
+        this.enabled = enabled;
+    }
 }

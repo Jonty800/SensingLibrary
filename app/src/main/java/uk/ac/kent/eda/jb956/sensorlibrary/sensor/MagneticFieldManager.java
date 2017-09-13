@@ -60,7 +60,8 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
         if (isSensing())
             return this;
         try {
-            if (Settings.MAG_ENABLED) {
+            if (isEnabled()) {
+                super.startSensing();
                 logInfo(TAG, "Registering listener...");
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
@@ -92,7 +93,8 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
         if (!isSensing())
             return this;
         try {
-            if (Settings.MAG_ENABLED) {
+            if (isEnabled()) {
+                super.stopSensing();
                 androidSensorManager.unregisterListener(this, getSensor());
                 getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD);
             }
@@ -202,10 +204,5 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
             database.execSQL("DELETE FROM " + dbName + " WHERE id IN(SELECT id FROM " + dbName + " ORDER BY id ASC LIMIT " + limit + ")");
 
         logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        Settings.MAG_ENABLED = enabled;
     }
 }
