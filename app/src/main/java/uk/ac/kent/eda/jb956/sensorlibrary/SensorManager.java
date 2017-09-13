@@ -88,13 +88,12 @@ public class SensorManager {
         Intent i = new Intent(context, SensingService.class);
         context.stopService(i);
     }
-    private SensingEvent sensingEvent = new SensingEvent();
     public void subscribeToSensorListener(SensingEvent.SensingEventListener listener){
-        sensingEvent.subscribeToSensor(listener);
+        SensingEvent.getInstance().subscribeToSensor(listener);
     }
 
     public void unsubscribeFromSensorListener(){
-        sensingEvent.unsubscribeFromSensor();
+        SensingEvent.getInstance().unsubscribeFromSensor();
     }
 
     /**
