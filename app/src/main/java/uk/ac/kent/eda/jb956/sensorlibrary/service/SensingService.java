@@ -24,6 +24,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.sensor.PressureSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ProximitySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.TemperatureSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.WifiSensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.Util;
 
 /**
@@ -124,34 +125,34 @@ public class SensingService extends Service {
         SensorConfig config = (SensorConfig) intent.getSerializableExtra("config");
         if(exec.equalsIgnoreCase("start")) {
             switch (sensorId) {
-                case Sensor.TYPE_GYROSCOPE:
+                case SensorUtils.SENSOR_TYPE_GYROSCOPE:
                     gyroscopeManager.withConfig(config).startSensing();
                     break;
-                case Sensor.TYPE_ACCELEROMETER:
+                case SensorUtils.SENSOR_TYPE_ACCELEROMETER:
                     accelerometerManager.withConfig(config).startSensing();
                     break;
-                case Sensor.TYPE_PROXIMITY:
+                case SensorUtils.SENSOR_TYPE_PROXIMITY:
                     proximityManager.withConfig(config).startSensing();
                     break;
-                case Sensor.TYPE_LIGHT:
+                case SensorUtils.SENSOR_TYPE_LIGHT:
                     lightSensorManager.withConfig(config).startSensing();
                     break;
-                case Sensor.TYPE_RELATIVE_HUMIDITY:
+                case SensorUtils.SENSOR_TYPE_HUMIDITY:
                     humiditySensorManager.withConfig(config).startSensing();
                     break;
-                case Sensor.TYPE_PRESSURE:
+                case SensorUtils.SENSOR_TYPE_PRESSURE:
                     pressureSensorManager.withConfig(config).startSensing();
                     break;
-                case Sensor.TYPE_AMBIENT_TEMPERATURE:
+                case SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE:
                     temperatureSensorManager.withConfig(config).startSensing();
                     break;
-                case Sensor.TYPE_MAGNETIC_FIELD:
+                case SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD:
                     magneticFieldManager.withConfig(config).startSensing();
                     break;
-                case Util.TYPE_WIFI:
+                case SensorUtils.SENSOR_TYPE_WIFI:
                     wifiSensorManager.withConfig(config).startSensing();
                     break;
-                case Util.TYPE_AUDIO:
+                case SensorUtils.SENSOR_TYPE_MICROPHONE:
                     audioManager.withConfig(config).startSensing();
                     break;
 
@@ -162,34 +163,34 @@ public class SensingService extends Service {
         }
         else if(exec.equalsIgnoreCase("stop")){
                 switch (sensorId) {
-                    case Sensor.TYPE_GYROSCOPE:
+                    case SensorUtils.SENSOR_TYPE_GYROSCOPE:
                         gyroscopeManager.stopSensing();
                         break;
-                    case Sensor.TYPE_ACCELEROMETER:
+                    case SensorUtils.SENSOR_TYPE_ACCELEROMETER:
                         accelerometerManager.stopSensing();
                         break;
-                    case Sensor.TYPE_PROXIMITY:
+                    case SensorUtils.SENSOR_TYPE_PROXIMITY:
                         proximityManager.stopSensing();
                         break;
-                    case Sensor.TYPE_LIGHT:
+                    case SensorUtils.SENSOR_TYPE_LIGHT:
                         lightSensorManager.stopSensing();
                         break;
-                    case Sensor.TYPE_RELATIVE_HUMIDITY:
+                    case SensorUtils.SENSOR_TYPE_HUMIDITY:
                         humiditySensorManager.stopSensing();
                         break;
-                    case Sensor.TYPE_PRESSURE:
+                    case SensorUtils.SENSOR_TYPE_PRESSURE:
                         pressureSensorManager.stopSensing();
                         break;
-                    case Sensor.TYPE_AMBIENT_TEMPERATURE:
+                    case SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE:
                         temperatureSensorManager.stopSensing();
                         break;
-                    case Sensor.TYPE_MAGNETIC_FIELD:
+                    case SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD:
                         magneticFieldManager.stopSensing();
                         break;
-                    case Util.TYPE_WIFI:
+                    case SensorUtils.SENSOR_TYPE_WIFI:
                         wifiSensorManager.stopSensing();
                         break;
-                    case Util.TYPE_AUDIO:
+                    case SensorUtils.SENSOR_TYPE_MICROPHONE:
                         audioManager.stopSensing();
                         break;
 
