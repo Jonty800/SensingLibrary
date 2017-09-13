@@ -6,14 +6,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
-import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
@@ -73,16 +70,13 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
         if (isSensing())
             return this;
         try {
-            if (isEnabled()) {
-                super.startSensing();
-                logInfo(TAG, "Registering listener...");
-                if (sensor != null) {
-                    androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
-                    sensing = true;
-                    getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_PRESSURE);
-                } else {
-                    logInfo(TAG, "Cannot calculate pressure, as pressure Sensor is not available!");
-                }
+            logInfo(TAG, "Registering listener...");
+            if (sensor != null) {
+                androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
+                sensing = true;
+                getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_PRESSURE);
+            } else {
+                logInfo(TAG, "Cannot calculate pressure, as pressure Sensor is not available!");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,11 +90,8 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
         if (!isSensing())
             return this;
         try {
-            if (isEnabled()) {
-                super.stopSensing();
-                androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_PRESSURE);
-            }
+            androidSensorManager.unregisterListener(this, getSensor());
+            getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_PRESSURE);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -110,7 +101,7 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
     }
 
     @Override
-    public PressureSensorManager withConfig(SensorConfig config){
+    public PressureSensorManager withConfig(SensorConfig config) {
         super.withConfig(config);
         return this;
     }
@@ -150,7 +141,7 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
                     sensorData.pressure = pressure;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
-                    if(canSaveToDatabase()) {
+                    if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToPressure(sensorData);
                     }
                     if (getSensorEvent() != null)

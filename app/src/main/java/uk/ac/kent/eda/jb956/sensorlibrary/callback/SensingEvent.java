@@ -10,8 +10,8 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 public class SensingEvent {
 
     public static SensingEvent getInstance() {
-        if(instance == null)
-        instance = new SensingEvent();
+        if (instance == null)
+            instance = new SensingEvent();
         return instance;
     }
 
@@ -31,10 +31,12 @@ public class SensingEvent {
         if (sensingEventListener != null)
             sensingEventListener.onDataSensed(sensorData);
     }
+
     public void onSensingStarted(int sensorType) {
         if (sensingEventListener != null)
             sensingEventListener.onSensingStarted(sensorType);
     }
+
     public void onSensingStopped(int sensorType) {
         if (sensingEventListener != null)
             sensingEventListener.onSensingStopped(sensorType);
@@ -44,6 +46,7 @@ public class SensingEvent {
         if (sensingEventListener != null)
             sensingEventListener.onSensingPaused(sensorType);
     }
+
     public void onSensingResumed(int sensorType) {
         if (sensingEventListener != null)
             sensingEventListener.onSensingResumed(sensorType);
@@ -51,9 +54,13 @@ public class SensingEvent {
 
     public interface SensingEventListener {
         void onDataSensed(SensorData sensorData);
+
         void onSensingStarted(int sensorType);
+
         void onSensingStopped(int sensorType);
+
         void onSensingPaused(int sensorType);
+
         void onSensingResumed(int sensorType);
     }
 }

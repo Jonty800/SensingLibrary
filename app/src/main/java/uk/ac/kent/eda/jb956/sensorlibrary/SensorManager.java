@@ -1,39 +1,18 @@
 package uk.ac.kent.eda.jb956.sensorlibrary;
 
-import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.v7.app.NotificationCompat;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.control.WorkerThread;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AccelerometerManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ActivitySensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AudioSensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.BaseSensor;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.GyroscopeManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.HumiditySensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.LightSensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.MagneticFieldManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.PressureSensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ProximitySensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.TemperatureSensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.WifiSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.SensingService;
 
 /**
@@ -59,7 +38,7 @@ public class SensorManager {
         mSensorThread = new HandlerThread("Sensor thread", Thread.MAX_PRIORITY);
         mSensorThread.start();
         mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
-        workerThread =  WorkerThread.create();
+        workerThread = WorkerThread.create();
     }
 
     public static synchronized SensorManager getInstance(Context c) {
@@ -68,7 +47,7 @@ public class SensorManager {
         return instance;
     }
 
-    public void startSensor(int sensorId, SensorConfig config){
+    public void startSensor(int sensorId, SensorConfig config) {
         Intent i = new Intent(context, SensingService.class);
         i.putExtra("type", sensorId);
         i.putExtra("exec", "start");
@@ -76,7 +55,7 @@ public class SensorManager {
         context.startService(i);
     }
 
-    public void stopSensor(int sensorId){
+    public void stopSensor(int sensorId) {
         Intent i = new Intent(context, SensingService.class);
         i.putExtra("type", sensorId);
         i.putExtra("exec", "stop");
@@ -84,15 +63,16 @@ public class SensorManager {
         context.startService(i);
     }
 
-    public void stopSensingService(){
+    public void stopSensingService() {
         Intent i = new Intent(context, SensingService.class);
         context.stopService(i);
     }
-    public void subscribeToSensorListener(SensingEvent.SensingEventListener listener){
+
+    public void subscribeToSensorListener(SensingEvent.SensingEventListener listener) {
         SensingEvent.getInstance().subscribeToSensor(listener);
     }
 
-    public void unsubscribeFromSensorListener(){
+    public void unsubscribeFromSensorListener() {
         SensingEvent.getInstance().unsubscribeFromSensor();
     }
 
@@ -136,6 +116,7 @@ public class SensorManager {
     public WorkerThread getWorkerThread() {
         return workerThread;
     }
+
     private WorkerThread workerThread;
 
     private HandlerThread mSensorThread;

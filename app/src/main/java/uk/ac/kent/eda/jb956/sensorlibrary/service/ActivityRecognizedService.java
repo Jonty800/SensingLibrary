@@ -12,7 +12,6 @@ import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ActivityData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ActivitySensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.BaseSensor;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
@@ -97,7 +96,7 @@ public class ActivityRecognizedService extends IntentService {
             sensorData.activityCode = best.getType();
             sensorData.confidence = best.getConfidence();
             sensorData.timestamp = System.currentTimeMillis();
-            if(ActivitySensorManager.getInstance(this).canSaveToDatabase()) {
+            if (ActivitySensorManager.getInstance(this).canSaveToDatabase()) {
                 MySQLiteHelper.getInstance(this).addToActivity(sensorData);
             }
             SensingEvent.getInstance().onDataSensed(sensorData);

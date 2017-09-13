@@ -6,14 +6,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
-import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.TemperatureSensorData;
@@ -62,17 +59,15 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
         if (isSensing())
             return this;
         try {
-            if (isEnabled()) {
-                super.startSensing();
-                logInfo(TAG, "Registering listener...");
-                if (sensor != null) {
-                    androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
-                    sensing = true;
-                    getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
-                } else {
-                    logInfo(TAG, "Cannot calculate Ambient Temperature, as Ambient Temperature sensor is not available!");
-                }
+            logInfo(TAG, "Registering listener...");
+            if (sensor != null) {
+                androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
+                sensing = true;
+                getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
+            } else {
+                logInfo(TAG, "Cannot calculate Ambient Temperature, as Ambient Temperature sensor is not available!");
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,11 +80,8 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
         if (!isSensing())
             return this;
         try {
-            if (isEnabled()) {
-                super.stopSensing();
-                androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
-            }
+            androidSensorManager.unregisterListener(this, getSensor());
+            getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -109,7 +101,7 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
     private SensorData lastEntry = null;
 
     @Override
-    public TemperatureSensorManager withConfig(SensorConfig config){
+    public TemperatureSensorManager withConfig(SensorConfig config) {
         super.withConfig(config);
         return this;
     }
@@ -129,7 +121,7 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
                     sensorData.degreesC = degreesC;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
-                    if(canSaveToDatabase()) {
+                    if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToTemperature(sensorData);
                     }
                     if (getSensorEvent() != null)

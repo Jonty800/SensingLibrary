@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
-import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
@@ -67,7 +66,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
     private SensingEvent sensorEvent = null;
 
     @Override
-    public ActivitySensorManager withConfig(SensorConfig config){
+    public ActivitySensorManager withConfig(SensorConfig config) {
         super.withConfig(config);
         return this;
     }
@@ -132,20 +131,17 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
     @Override
     public ActivitySensorManager startSensing() {
         if (isSensing())
-             return this;
+            return this;
         try {
-            if (isEnabled()) {
-                super.startSensing();
-                getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_ACTIVITY);
-                mApiClient = new GoogleApiClient.Builder(context)
-                        .addApi(ActivityRecognition.API)
-                        .addConnectionCallbacks(this)
-                        .addOnConnectionFailedListener(this)
-                        .build();
+            getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_ACTIVITY);
+            mApiClient = new GoogleApiClient.Builder(context)
+                    .addApi(ActivityRecognition.API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
 
-                mApiClient.connect();
-                //sensing = true;
-            }
+            mApiClient.connect();
+            //sensing = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -159,11 +155,9 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
             return this;
 
         try {
-            if (isEnabled()) {
-                super.stopSensing();
-                mApiClient.disconnect();
-                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_ACTIVITY);
-            }
+            mApiClient.disconnect();
+            getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_ACTIVITY);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,15 +1,12 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
 
 import android.content.Context;
-import android.util.Log;
 
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
 import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
-import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.AudioSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
@@ -44,15 +41,12 @@ public class AudioSensorManager extends BaseSensor {
     public AudioSensorManager startSensing() {
         if (isSensing())
             return this;
-        if (isEnabled()) {
-            super.startSensing();
-            startSleepingTask();
-            addNewSensingTask();
-            sensing = true;
-            getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_MICROPHONE);
-        }else{
-            logInfo(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
-        }
+        super.startSensing();
+        startSleepingTask();
+        addNewSensingTask();
+        sensing = true;
+        getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_MICROPHONE);
+        logInfo(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         return this;
     }
 
@@ -66,7 +60,7 @@ public class AudioSensorManager extends BaseSensor {
 
     private AudioProcessor audioProcessor = new AudioProcessor() {
         @Override
-        public boolean process ( final AudioEvent audioEvent){
+        public boolean process(final AudioEvent audioEvent) {
             AudioSensorData sensorData = new AudioSensorData(SensorUtils.SENSOR_TYPE_MICROPHONE);
             sensorData.timestamp = System.currentTimeMillis();
             sensorData.buffer = audioEvent.getFloatBuffer();
@@ -78,13 +72,14 @@ public class AudioSensorManager extends BaseSensor {
         }
 
         @Override
-        public void processingFinished () {
+        public void processingFinished() {
         }
     };
 
     private boolean sleepingTaskStarted = false;
-    private void startSleepingTask(){
-        if(sleepingTaskStarted)
+
+    private void startSleepingTask() {
+        if (sleepingTaskStarted)
             return;
         SensorManager.getInstance(context).getWorkerThread().postDelayedTask(sleepTask, getAwakeWindowSize());
         sleepingTaskStarted = true;
@@ -122,7 +117,7 @@ public class AudioSensorManager extends BaseSensor {
         return this;
     }
 
-    private void sleep(){
+    private void sleep() {
         sleeping = true;
         logInfo(TAG, "Pausing Audio Sensing");
         stopSensingTask();
@@ -130,25 +125,23 @@ public class AudioSensorManager extends BaseSensor {
 
     }
 
-    private void wake(){
+    private void wake() {
         sleeping = false;
-        if (isEnabled()) {
-            startSleepingTask();
-            addNewSensingTask();
-            getSensorEvent().onSensingResumed(SensorUtils.SENSOR_TYPE_MICROPHONE);
-        }
+        startSleepingTask();
+        addNewSensingTask();
+        getSensorEvent().onSensingResumed(SensorUtils.SENSOR_TYPE_MICROPHONE);
     }
 
-    private void stopSensingTask(){
-        if(currentTask!=null) {
+    private void stopSensingTask() {
+        if (currentTask != null) {
             SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(currentTask);
-            if(!dispatcher.isStopped())
+            if (!dispatcher.isStopped())
                 dispatcher.stop(); //should happen in stopSensing()
         }
     }
 
     @Override
-    public AudioSensorManager withConfig(SensorConfig config){
+    public AudioSensorManager withConfig(SensorConfig config) {
         super.withConfig(config);
         return this;
     }

@@ -6,14 +6,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
-import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
@@ -44,6 +41,7 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
     }
+
     private final Sensor sensor;
 
     @Override
@@ -57,7 +55,7 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
     }
 
     @Override
-    public GyroscopeManager withConfig(SensorConfig config){
+    public GyroscopeManager withConfig(SensorConfig config) {
         super.withConfig(config);
         return this;
     }
@@ -67,16 +65,13 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         if (isSensing())
             return this;
         try {
-            if (isEnabled()) {
-                super.startSensing();
-                getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_GYROSCOPE);
-                logInfo(TAG, "Registering listener...");
-                if (sensor != null) {
-                    androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
-                    sensing = true;
-                } else {
-                    logInfo(TAG, "Cannot calculate Gyroscope data, as gyroscope sensor is not available!");
-                }
+            getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_GYROSCOPE);
+            logInfo(TAG, "Registering listener...");
+            if (sensor != null) {
+                androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
+                sensing = true;
+            } else {
+                logInfo(TAG, "Cannot calculate Gyroscope data, as gyroscope sensor is not available!");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,11 +85,8 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         if (!isSensing())
             return this;
         try {
-            if (isEnabled()) {
-                super.stopSensing();
-                androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_GYROSCOPE);
-            }
+            androidSensorManager.unregisterListener(this, getSensor());
+            getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_GYROSCOPE);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -132,7 +124,7 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
                     sensorData.Z = z;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
-                    if(canSaveToDatabase()) {
+                    if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToGyro(sensorData);
                     }
                     if (getSensorEvent() != null)

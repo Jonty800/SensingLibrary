@@ -8,13 +8,10 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
-import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.LightSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
@@ -64,16 +61,13 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         if (isSensing())
             return this;
         try {
-            if (isEnabled()) {
-                super.startSensing();
-                logInfo(TAG, "Registering listener...");
-                if (sensor != null) {
-                    androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
-                    sensing = true;
-                    getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_LIGHT);
-                } else {
-                    logInfo(TAG, "Cannot calculate Lux, as Light sensor is not available!");
-                }
+            logInfo(TAG, "Registering listener...");
+            if (sensor != null) {
+                androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
+                sensing = true;
+                getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_LIGHT);
+            } else {
+                logInfo(TAG, "Cannot calculate Lux, as Light sensor is not available!");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,11 +92,8 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         if (!isSensing())
             return this;
         try {
-            if (isEnabled()) {
-                super.stopSensing();
-                androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_LIGHT);
-            }
+            androidSensorManager.unregisterListener(this, getSensor());
+            getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_LIGHT);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -142,7 +133,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
                     history.add(sensorData);
-                    if(canSaveToDatabase()) {
+                    if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToLight(sensorData);
                     }
                     // Log.i(TAG, "Lx: " + lx);
@@ -160,7 +151,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
     }
 
     @Override
-    public LightSensorManager withConfig(SensorConfig config){
+    public LightSensorManager withConfig(SensorConfig config) {
         super.withConfig(config);
         return this;
     }
@@ -196,7 +187,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                     // temp.add(pd.illuminance);
                     // }
                     inPocketDetectionHelper.lightValues = new ArrayList<>(temp);
-                    if(canSaveToDatabase()) {
+                    if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToPocket(inPocketDetectionHelper.getDetectionResult(), System.currentTimeMillis());
                     }
                     logInfo(TAG, "PocketDetectionResult: " + inPocketDetectionHelper.getDetectionResult().toString());

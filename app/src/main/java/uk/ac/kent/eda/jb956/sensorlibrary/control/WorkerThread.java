@@ -7,8 +7,6 @@ package uk.ac.kent.eda.jb956.sensorlibrary.control;
 
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Looper;
-import android.util.Log;
 
 /**
  * Created by ce208 on 06/04/2017.
@@ -23,6 +21,7 @@ public class WorkerThread extends HandlerThread {
     private WorkerThread() {
         super("WorkerThread");
     }
+
     static private final String _TAG = "WorkerThread";
 
 

@@ -13,16 +13,18 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 public class BaseSensor {
 
     SensorConfig config = new SensorConfig(); //load default
-    public BaseSensor withConfig(SensorConfig config){ //replace default
+
+    public BaseSensor withConfig(SensorConfig config) { //replace default
         this.config = config;
         return this;
     }
-    public BaseSensor withDefaultConfig(){ //load default
+
+    public BaseSensor withDefaultConfig() { //load default
         this.config = new SensorConfig();
         return this;
     }
 
-    public int getSamplingRateMicroseconds(){
+    public int getSamplingRateMicroseconds() {
         return config.SAMPLING_RATE * 1000;
     }
 
@@ -34,15 +36,15 @@ public class BaseSensor {
         return config.SAMPLING_RATE;
     }
 
-    public int getAwakeWindowSize(){
+    public int getAwakeWindowSize() {
         return config.AWAKE_WINDOW_SIZE;
     }
 
-    public int getSleepWindowSize(){
+    public int getSleepWindowSize() {
         return config.SLEEP_WINDOW_SIZE;
     }
 
-    public boolean canSaveToDatabase(){
+    public boolean canSaveToDatabase() {
         return config.saveToDatabase;
     }
 
@@ -50,8 +52,8 @@ public class BaseSensor {
         config.saveToDatabase = save;
     }
 
-    public void logInfo(String TAG, String text){
-        if(config.logToConsole) {
+    public void logInfo(String TAG, String text) {
+        if (config.logToConsole) {
             Log.i(TAG, text);
         }
     }
@@ -60,22 +62,11 @@ public class BaseSensor {
         return SensingEvent.getInstance();
     }
 
-    public BaseSensor startSensing(){
-        setEnabled(true);
+    public BaseSensor startSensing() {
         return this;
     }
 
-    BaseSensor stopSensing(){
-        setEnabled(false);
+    BaseSensor stopSensing() {
         return this;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public boolean enabled = false;
-    void setEnabled(boolean enabled){
-        this.enabled = enabled;
     }
 }

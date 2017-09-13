@@ -6,14 +6,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
-import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
@@ -62,16 +59,13 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
         if (isSensing())
             return this;
         try {
-            if (isEnabled()) {
-                super.startSensing();
-                logInfo(TAG, "Registering listener...");
-                if (sensor != null) {
-                    androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
-                    sensing = true;
-                    getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_HUMIDITY);
-                } else {
-                    logInfo(TAG, "Cannot calculate Humidity, as humidity sensor is not available!");
-                }
+            logInfo(TAG, "Registering listener...");
+            if (sensor != null) {
+                androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
+                sensing = true;
+                getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_HUMIDITY);
+            } else {
+                logInfo(TAG, "Cannot calculate Humidity, as humidity sensor is not available!");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,11 +79,8 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
         if (!isSensing())
             return this;
         try {
-            if (isEnabled()) {
-                super.stopSensing();
-                androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_HUMIDITY);
-            }
+            androidSensorManager.unregisterListener(this, getSensor());
+            getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_HUMIDITY);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -99,7 +90,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
     }
 
     @Override
-    public HumiditySensorManager withConfig(SensorConfig config){
+    public HumiditySensorManager withConfig(SensorConfig config) {
         super.withConfig(config);
         return this;
     }
@@ -129,7 +120,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
                     sensorData.pressure = millibars_of_pressure;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
-                    if(canSaveToDatabase()) {
+                    if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToHumidity(sensorData);
                     }
                     if (getSensorEvent() != null)

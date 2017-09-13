@@ -7,7 +7,7 @@ import java.io.Serializable;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class SensorConfig implements Serializable{
+public class SensorConfig implements Serializable {
 
     public int SAMPLING_RATE = 100; //ms
     public int SLEEP_WINDOW_SIZE = 20000; //ms
@@ -17,7 +17,7 @@ public class SensorConfig implements Serializable{
 
     public AudioConfig audioConfig = new AudioConfig();
 
-    public class AudioConfig implements Serializable{
+    public class AudioConfig implements Serializable {
         public int BUFFER_SIZE = 2000;
         public int RECORDER_SAMPLERATE = 16000;
     }

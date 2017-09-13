@@ -4,7 +4,6 @@ import android.hardware.Sensor;
 
 import java.util.List;
 
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 
 /**

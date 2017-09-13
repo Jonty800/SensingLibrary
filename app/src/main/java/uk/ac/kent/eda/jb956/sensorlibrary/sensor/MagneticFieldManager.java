@@ -6,14 +6,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
-import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
@@ -43,6 +40,7 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
+
     private final Sensor sensor;
 
     @Override
@@ -60,16 +58,13 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
         if (isSensing())
             return this;
         try {
-            if (isEnabled()) {
-                super.startSensing();
-                logInfo(TAG, "Registering listener...");
-                if (sensor != null) {
-                    androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
-                    sensing = true;
-                    getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD);
-                } else {
-                    logInfo(TAG, "Cannot calculate Magnetic Field data, as Magnetic Field sensor is not available!");
-                }
+            logInfo(TAG, "Registering listener...");
+            if (sensor != null) {
+                androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
+                sensing = true;
+                getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD);
+            } else {
+                logInfo(TAG, "Cannot calculate Magnetic Field data, as Magnetic Field sensor is not available!");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,11 +88,8 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
         if (!isSensing())
             return this;
         try {
-            if (isEnabled()) {
-                super.stopSensing();
-                androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD);
-            }
+            androidSensorManager.unregisterListener(this, getSensor());
+            getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -117,7 +109,7 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
     private SensorData lastEntry = null;
 
     @Override
-    public MagneticFieldManager withConfig(SensorConfig config){
+    public MagneticFieldManager withConfig(SensorConfig config) {
         super.withConfig(config);
         return this;
     }
@@ -141,7 +133,7 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
                     sensorData.Z = z;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
-                    if(canSaveToDatabase()) {
+                    if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToMag(sensorData);
                     }
                     if (getSensorEvent() != null)

@@ -7,13 +7,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
-import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ProximitySensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
@@ -61,17 +58,13 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
         if (isSensing())
             return this;
         try {
-            if (isEnabled()) {
-                super.startSensing();
-                logInfo(TAG, "Registering listener...");
-                if (sensor != null) {
-                    androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
-                    sensing = true;
-                    getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_PROXIMITY);
-                } else {
-                    logInfo(TAG, "Cannot calculate Proximity, as Proximity sensor is not available!");
-                }
-
+            logInfo(TAG, "Registering listener...");
+            if (sensor != null) {
+                androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
+                sensing = true;
+                getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_PROXIMITY);
+            } else {
+                logInfo(TAG, "Cannot calculate Proximity, as Proximity sensor is not available!");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,11 +78,8 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
         if (!isSensing())
             return this;
         try {
-            if (isEnabled()) {
-                super.stopSensing();
-                androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_PROXIMITY);
-            }
+            androidSensorManager.unregisterListener(this, getSensor());
+            getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_PROXIMITY);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -134,7 +124,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
                     sensorData.proximity = proximity;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
-                    if(canSaveToDatabase()) {
+                    if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToProximity(sensorData);
                     }
                     history.add(sensorData);
@@ -154,7 +144,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
     }
 
     @Override
-    public ProximitySensorManager withConfig(SensorConfig config){
+    public ProximitySensorManager withConfig(SensorConfig config) {
         super.withConfig(config);
         return this;
     }

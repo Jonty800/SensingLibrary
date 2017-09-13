@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 
 /**
@@ -33,7 +32,7 @@ public class BootReceiver extends BroadcastReceiver {
             if (ok) {
                 //TODO update this code and uncomment
                 //SensorManager.getInstance(context).startSensingService();
-            }else{
+            } else {
                 Log.i(TAG, "Failed to start sensors: Permissions are missing!");
             }
         }

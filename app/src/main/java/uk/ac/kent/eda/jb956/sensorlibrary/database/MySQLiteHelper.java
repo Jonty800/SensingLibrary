@@ -794,126 +794,126 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void addToAcc(XYZSensorData data) {
-            try {
-                SQLiteDatabase db = this.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put("x", data.X);
-                values.put("y", data.Y);
-                values.put("z", data.Z);
-                // values.put("user_id", NetworkCache.getInstance().user_id);
-                values.put("timestamp", data.timestamp);
-                db.insert("acc", null, values);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("x", data.X);
+            values.put("y", data.Y);
+            values.put("z", data.Z);
+            // values.put("user_id", NetworkCache.getInstance().user_id);
+            values.put("timestamp", data.timestamp);
+            db.insert("acc", null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // db.close();
     }
 
     public void addToMag(XYZSensorData data) {
-            try {
-                SQLiteDatabase db = this.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put("x", data.X);
-                values.put("y", data.Y);
-                values.put("z", data.Z);
-                // values.put("user_id", NetworkCache.getInstance().user_id);
-                values.put("timestamp", data.timestamp);
-                db.insert("mag", null, values);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("x", data.X);
+            values.put("y", data.Y);
+            values.put("z", data.Z);
+            // values.put("user_id", NetworkCache.getInstance().user_id);
+            values.put("timestamp", data.timestamp);
+            db.insert("mag", null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // db.close();
     }
 
     public void addToLight(LightSensorData data) {
 
-            try {
-                SQLiteDatabase db = this.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put("illuminance", data.illuminance);
-                values.put("timestamp", data.timestamp);
-                db.insert("light", null, values);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            // db.close();
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("illuminance", data.illuminance);
+            values.put("timestamp", data.timestamp);
+            db.insert("light", null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // db.close();
     }
 
     public void addToPocket(InPocketContext context, long ts) {
-            try {
-                SQLiteDatabase db = this.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put("context", context.getId());
-                values.put("timestamp", ts);
-                db.insert("pocket", null, values);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            // db.close();
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("context", context.getId());
+            values.put("timestamp", ts);
+            db.insert("pocket", null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // db.close();
     }
 
     public void addToPositions(PositionsData data) {
 
-            try {
-                SQLiteDatabase db = this.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put("x", data.X);
-                values.put("y", data.Y);
-                values.put("timestamp", data.timestamp);
-                db.insert("positions", null, values);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("x", data.X);
+            values.put("y", data.Y);
+            values.put("timestamp", data.timestamp);
+            db.insert("positions", null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void addToHumidity(PressureSensorData data) {
-            try {
-                SQLiteDatabase db = this.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put("millibars_of_pressure", data.pressure);
-                values.put("timestamp", data.timestamp);
-                db.insert("humidity", null, values);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("millibars_of_pressure", data.pressure);
+            values.put("timestamp", data.timestamp);
+            db.insert("humidity", null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void addToPressure(PressureSensorData data) {
-            try {
-                SQLiteDatabase db = this.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put("pressure", data.pressure);
-                values.put("timestamp", data.timestamp);
-                db.insert("pressure", null, values);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("pressure", data.pressure);
+            values.put("timestamp", data.timestamp);
+            db.insert("pressure", null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
     public void addToActivity(ActivityData data) {
-            try {
-                SQLiteDatabase db = this.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put("activityCode", data.activityCode);
-                values.put("confidence", data.confidence);
-                values.put("timestamp", data.timestamp);
-                db.insert("act", null, values);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("activityCode", data.activityCode);
+            values.put("confidence", data.confidence);
+            values.put("timestamp", data.timestamp);
+            db.insert("act", null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void addToProximity(ProximitySensorData data) {
-            try {
-                SQLiteDatabase db = this.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put("proximity", data.proximity);
-                values.put("timestamp", data.timestamp);
-                db.insert("proximity", null, values);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("proximity", data.proximity);
+            values.put("timestamp", data.timestamp);
+            db.insert("proximity", null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void refreshFiles(File file) {
@@ -923,43 +923,43 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void addToWifi(WifiData data) {
-            try {
-                SQLiteDatabase db = this.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put("bssid", data.bssid);
-                values.put("rssi", data.rssi);
-                values.put("timestamp", data.timestamp);
-                values.put("distanceEstimate", data.distanceEstimate);
-                db.insert("wifi", null, values);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("bssid", data.bssid);
+            values.put("rssi", data.rssi);
+            values.put("timestamp", data.timestamp);
+            values.put("distanceEstimate", data.distanceEstimate);
+            db.insert("wifi", null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void addToGyro(XYZSensorData data) {
-            try {
-                SQLiteDatabase db = this.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put("x", data.X);
-                values.put("y", data.Y);
-                values.put("z", data.Z);
-                values.put("timestamp", data.timestamp);
-                db.insert("gyro", null, values);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("x", data.X);
+            values.put("y", data.Y);
+            values.put("z", data.Z);
+            values.put("timestamp", data.timestamp);
+            db.insert("gyro", null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void addToTemperature(TemperatureSensorData data) {
-            try {
-                SQLiteDatabase db = this.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put("degrees", data.degreesC);
-                values.put("timestamp", data.timestamp);
-                db.insert("temperature", null, values);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("degrees", data.degreesC);
+            values.put("timestamp", data.timestamp);
+            db.insert("temperature", null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public long getSize() {
