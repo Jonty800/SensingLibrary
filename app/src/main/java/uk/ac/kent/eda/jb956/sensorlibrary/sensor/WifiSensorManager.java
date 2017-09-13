@@ -158,7 +158,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
                 startSleepingTask();
                 addNewSensingTask();
                 sensing = true;
-                getSensorEventListener().onSensingStarted();
+                getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -174,7 +174,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
         try {
             if (Settings.WIFI_ENABLED) {
                 stopSensingTask();
-                getSensorEventListener().onSensingStopped();
+                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -191,7 +191,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
         try {
             if (Settings.WIFI_ENABLED) {
                 stopSensingTask();
-                getSensorEventListener().onSensingPaused();
+                getSensorEventListener().onSensingPaused(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -206,7 +206,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
                 logInfo(TAG, "Resuming Wi-Fi Fingerprinting Service");
                 startSleepingTask();
                 addNewSensingTask();
-                getSensorEventListener().onSensingResumed();
+                getSensorEventListener().onSensingResumed(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
             }
         } catch (Exception e) {
             e.printStackTrace();

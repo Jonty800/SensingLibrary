@@ -78,7 +78,7 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
-                    getSensorEventListener().onSensingStarted();
+                    getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_PRESSURE);
                 } else {
                     logInfo(TAG, "Cannot calculate pressure, as pressure Sensor is not available!");
                 }
@@ -97,7 +97,7 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
         try {
             if (Settings.PRESSURE_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEventListener().onSensingStopped();
+                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_PRESSURE);
             }
         } catch (Exception e) {
             e.printStackTrace();

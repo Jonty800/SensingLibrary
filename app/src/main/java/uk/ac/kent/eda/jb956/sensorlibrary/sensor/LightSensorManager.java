@@ -78,7 +78,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
                     sensing = true;
-                    getSensorEventListener().onSensingStarted();
+                    getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_LIGHT);
                 } else {
                     logInfo(TAG, "Cannot calculate Lux, as Light sensor is not available!");
                 }
@@ -108,7 +108,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         try {
             if (Settings.ACC_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEventListener().onSensingStopped();
+                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_LIGHT);
             }
         } catch (Exception e) {
             e.printStackTrace();

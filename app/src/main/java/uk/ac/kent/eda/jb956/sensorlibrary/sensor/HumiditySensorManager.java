@@ -76,7 +76,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
-                    getSensorEventListener().onSensingStarted();
+                    getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_HUMIDITY);
                 } else {
                     logInfo(TAG, "Cannot calculate Humidity, as humidity sensor is not available!");
                 }
@@ -95,7 +95,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
         try {
             if (Settings.HUMIDITY_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEventListener().onSensingStopped();
+                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_HUMIDITY);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -76,7 +76,7 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
-                    getSensorEventListener().onSensingStarted();
+                    getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
                 } else {
                     logInfo(TAG, "Cannot calculate Ambient Temperature, as Ambient Temperature sensor is not available!");
                 }
@@ -95,7 +95,7 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
         try {
             if (Settings.TEMP_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEventListener().onSensingStopped();
+                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
             }
         } catch (Exception e) {
             e.printStackTrace();

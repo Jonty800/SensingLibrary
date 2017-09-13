@@ -125,7 +125,7 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
             return this;
         try {
             if (Settings.ACC_ENABLED) {
-                getSensorEventListener().onSensingStarted();
+                getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_ACCELEROMETER);
                 logInfo(TAG, "Registering listener...");
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
@@ -148,7 +148,7 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
         try {
             if (Settings.ACC_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEventListener().onSensingStopped();
+                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_ACCELEROMETER);
             }
         } catch (Exception e) {
             e.printStackTrace();

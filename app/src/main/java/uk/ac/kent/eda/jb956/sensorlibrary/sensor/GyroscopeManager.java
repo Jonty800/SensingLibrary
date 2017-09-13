@@ -78,7 +78,7 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
             return this;
         try {
             if (Settings.GYRO_ENABLED) {
-                getSensorEventListener().onSensingStarted();
+                getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_GYROSCOPE);
                 logInfo(TAG, "Registering listener...");
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
@@ -101,7 +101,7 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         try {
             if (Settings.GYRO_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEventListener().onSensingStopped();
+                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_GYROSCOPE);
             }
         } catch (Exception e) {
             e.printStackTrace();

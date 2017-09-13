@@ -45,7 +45,7 @@ public class BaseSensor {
         return config.saveToDatabase;
     }
 
-    public void setSavetoDatabase(boolean save) {
+    public void setSaveToDatabase(boolean save) {
         config.saveToDatabase = save;
     }
 

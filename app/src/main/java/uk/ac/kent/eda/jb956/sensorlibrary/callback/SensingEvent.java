@@ -22,29 +22,29 @@ public class SensingEvent {
         if (sensingEventListener != null)
             sensingEventListener.onDataSensed(sensorData);
     }
-    public void onSensingStarted() {
+    public void onSensingStarted(int sensorType) {
         if (sensingEventListener != null)
-            sensingEventListener.onSensingStarted();
+            sensingEventListener.onSensingStarted(sensorType);
     }
-    public void onSensingStopped() {
+    public void onSensingStopped(int sensorType) {
         if (sensingEventListener != null)
-            sensingEventListener.onSensingStopped();
+            sensingEventListener.onSensingStopped(sensorType);
     }
 
-    public void onSensingPaused() {
+    public void onSensingPaused(int sensorType) {
         if (sensingEventListener != null)
-            sensingEventListener.onSensingPaused();
+            sensingEventListener.onSensingPaused(sensorType);
     }
-    public void onSensingResumed() {
+    public void onSensingResumed(int sensorType) {
         if (sensingEventListener != null)
-            sensingEventListener.onSensingResumed();
+            sensingEventListener.onSensingResumed(sensorType);
     }
 
     public interface SensingEventListener {
         void onDataSensed(SensorData sensorData);
-        void onSensingStarted();
-        void onSensingStopped();
-        void onSensingPaused();
-        void onSensingResumed();
+        void onSensingStarted(int sensorType);
+        void onSensingStopped(int sensorType);
+        void onSensingPaused(int sensorType);
+        void onSensingResumed(int sensorType);
     }
 }

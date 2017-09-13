@@ -75,7 +75,7 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
                 if (sensor != null) {
                     androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                     sensing = true;
-                    getSensorEventListener().onSensingStarted();
+                    getSensorEventListener().onSensingStarted(SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD);
                 } else {
                     logInfo(TAG, "Cannot calculate Magnetic Field data, as Magnetic Field sensor is not available!");
                 }
@@ -104,7 +104,7 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
         try {
             if (Settings.MAG_ENABLED) {
                 androidSensorManager.unregisterListener(this, getSensor());
-                getSensorEventListener().onSensingStopped();
+                getSensorEventListener().onSensingStopped(SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD);
             }
         } catch (Exception e) {
             e.printStackTrace();
