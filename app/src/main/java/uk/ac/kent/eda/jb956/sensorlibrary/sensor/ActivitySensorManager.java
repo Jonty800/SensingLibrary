@@ -25,6 +25,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.ActivityRecognizedService;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -84,7 +85,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
         Cursor cur = MySQLiteHelper.getInstance(context).getReadableDatabase().rawQuery("SELECT * FROM act where timestamp >=" + start + " and timestamp <=" + end, null);
         while (cur.moveToNext()) {
             //Which column you want to export
-            WifiData sensorData = new WifiData();
+            WifiData sensorData = new WifiData(SensorUtils.SENSOR_TYPE_ACTIVITY);
             sensorData.timestamp = Long.parseLong(cur.getString(3));
             sensorData.bssid = cur.getString(1);
             sensorData.rssi = Double.parseDouble(cur.getString(2));

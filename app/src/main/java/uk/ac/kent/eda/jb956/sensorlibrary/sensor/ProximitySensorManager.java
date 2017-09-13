@@ -18,6 +18,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.ProximitySensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -136,7 +137,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
                 if ((curTime - lastUpdate) > getSamplingRate()) {
                     lastUpdate = curTime;
                     float proximity = event.values[0]; //cm
-                    ProximitySensorData sensorData = new ProximitySensorData();
+                    ProximitySensorData sensorData = new ProximitySensorData(SensorUtils.SENSOR_TYPE_PROXIMITY);
                     sensorData.proximity = proximity;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
@@ -171,7 +172,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
         Cursor cur = MySQLiteHelper.getInstance(context).getReadableDatabase().rawQuery("SELECT * FROM proximity where timestamp >=" + start + " and timestamp <=" + end, null);
         while (cur.moveToNext()) {
             //Which column you want to export
-            ProximitySensorData sensorData = new ProximitySensorData();
+            ProximitySensorData sensorData = new ProximitySensorData(SensorUtils.SENSOR_TYPE_PROXIMITY);
             sensorData.timestamp = Long.parseLong(cur.getString(1));
             sensorData.proximity = Float.parseFloat(cur.getString(2));
             temp.add(sensorData);

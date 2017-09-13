@@ -9,4 +9,8 @@ public class AudioSensorData extends SensorData {
     public float[] buffer;
     public byte[] byte_buffer;
     public int bufferSize;
+
+    public AudioSensorData(int sensorType) {
+        super(sensorType);
+    }
 }

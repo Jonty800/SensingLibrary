@@ -6,4 +6,8 @@ package uk.ac.kent.eda.jb956.sensorlibrary.data;
  */
 public class ProximitySensorData extends SensorData {
     public double proximity;
+
+    public ProximitySensorData(int sensorType) {
+        super(sensorType);
+    }
 }

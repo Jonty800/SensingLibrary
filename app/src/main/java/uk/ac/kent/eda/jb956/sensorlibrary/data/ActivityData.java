@@ -7,4 +7,8 @@ package uk.ac.kent.eda.jb956.sensorlibrary.data;
 public class ActivityData extends SensorData {
     public int activityCode;
     public double confidence;
+
+    public ActivityData(int sensorType) {
+        super(sensorType);
+    }
 }

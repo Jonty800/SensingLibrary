@@ -6,4 +6,8 @@ package uk.ac.kent.eda.jb956.sensorlibrary.data;
  */
 public class PressureSensorData extends SensorData {
     public float pressure;
+
+    public PressureSensorData(int sensorType) {
+        super(sensorType);
+    }
 }

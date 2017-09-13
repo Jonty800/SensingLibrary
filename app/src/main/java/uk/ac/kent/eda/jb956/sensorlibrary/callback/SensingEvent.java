@@ -8,39 +8,39 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
  */
 
 public class SensingEvent {
-    private OnEventListener mOnEventListener;
+    private SensingEventListener sensingEventListener;
 
-    public synchronized void subscribeToSensor(OnEventListener listener) {
-        mOnEventListener = listener;
+    public synchronized void subscribeToSensor(SensingEventListener listener) {
+        sensingEventListener = listener;
     }
 
     public synchronized void unsubscribeFromSensor() {
-        mOnEventListener = null;
+        sensingEventListener = null;
     }
 
     public void onDataSensed(SensorData sensorData) {
-        if (mOnEventListener != null)
-            mOnEventListener.onDataSensed(sensorData);
+        if (sensingEventListener != null)
+            sensingEventListener.onDataSensed(sensorData);
     }
     public void onSensingStarted() {
-        if (mOnEventListener != null)
-            mOnEventListener.onSensingStarted();
+        if (sensingEventListener != null)
+            sensingEventListener.onSensingStarted();
     }
     public void onSensingStopped() {
-        if (mOnEventListener != null)
-            mOnEventListener.onSensingStopped();
+        if (sensingEventListener != null)
+            sensingEventListener.onSensingStopped();
     }
 
     public void onSensingPaused() {
-        if (mOnEventListener != null)
-            mOnEventListener.onSensingPaused();
+        if (sensingEventListener != null)
+            sensingEventListener.onSensingPaused();
     }
     public void onSensingResumed() {
-        if (mOnEventListener != null)
-            mOnEventListener.onSensingResumed();
+        if (sensingEventListener != null)
+            sensingEventListener.onSensingResumed();
     }
 
-    public interface OnEventListener {
+    public interface SensingEventListener {
         void onDataSensed(SensorData sensorData);
         void onSensingStarted();
         void onSensingStopped();

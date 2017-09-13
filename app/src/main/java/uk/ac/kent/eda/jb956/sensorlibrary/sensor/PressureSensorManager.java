@@ -18,6 +18,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -143,7 +144,7 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
                 if ((curTime - lastUpdate) > SAMPLING_RATE) {
                     lastUpdate = curTime;
                     float pressure = event.values[0];
-                    PressureSensorData sensorData = new PressureSensorData();
+                    PressureSensorData sensorData = new PressureSensorData(SensorUtils.SENSOR_TYPE_PRESSURE);
                     sensorData.pressure = pressure;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
@@ -168,7 +169,7 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
         Cursor cur = MySQLiteHelper.getInstance(context).getReadableDatabase().rawQuery("SELECT * FROM pressure where timestamp >=" + start + " and timestamp <=" + end, null);
         while (cur.moveToNext()) {
             //Which column you want to export
-            PressureSensorData sensorData = new PressureSensorData();
+            PressureSensorData sensorData = new PressureSensorData(SensorUtils.SENSOR_TYPE_PRESSURE);
             sensorData.timestamp = Long.parseLong(cur.getString(1));
             sensorData.pressure = Float.parseFloat(cur.getString(2));
             temp.add(sensorData);

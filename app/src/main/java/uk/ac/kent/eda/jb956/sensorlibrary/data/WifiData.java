@@ -9,4 +9,7 @@ public class WifiData extends SensorData {
     public double rssi;
     public double distanceEstimate;
 
+    public WifiData(int sensorType) {
+        super(sensorType);
+    }
 }

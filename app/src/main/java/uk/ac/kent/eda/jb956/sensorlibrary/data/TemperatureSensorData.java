@@ -6,4 +6,8 @@ package uk.ac.kent.eda.jb956.sensorlibrary.data;
  */
 public class TemperatureSensorData extends SensorData {
     public float degreesC;
+
+    public TemperatureSensorData(int sensorType) {
+        super(sensorType);
+    }
 }

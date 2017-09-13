@@ -12,6 +12,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.ActivityData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ActivitySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.BaseSensor;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -91,7 +92,7 @@ public class ActivityRecognizedService extends IntentService {
             }
         }
         if (best != null) {
-            ActivityData sensorData = new ActivityData();
+            ActivityData sensorData = new ActivityData(SensorUtils.SENSOR_TYPE_ACTIVITY);
             sensorData.activityCode = best.getType();
             sensorData.confidence = best.getConfidence();
             sensorData.timestamp = System.currentTimeMillis();

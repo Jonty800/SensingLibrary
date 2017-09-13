@@ -7,4 +7,8 @@ package uk.ac.kent.eda.jb956.sensorlibrary.data;
 public class PositionsData extends SensorData {
     public float X;
     public float Y;
+
+    public PositionsData(int sensorType) {
+        super(sensorType);
+    }
 }

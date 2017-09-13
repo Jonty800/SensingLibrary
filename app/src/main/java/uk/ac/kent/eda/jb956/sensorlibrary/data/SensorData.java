@@ -1,11 +1,23 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.data;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
+
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
  * School of Engineering and Digital Arts, University of Kent
  */
 public class SensorData {
     public long timestamp;
+
+    public int getSensorType() {
+        return sensorType;
+    }
+
+    private int sensorType;
+
+    public SensorData(int sensorType){
+        this.sensorType = sensorType;
+    }
 
     public ActivityData toActivityData() {
         return (ActivityData) this;

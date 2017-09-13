@@ -30,6 +30,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -91,7 +92,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
         Cursor cur = MySQLiteHelper.getInstance(context).getReadableDatabase().rawQuery("SELECT * FROM wifi where timestamp >=" + start + " and timestamp <=" + end, null);
         while (cur.moveToNext()) {
             //Which column you want to export
-            WifiData sensorData = new WifiData();
+            WifiData sensorData = new WifiData(SensorUtils.SENSOR_TYPE_WIFI);
             sensorData.timestamp = Long.parseLong(cur.getString(3));
             sensorData.bssid = cur.getString(1);
             sensorData.rssi = Double.parseDouble(cur.getString(2));
@@ -252,7 +253,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface  {
                 List<WifiData> unparsedResults = new ArrayList<>();
                 for (ScanResult r : results) {
                     if (r.frequency < 3000) {
-                        WifiData wd = new WifiData();
+                        WifiData wd = new WifiData(SensorUtils.SENSOR_TYPE_WIFI);
                         wd.rssi = r.level;
                         if (Build.VERSION.SDK_INT >= 17) {
                             wd.timestamp = System.currentTimeMillis() - SystemClock.elapsedRealtime() + (r.timestamp / 1000);

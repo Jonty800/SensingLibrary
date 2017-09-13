@@ -7,4 +7,8 @@ package uk.ac.kent.eda.jb956.sensorlibrary.data;
 
 public class LightSensorData extends SensorData {
     public double illuminance;
+
+    public LightSensorData(int sensorType) {
+        super(sensorType);
+    }
 }

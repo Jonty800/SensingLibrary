@@ -12,6 +12,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.AudioSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -65,7 +66,7 @@ public class AudioSensorManager extends BaseSensor {
     private AudioProcessor audioProcessor = new AudioProcessor() {
         @Override
         public boolean process ( final AudioEvent audioEvent){
-            AudioSensorData sensorData = new AudioSensorData();
+            AudioSensorData sensorData = new AudioSensorData(SensorUtils.SENSOR_TYPE_MICROPHONE);
             sensorData.timestamp = System.currentTimeMillis();
             sensorData.buffer = audioEvent.getFloatBuffer();
             sensorData.bufferSize = getBufferSize();

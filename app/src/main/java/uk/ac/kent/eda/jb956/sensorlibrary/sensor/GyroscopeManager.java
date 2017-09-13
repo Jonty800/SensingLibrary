@@ -18,6 +18,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -133,7 +134,7 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
                     float x = event.values[0];
                     float y = event.values[1];
                     float z = event.values[2];
-                    XYZSensorData sensorData = new XYZSensorData();
+                    XYZSensorData sensorData = new XYZSensorData(SensorUtils.SENSOR_TYPE_GYROSCOPE);
                     sensorData.X = x;
                     sensorData.Y = y;
                     sensorData.Z = z;
@@ -166,7 +167,7 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         Cursor cur = MySQLiteHelper.getInstance(context).getReadableDatabase().rawQuery("SELECT * FROM gyro where timestamp >=" + start + " and timestamp <=" + end, null);
         while (cur.moveToNext()) {
             //Which column you want to export
-            XYZSensorData sensorData = new XYZSensorData();
+            XYZSensorData sensorData = new XYZSensorData(SensorUtils.SENSOR_TYPE_GYROSCOPE);
             sensorData.timestamp = Long.parseLong(cur.getString(1));
             sensorData.X = Double.parseDouble(cur.getString(2));
             sensorData.Y = Double.parseDouble(cur.getString(3));

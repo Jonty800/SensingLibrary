@@ -8,4 +8,8 @@ public class XYZSensorData extends SensorData {
     public double X;
     public double Y;
     public double Z;
+
+    public XYZSensorData(int sensorType) {
+        super(sensorType);
+    }
 }

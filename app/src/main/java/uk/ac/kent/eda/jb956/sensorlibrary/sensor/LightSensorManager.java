@@ -19,6 +19,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.LightSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -143,7 +144,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                 if ((curTime - lastUpdate) > getSamplingRate()) {
                     lastUpdate = curTime;
                     double lx = event.values[0];
-                    LightSensorData sensorData = new LightSensorData();
+                    LightSensorData sensorData = new LightSensorData(SensorUtils.SENSOR_TYPE_LIGHT);
                     sensorData.illuminance = lx;
                     sensorData.timestamp = System.currentTimeMillis();
                     lastEntry = sensorData;
@@ -230,7 +231,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         Cursor cur = MySQLiteHelper.getInstance(context).getReadableDatabase().rawQuery("SELECT * FROM light where timestamp >=" + start + " and timestamp <=" + end, null);
         while (cur.moveToNext()) {
             //Which column you want to export
-            LightSensorData sensorData = new LightSensorData();
+            LightSensorData sensorData = new LightSensorData(SensorUtils.SENSOR_TYPE_LIGHT);
             sensorData.timestamp = Long.parseLong(cur.getString(1));
             sensorData.illuminance = Float.parseFloat(cur.getString(2));
             temp.add(sensorData);
