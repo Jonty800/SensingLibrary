@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.control.WorkerThread;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
@@ -86,6 +87,14 @@ public class SensorManager {
     public void stopSensingService(){
         Intent i = new Intent(context, SensingService.class);
         context.stopService(i);
+    }
+    private SensingEvent sensingEvent = new SensingEvent();
+    public void subscribeToSensorListener(SensingEvent.SensingEventListener listener){
+        sensingEvent.subscribeToSensor(listener);
+    }
+
+    public void unsubscribeFromSensorListener(){
+        sensingEvent.unsubscribeFromSensor();
     }
 
     /**
