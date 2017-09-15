@@ -13,8 +13,6 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 
 interface SensingInterface {
 
-    boolean isSensing();
-
     Sensor getSensor();
 
     SensorData getLastEntry();
