@@ -5,10 +5,6 @@ import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.BaseSensor;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.WifiSensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -36,13 +32,11 @@ public class DutyCyclingManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.i(String.valueOf(sensorId), "Sensor paused");
     }
 
     private void wake() {
         sleeping = false;
         try {
-            Log.i(String.valueOf(sensorId), "Resuming sensor");
             SensingEvent.getInstance().onSensingResumed(sensorId);
             onWake();
         } catch (Exception e) {
@@ -87,7 +81,7 @@ public class DutyCyclingManager {
         };
     }
 
-    DutyCyclingEventListener dutyCyclingEventListener;
+    private DutyCyclingEventListener dutyCyclingEventListener;
     private void onWake() {
         if (dutyCyclingEventListener != null)
             dutyCyclingEventListener.onWake();
@@ -105,7 +99,6 @@ public class DutyCyclingManager {
 
     public interface DutyCyclingEventListener {
         void onWake();
-
         void onSleep();
     }
 }

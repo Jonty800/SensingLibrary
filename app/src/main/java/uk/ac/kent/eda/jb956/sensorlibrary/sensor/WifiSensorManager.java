@@ -255,6 +255,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
     }
 
     private void addNewSensingTask() {
+        Log.d(TAG, "addNewSensingTask()");
         checkWifiSettings();
         int next_delay = getSamplingRate();
         SensorManager.getInstance(context).getWorkerThread().postDelayedTask(task, next_delay);
@@ -318,6 +319,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
     }
 
     private void requestWifiScan() {
+        Log.d(TAG, "requestWifiScan()");
         if (!canAccessWifiSignals()) {
             logInfo(TAG, "Wi-Fi not enabled or not always available - ignoring requestWifiScan");
             return;
@@ -348,11 +350,13 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
 
     @Override
     public void onWake() {
+        Log.i(TAG, "Resuming sensor");
         addNewSensingTask();
     }
 
     @Override
     public void onSleep() {
+        Log.i(TAG, "Pausing sensor");
         stopSensingTask();
     }
 }
