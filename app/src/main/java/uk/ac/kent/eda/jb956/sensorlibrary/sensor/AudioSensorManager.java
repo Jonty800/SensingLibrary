@@ -1,6 +1,7 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
 
 import android.content.Context;
+import android.util.Log;
 
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
@@ -20,11 +21,9 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 public class AudioSensorManager extends BaseSensor implements DutyCyclingManager.DutyCyclingEventListener {
 
     public AudioSensorManager(Context context) {
-        dutyCyclingManager = new DutyCyclingManager(context, SensorUtils.SENSOR_TYPE_MICROPHONE, config);
         dutyCyclingManager.subscribeToListener(this);
     }
 
-    private DutyCyclingManager dutyCyclingManager;
     public AudioDispatcher getAudioDispatcher() {
         return dispatcher;
     }
@@ -89,7 +88,6 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
     }
 
     private void stopSensingTask(){
-        logInfo(TAG, "Pausing Audio Sensing");
         if (!dispatcher.isStopped())
             dispatcher.stop(); //should happen in stopSensing()
     }
@@ -97,12 +95,6 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
     private void beginSensingTask() {
         addNewSensingTask();
         getSensorEvent().onSensingResumed(SensorUtils.SENSOR_TYPE_MICROPHONE);
-    }
-
-    @Override
-    public AudioSensorManager withConfig(SensorConfig config) {
-        super.withConfig(config);
-        return this;
     }
 
     public boolean isSensing() {
@@ -137,12 +129,14 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
 
     @Override
     public void onWake() {
+        Log.i(TAG, "Resuming sensor");
         getSensorEvent().onSensingPaused(SensorUtils.SENSOR_TYPE_MICROPHONE);
         beginSensingTask();
     }
 
     @Override
     public void onSleep() {
+        Log.i(TAG, "Pausing sensor");
         getSensorEvent().onSensingPaused(SensorUtils.SENSOR_TYPE_MICROPHONE);
         stopSensingTask();
     }

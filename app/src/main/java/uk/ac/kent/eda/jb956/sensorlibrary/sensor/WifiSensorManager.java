@@ -54,7 +54,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         if (wifi == null)
             wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         setSamplingRate(10000);
-        dutyCyclingManager = new DutyCyclingManager(context, SensorUtils.SENSOR_TYPE_WIFI, config);
+        dutyCyclingManager.subscribeToListener(this);
     }
 
     private final Sensor sensor;
@@ -133,15 +133,13 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
-    private DutyCyclingManager dutyCyclingManager;
-
     @Override
     public WifiSensorManager startSensing() {
         if (isSensing())
             return this;
         try {
             logInfo(TAG, "Starting Wi-Fi Fingerprinting Service");
-            dutyCyclingManager.subscribeToListener(this).run();
+            dutyCyclingManager.run();
             addNewSensingTask(0);
             sensing = true;
             getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_WIFI);

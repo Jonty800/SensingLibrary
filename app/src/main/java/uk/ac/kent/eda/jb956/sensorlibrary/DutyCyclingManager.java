@@ -1,9 +1,12 @@
 package uk.ac.kent.eda.jb956.sensorlibrary;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
+import uk.ac.kent.eda.jb956.sensorlibrary.control.WorkerThread;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 
 /**
@@ -17,21 +20,33 @@ public class DutyCyclingManager {
         return sleeping;
     }
 
+    private WorkerThread getWorkerThread() {
+        return workerThread;
+    }
+
+    private WorkerThread workerThread;
+
+    private HandlerThread mSensorThread;
+    private Handler mSensorHandler;
+
+    private Handler getmSensorHandler() {
+        return mSensorHandler;
+    }
+
     private boolean sleeping = false;
-    private int sensorId;
-    private Context context;
     private SensorConfig config;
 
-    public DutyCyclingManager(Context context, int sensorId, SensorConfig config) {
-        this.context = context;
+    public DutyCyclingManager(SensorConfig config) {
         this.config = config;
-        this.sensorId = sensorId;
+        mSensorThread = new HandlerThread("DutyCycling thread", Thread.NORM_PRIORITY);
+        mSensorThread.start();
+        mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
+        workerThread = WorkerThread.create();
     }
 
     private void sleep() {
         sleeping = true;
         try {
-            SensingEvent.getInstance().onSensingPaused(sensorId);
             onSleep();
         } catch (Exception e) {
             e.printStackTrace();
@@ -41,7 +56,6 @@ public class DutyCyclingManager {
     private void wake() {
         sleeping = false;
         try {
-            SensingEvent.getInstance().onSensingResumed(sensorId);
             onWake();
         } catch (Exception e) {
             e.printStackTrace();
@@ -57,7 +71,7 @@ public class DutyCyclingManager {
     }
 
     public void stop(){
-        SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(dutyCyclingTask);
+        getWorkerThread().removeDelayedTask(dutyCyclingTask);
         sleepingTaskStarted = false;
         sleeping = false;
     }
@@ -67,7 +81,7 @@ public class DutyCyclingManager {
     private void startDutyCycling() {
         if (sleepingTaskStarted)
             return;
-        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(dutyCyclingTask, getAwakeWindowSize());
+        getWorkerThread().postDelayedTask(dutyCyclingTask, getAwakeWindowSize());
         sleepingTaskStarted = true;
     }
 
@@ -82,13 +96,11 @@ public class DutyCyclingManager {
         @Override
         public void run() {
             if (!sleeping) {
-                Log.i(String.valueOf(sensorId), "Sleeping for " + getSleepWindowSize());
                 sleep();
-                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(this, getSleepWindowSize());
+                getWorkerThread().postDelayedTask(this, getSleepWindowSize());
             } else {
-                Log.i(String.valueOf(sensorId),"Sensing for " + getAwakeWindowSize());
                 wake();
-                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(this, getAwakeWindowSize());
+                getWorkerThread().postDelayedTask(this, getAwakeWindowSize());
             }
         }
     };

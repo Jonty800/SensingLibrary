@@ -2,9 +2,9 @@ package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
 
 import android.util.Log;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
-import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -15,13 +15,23 @@ public class BaseSensor {
 
     SensorConfig config = new SensorConfig(); //load default
 
+    DutyCyclingManager dutyCyclingManager;
+
     public BaseSensor withConfig(SensorConfig config) { //replace default
         this.config = config;
+        if(dutyCyclingManager==null)
+            dutyCyclingManager = new DutyCyclingManager(config);
+        else
+            dutyCyclingManager.updateSensorConfig(config);
         return this;
     }
 
     public BaseSensor withDefaultConfig() { //load default
         this.config = new SensorConfig();
+        if(dutyCyclingManager==null)
+            dutyCyclingManager = new DutyCyclingManager(config);
+        else
+            dutyCyclingManager.updateSensorConfig(config);
         return this;
     }
 
