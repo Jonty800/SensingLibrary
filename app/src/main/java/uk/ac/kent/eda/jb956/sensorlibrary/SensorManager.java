@@ -51,9 +51,12 @@ public class SensorManager {
         mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
         workerThread = WorkerThread.create();
         if(activeSensors.isEmpty()){
-            String json = getStringEntryFromPrefs("activeSensors");
-            Type type = new TypeToken<Map<Integer, SensorConfig>>(){}.getType();
-            activeSensors = new Gson().fromJson(json, type);
+            if(prefsContainsKey("activeSensors")) {
+                String json = getStringEntryFromPrefs("activeSensors");
+                Type type = new TypeToken<Map<Integer, SensorConfig>>() {
+                }.getType();
+                activeSensors = new Gson().fromJson(json, type);
+            }
         }
     }
 
@@ -205,6 +208,12 @@ public class SensorManager {
         String json = prefs.getString(key, null);
         Log.i("getFromSharedPref: " + key, "" + json);
         return new Gson().fromJson(json, type);
+    }
+
+    private boolean prefsContainsKey(String key){
+        SharedPreferences prefs = context.getSharedPreferences(
+                Settings.appName + "Config", Context.MODE_PRIVATE);
+        return prefs.contains(key);
     }
 
     private String getStringEntryFromPrefs(String key) {
