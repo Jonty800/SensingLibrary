@@ -13,6 +13,10 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 
 public class DutyCyclingManager {
 
+    public boolean isSleeping() {
+        return sleeping;
+    }
+
     private boolean sleeping = false;
     private int sensorId;
     private Context context;
@@ -48,12 +52,22 @@ public class DutyCyclingManager {
         startDutyCycling();
     }
 
+    public void updateSensorConfig(SensorConfig config){
+        this.config = config;
+    }
+
+    public void stop(){
+        SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(dutyCyclingTask);
+        sleepingTaskStarted = false;
+        sleeping = false;
+    }
+
     private boolean sleepingTaskStarted = false;
 
     private void startDutyCycling() {
         if (sleepingTaskStarted)
             return;
-        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(processDutyCyclingTask(), getAwakeWindowSize());
+        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(dutyCyclingTask, getAwakeWindowSize());
         sleepingTaskStarted = true;
     }
 
@@ -64,22 +78,20 @@ public class DutyCyclingManager {
         return config.SLEEP_WINDOW_SIZE;
     }
 
-    private Runnable processDutyCyclingTask() {
-        return new Runnable() {
-            @Override
-            public void run() {
-                if (!sleeping) {
-                    Log.i(String.valueOf(sensorId), "Sleeping for " + getSleepWindowSize());
-                    sleep();
-                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(processDutyCyclingTask(), getSleepWindowSize());
-                } else {
-                    Log.i(String.valueOf(sensorId),"Sensing for " + getAwakeWindowSize());
-                    wake();
-                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(processDutyCyclingTask(), getAwakeWindowSize());
-                }
+    private Runnable dutyCyclingTask = new Runnable() {
+        @Override
+        public void run() {
+            if (!sleeping) {
+                Log.i(String.valueOf(sensorId), "Sleeping for " + getSleepWindowSize());
+                sleep();
+                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(this, getSleepWindowSize());
+            } else {
+                Log.i(String.valueOf(sensorId),"Sensing for " + getAwakeWindowSize());
+                wake();
+                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(this, getAwakeWindowSize());
             }
-        };
-    }
+        }
+    };
 
     private DutyCyclingEventListener dutyCyclingEventListener;
     private void onWake() {

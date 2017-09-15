@@ -54,6 +54,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         if (wifi == null)
             wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         setSamplingRate(10000);
+        dutyCyclingManager = new DutyCyclingManager(context, SensorUtils.SENSOR_TYPE_WIFI, config);
     }
 
     private final Sensor sensor;
@@ -132,14 +133,16 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
+    DutyCyclingManager dutyCyclingManager;
+
     @Override
     public WifiSensorManager startSensing() {
         if (isSensing())
             return this;
         try {
             logInfo(TAG, "Starting Wi-Fi Fingerprinting Service");
-            new DutyCyclingManager(context, SensorUtils.SENSOR_TYPE_WIFI, config).subscribeToListener(this).run();
-            addNewSensingTask();
+            dutyCyclingManager.subscribeToListener(this).run();
+            addNewSensingTask(0);
             sensing = true;
             getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_WIFI);
         } catch (Exception e) {
@@ -149,12 +152,14 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         return this;
     }
 
+
     @Override
     public WifiSensorManager stopSensing() {
         if (!isSensing())
             return this;
         try {
             stopSensingTask();
+            dutyCyclingManager.stop();
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_WIFI);
         } catch (Exception e) {
             e.printStackTrace();
@@ -165,30 +170,8 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
     }
 
     public boolean isSleeping() {
-        return sleeping;
+        return dutyCyclingManager != null && dutyCyclingManager.isSleeping();
     }
-
-    private boolean sleeping = false;
-
-//    @Override
-//    public void sleep() {
-//        sleeping = true;
-//        try {
-//            stopSensingTask();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    @Override
-//    public void wake() {
-//        sleeping = false;
-//        try {
-//            addNewSensingTask();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     private WifiManager wifi;
     private long timeLastInitiated = 0;
@@ -254,11 +237,9 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(task);
     }
 
-    private void addNewSensingTask() {
-        Log.d(TAG, "addNewSensingTask()");
+    private void addNewSensingTask(int delay) {
         checkWifiSettings();
-        int next_delay = getSamplingRate();
-        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(task, next_delay);
+        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(task, delay);
     }
 
     private Runnable task = new Runnable() {
@@ -319,7 +300,6 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
     }
 
     private void requestWifiScan() {
-        Log.d(TAG, "requestWifiScan()");
         if (!canAccessWifiSignals()) {
             logInfo(TAG, "Wi-Fi not enabled or not always available - ignoring requestWifiScan");
             return;
@@ -336,7 +316,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         }
         timeLastInitiated = System.currentTimeMillis();
         wifi.startScan();
-        addNewSensingTask();
+        addNewSensingTask(getSamplingRate());
     }
 
     private boolean sensing = false;
@@ -351,7 +331,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
     @Override
     public void onWake() {
         Log.i(TAG, "Resuming sensor");
-        addNewSensingTask();
+        addNewSensingTask(0);
     }
 
     @Override

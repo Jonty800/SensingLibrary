@@ -59,14 +59,6 @@ public class BaseSensor {
         }
     }
 
-    public void sleep() {
-
-    }
-
-    public void wake() {
-
-    }
-
     public SensingEvent getSensorEvent() {
         return SensingEvent.getInstance();
     }

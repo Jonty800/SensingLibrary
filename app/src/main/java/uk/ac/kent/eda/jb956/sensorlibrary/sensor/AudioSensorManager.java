@@ -6,6 +6,7 @@ import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
 import be.tarsos.dsp.io.android.AudioDispatcherFactory;
+import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.AudioSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
@@ -16,18 +17,19 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class AudioSensorManager extends BaseSensor {
+public class AudioSensorManager extends BaseSensor implements DutyCyclingManager.DutyCyclingEventListener {
 
     public AudioSensorManager(Context context) {
-        this.context = context;
+        dutyCyclingManager = new DutyCyclingManager(context, SensorUtils.SENSOR_TYPE_MICROPHONE, config);
+        dutyCyclingManager.subscribeToListener(this);
     }
 
+    private DutyCyclingManager dutyCyclingManager;
     public AudioDispatcher getAudioDispatcher() {
         return dispatcher;
     }
 
     private AudioDispatcher dispatcher;
-    private Context context;
     private final String TAG = "AudioSensorManager";
     private static AudioSensorManager instance;
     boolean sensing = false;
@@ -41,10 +43,8 @@ public class AudioSensorManager extends BaseSensor {
     public AudioSensorManager startSensing() {
         if (isSensing())
             return this;
-        super.startSensing();
-        startSleepingTask();
-        addNewSensingTask();
         sensing = true;
+        dutyCyclingManager.run();
         getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_MICROPHONE);
         logInfo(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         return this;
@@ -76,68 +76,26 @@ public class AudioSensorManager extends BaseSensor {
         }
     };
 
-    private boolean sleepingTaskStarted = false;
-
-    private void startSleepingTask() {
-        if (sleepingTaskStarted)
-            return;
-        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(sleepTask, getAwakeWindowSize());
-        sleepingTaskStarted = true;
-    }
-
-    Runnable currentTask = null;
-    private Runnable sleepTask = new Runnable() {
-        @Override
-        public void run() {
-            if (!sleeping) {
-                currentTask = sleepTask;
-                logInfo(TAG, "Sleeping for " + getSleepWindowSize());
-                sleep();
-                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(currentTask, getSleepWindowSize());
-            } else {
-                currentTask = sleepTask;
-                logInfo(TAG, "Sensing for " + getAwakeWindowSize());
-                wake();
-                SensorManager.getInstance(context).getWorkerThread().postDelayedTask(currentTask, getAwakeWindowSize());
-            }
-        }
-    };
-
-    boolean sleeping = false;
-
     public AudioSensorManager stopSensing() {
         if (!isSensing())
             return this;
         logInfo(TAG, "Stopped Audio Sensing");
-        dispatcher.stop();
-        sensing = false;
         stopSensingTask();
+        dutyCyclingManager.stop();
+        sensing = false;
         getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_MICROPHONE);
-        sleepingTaskStarted = false;
         return this;
     }
 
-    public void sleep() {
-        sleeping = true;
+    private void stopSensingTask(){
         logInfo(TAG, "Pausing Audio Sensing");
-        stopSensingTask();
-        getSensorEvent().onSensingPaused(SensorUtils.SENSOR_TYPE_MICROPHONE);
-
+        if (!dispatcher.isStopped())
+            dispatcher.stop(); //should happen in stopSensing()
     }
 
-    public void wake() {
-        sleeping = false;
-        startSleepingTask();
+    private void beginSensingTask() {
         addNewSensingTask();
         getSensorEvent().onSensingResumed(SensorUtils.SENSOR_TYPE_MICROPHONE);
-    }
-
-    private void stopSensingTask() {
-        if (currentTask != null) {
-            SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(currentTask);
-            if (!dispatcher.isStopped())
-                dispatcher.stop(); //should happen in stopSensing()
-        }
     }
 
     @Override
@@ -174,5 +132,17 @@ public class AudioSensorManager extends BaseSensor {
 
     public void setSleepingDuration(int duration) {
         config.SLEEP_WINDOW_SIZE = duration;
+    }
+
+    @Override
+    public void onWake() {
+        getSensorEvent().onSensingPaused(SensorUtils.SENSOR_TYPE_MICROPHONE);
+        beginSensingTask();
+    }
+
+    @Override
+    public void onSleep() {
+        getSensorEvent().onSensingPaused(SensorUtils.SENSOR_TYPE_MICROPHONE);
+        stopSensingTask();
     }
 }
