@@ -133,7 +133,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
     }
 
-    DutyCyclingManager dutyCyclingManager;
+    private DutyCyclingManager dutyCyclingManager;
 
     @Override
     public WifiSensorManager startSensing() {

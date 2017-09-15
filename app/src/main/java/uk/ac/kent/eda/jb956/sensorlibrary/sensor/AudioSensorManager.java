@@ -45,6 +45,7 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
             return this;
         sensing = true;
         dutyCyclingManager.run();
+        addNewSensingTask();
         getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_MICROPHONE);
         logInfo(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         return this;
