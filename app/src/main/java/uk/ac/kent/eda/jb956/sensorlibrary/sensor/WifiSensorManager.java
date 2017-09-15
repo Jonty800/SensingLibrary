@@ -35,7 +35,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class WifiSensorManager extends BaseSensor implements SensingInterface {
+public class WifiSensorManager extends BaseSensor implements SensingInterface, DutyCyclingManager.DutyCyclingEventListener {
 
     private final String TAG = "WifiSensorManager";
     private static WifiSensorManager instance;
@@ -138,7 +138,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface {
             return this;
         try {
             logInfo(TAG, "Starting Wi-Fi Fingerprinting Service");
-            new DutyCyclingManager(this, context, SensorUtils.SENSOR_TYPE_WIFI, config).run(task);
+            new DutyCyclingManager(context, SensorUtils.SENSOR_TYPE_WIFI, config).subscribeToListener(this).run();
             addNewSensingTask();
             sensing = true;
             getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_WIFI);
@@ -170,25 +170,25 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface {
 
     private boolean sleeping = false;
 
-    @Override
-    public void sleep() {
-        sleeping = true;
-        try {
-            stopSensingTask();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void wake() {
-        sleeping = false;
-        try {
-            addNewSensingTask();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    @Override
+//    public void sleep() {
+//        sleeping = true;
+//        try {
+//            stopSensingTask();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @Override
+//    public void wake() {
+//        sleeping = false;
+//        try {
+//            addNewSensingTask();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private WifiManager wifi;
     private long timeLastInitiated = 0;
@@ -256,7 +256,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface {
 
     private void addNewSensingTask() {
         checkWifiSettings();
-        int next_delay = WifiSensorManager.getInstance(context).getSamplingRate();
+        int next_delay = getSamplingRate();
         SensorManager.getInstance(context).getWorkerThread().postDelayedTask(task, next_delay);
     }
 
@@ -345,4 +345,14 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface {
     }
 
     private SensorData lastEntry = null;
+
+    @Override
+    public void onWake() {
+        addNewSensingTask();
+    }
+
+    @Override
+    public void onSleep() {
+        stopSensingTask();
+    }
 }

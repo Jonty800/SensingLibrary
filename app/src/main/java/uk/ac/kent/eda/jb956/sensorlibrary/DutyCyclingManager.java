@@ -5,6 +5,7 @@ import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.BaseSensor;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.WifiSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
@@ -20,10 +21,8 @@ public class DutyCyclingManager {
     private int sensorId;
     private Context context;
     private SensorConfig config;
-    private BaseSensor baseSensor;
 
-    public DutyCyclingManager(BaseSensor baseSensor, Context context, int sensorId, SensorConfig config) {
-        this.baseSensor = baseSensor;
+    public DutyCyclingManager(Context context, int sensorId, SensorConfig config) {
         this.context = context;
         this.config = config;
         this.sensorId = sensorId;
@@ -32,9 +31,8 @@ public class DutyCyclingManager {
     private void sleep() {
         sleeping = true;
         try {
-            baseSensor.sleep();
             SensingEvent.getInstance().onSensingPaused(sensorId);
-            stopSensingTask();
+            onSleep();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -45,34 +43,23 @@ public class DutyCyclingManager {
         sleeping = false;
         try {
             Log.i(String.valueOf(sensorId), "Resuming sensor");
-            startSleepingTask();
-            baseSensor.wake();
             SensingEvent.getInstance().onSensingResumed(sensorId);
+            onWake();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void stopSensingTask() {
-        SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(task);
-    }
-
-    private Runnable task = null;
-    public void run(Runnable r){
-        this.task = r;
-        begin();
-    }
-
-    private void begin(){
-        startSleepingTask();
+    public void run(){
+        startDutyCycling();
     }
 
     private boolean sleepingTaskStarted = false;
 
-    private void startSleepingTask() {
+    private void startDutyCycling() {
         if (sleepingTaskStarted)
             return;
-        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), getAwakeWindowSize());
+        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(processDutyCyclingTask(), getAwakeWindowSize());
         sleepingTaskStarted = true;
     }
 
@@ -83,20 +70,42 @@ public class DutyCyclingManager {
         return config.SLEEP_WINDOW_SIZE;
     }
 
-    private Runnable getSleepTask() {
+    private Runnable processDutyCyclingTask() {
         return new Runnable() {
             @Override
             public void run() {
                 if (!sleeping) {
                     Log.i(String.valueOf(sensorId), "Sleeping for " + getSleepWindowSize());
                     sleep();
-                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), getSleepWindowSize());
+                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(processDutyCyclingTask(), getSleepWindowSize());
                 } else {
                     Log.i(String.valueOf(sensorId),"Sensing for " + getAwakeWindowSize());
                     wake();
-                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), getAwakeWindowSize());
+                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(processDutyCyclingTask(), getAwakeWindowSize());
                 }
             }
         };
+    }
+
+    DutyCyclingEventListener dutyCyclingEventListener;
+    private void onWake() {
+        if (dutyCyclingEventListener != null)
+            dutyCyclingEventListener.onWake();
+    }
+
+    public synchronized DutyCyclingManager subscribeToListener(DutyCyclingEventListener listener) {
+        dutyCyclingEventListener = listener;
+        return this;
+    }
+
+    private void onSleep() {
+        if (dutyCyclingEventListener != null)
+            dutyCyclingEventListener.onSleep();
+    }
+
+    public interface DutyCyclingEventListener {
+        void onWake();
+
+        void onSleep();
     }
 }
