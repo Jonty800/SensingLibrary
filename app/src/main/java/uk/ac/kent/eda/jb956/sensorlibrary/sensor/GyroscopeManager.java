@@ -36,7 +36,7 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         return instance;
     }
 
-    private GyroscopeManager(Context context) {
+    public GyroscopeManager(Context context) {
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);

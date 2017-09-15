@@ -20,24 +20,14 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 public class AudioSensorManager extends BaseSensor implements DutyCyclingManager.DutyCyclingEventListener {
 
-    public AudioSensorManager(Context context) {
+    public AudioSensorManager() {
         dutyCyclingManager.subscribeToListener(this);
-    }
-
-    public AudioDispatcher getAudioDispatcher() {
-        return dispatcher;
     }
 
     private AudioDispatcher dispatcher;
     private final String TAG = "AudioSensorManager";
     private static AudioSensorManager instance;
     boolean sensing = false;
-
-    public static synchronized AudioSensorManager getInstance(Context context) {
-        if (instance == null)
-            instance = new AudioSensorManager(context);
-        return instance;
-    }
 
     public AudioSensorManager startSensing() {
         if (isSensing())

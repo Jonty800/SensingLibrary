@@ -29,13 +29,7 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
 
-    public static synchronized AccelerometerManager getInstance(Context context) {
-        if (instance == null)
-            instance = new AccelerometerManager(context);
-        return instance;
-    }
-
-    private AccelerometerManager(Context context) {
+    public AccelerometerManager(Context context) {
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);

@@ -38,17 +38,10 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 public class WifiSensorManager extends BaseSensor implements SensingInterface, DutyCyclingManager.DutyCyclingEventListener {
 
     private final String TAG = "WifiSensorManager";
-    private static WifiSensorManager instance;
     private final Context context;
     // public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
 
-    public static synchronized WifiSensorManager getInstance(Context context) {
-        if (instance == null)
-            instance = new WifiSensorManager(context);
-        return instance;
-    }
-
-    private WifiSensorManager(Context context) {
+    public WifiSensorManager(Context context) {
         this.context = context.getApplicationContext();
         sensor = null;
         if (wifi == null)

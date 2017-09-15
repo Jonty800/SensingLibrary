@@ -23,7 +23,20 @@ import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.control.WorkerThread;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AccelerometerManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ActivitySensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AudioSensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.BaseSensor;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.GyroscopeManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.HumiditySensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.LightSensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.MagneticFieldManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.PressureSensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ProximitySensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.TemperatureSensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.sensor.WifiSensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.SensingService;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -37,6 +50,19 @@ public class SensorManager {
     private Map<Integer, SensorConfig> activeSensors = new HashMap<>();
     private final Context context;
     private final String TAG = "SensorManager";
+
+
+    private AudioSensorManager audioManager;
+    private AccelerometerManager accelerometerManager;
+    private GyroscopeManager gyroscopeManager;
+    private ProximitySensorManager proximityManager;
+    private LightSensorManager lightSensorManager;
+    private HumiditySensorManager humiditySensorManager;
+    private PressureSensorManager pressureSensorManager;
+    private TemperatureSensorManager temperatureSensorManager;
+    private MagneticFieldManager magneticFieldManager;
+    private WifiSensorManager wifiSensorManager;
+    private ActivitySensorManager activitySensorManager;
 
     /**
      * Upon creation of this singleton class, it will attempt to start the
@@ -58,12 +84,52 @@ public class SensorManager {
                 activeSensors = new Gson().fromJson(json, type);
             }
         }
+        audioManager = new AudioSensorManager();
+        accelerometerManager = new AccelerometerManager(context);
+        gyroscopeManager = new GyroscopeManager(context);
+        wifiSensorManager = new WifiSensorManager(context);
+        /*proximityManager = ProximitySensorManager.getInstance(this);
+        lightSensorManager = LightSensorManager.getInstance(this);
+        humiditySensorManager = HumiditySensorManager.getInstance(this);
+        pressureSensorManager = PressureSensorManager.getInstance(this);
+        temperatureSensorManager = TemperatureSensorManager.getInstance(this);
+        magneticFieldManager = MagneticFieldManager.getInstance(this);
+
+        activitySensorManager = ActivitySensorManager.getInstance(this);*/
     }
 
     public static synchronized SensorManager getInstance(Context c) {
         if (instance == null)
             instance = new SensorManager(c.getApplicationContext());
         return instance;
+    }
+
+    public BaseSensor getSensorById(int sensorId){
+        switch (sensorId) {
+            case SensorUtils.SENSOR_TYPE_GYROSCOPE:
+                return gyroscopeManager;
+            case SensorUtils.SENSOR_TYPE_ACCELEROMETER:
+                return accelerometerManager;
+            case SensorUtils.SENSOR_TYPE_PROXIMITY:
+                return proximityManager;
+            case SensorUtils.SENSOR_TYPE_LIGHT:
+                return lightSensorManager;
+            case SensorUtils.SENSOR_TYPE_HUMIDITY:
+                return humiditySensorManager;
+            case SensorUtils.SENSOR_TYPE_PRESSURE:
+                return pressureSensorManager;
+            case SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE:
+                return temperatureSensorManager;
+            case SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD:
+                return magneticFieldManager;
+            case SensorUtils.SENSOR_TYPE_WIFI:
+                return wifiSensorManager;
+            case SensorUtils.SENSOR_TYPE_MICROPHONE:
+                return audioManager;
+            default:
+                Log.i(TAG, "Invalid sensor ID");
+        }
+        return null;
     }
 
     public Map<Integer, SensorConfig> getActiveSensors() {

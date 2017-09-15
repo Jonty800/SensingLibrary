@@ -77,7 +77,7 @@ public class BaseSensor {
         return this;
     }
 
-    BaseSensor stopSensing() {
+    public BaseSensor stopSensing() {
         return this;
     }
 }

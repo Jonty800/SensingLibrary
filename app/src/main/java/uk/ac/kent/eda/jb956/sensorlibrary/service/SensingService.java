@@ -34,18 +34,6 @@ public class SensingService extends Service {
     private static final String TAG = "SensingService";
     SensorManager sensorManager;
 
-    private AudioSensorManager audioManager;
-    private AccelerometerManager accelerometerManager;
-    private GyroscopeManager gyroscopeManager;
-    private ProximitySensorManager proximityManager;
-    private LightSensorManager lightSensorManager;
-    private HumiditySensorManager humiditySensorManager;
-    private PressureSensorManager pressureSensorManager;
-    private TemperatureSensorManager temperatureSensorManager;
-    private MagneticFieldManager magneticFieldManager;
-    private WifiSensorManager wifiSensorManager;
-    private ActivitySensorManager activitySensorManager;
-
 
     @Nullable
     @Override
@@ -57,17 +45,6 @@ public class SensingService extends Service {
     public void onCreate() {
         super.onCreate();
         sensorManager = SensorManager.getInstance(this);
-        audioManager = AudioSensorManager.getInstance(this);
-        accelerometerManager = AccelerometerManager.getInstance(this);
-        gyroscopeManager = GyroscopeManager.getInstance(this);
-        proximityManager = ProximitySensorManager.getInstance(this);
-        lightSensorManager = LightSensorManager.getInstance(this);
-        humiditySensorManager = HumiditySensorManager.getInstance(this);
-        pressureSensorManager = PressureSensorManager.getInstance(this);
-        temperatureSensorManager = TemperatureSensorManager.getInstance(this);
-        magneticFieldManager = MagneticFieldManager.getInstance(this);
-        wifiSensorManager = WifiSensorManager.getInstance(this);
-        activitySensorManager = ActivitySensorManager.getInstance(this);
 
         //TODO test this
         Intent notificationIntent = new Intent(this, SensingService.class);
@@ -120,78 +97,9 @@ public class SensingService extends Service {
         int sensorId = intent.getIntExtra("type", -1);
         SensorConfig config = (SensorConfig) intent.getSerializableExtra("config");
         if (exec.equalsIgnoreCase("start")) {
-            switch (sensorId) {
-                case SensorUtils.SENSOR_TYPE_GYROSCOPE:
-                    gyroscopeManager.withConfig(config).startSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_ACCELEROMETER:
-                    accelerometerManager.withConfig(config).startSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_PROXIMITY:
-                    proximityManager.withConfig(config).startSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_LIGHT:
-                    lightSensorManager.withConfig(config).startSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_HUMIDITY:
-                    humiditySensorManager.withConfig(config).startSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_PRESSURE:
-                    pressureSensorManager.withConfig(config).startSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE:
-                    temperatureSensorManager.withConfig(config).startSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD:
-                    magneticFieldManager.withConfig(config).startSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_WIFI:
-                    wifiSensorManager.withConfig(config).startSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_MICROPHONE:
-                    audioManager.withConfig(config).startSensing();
-                    break;
-
-                default:
-                    Log.i(TAG, "Invalid sensor ID");
-            }
-
+            sensorManager.getSensorById(sensorId).withConfig(config).startSensing();
         } else if (exec.equalsIgnoreCase("stop")) {
-            switch (sensorId) {
-                case SensorUtils.SENSOR_TYPE_GYROSCOPE:
-                    gyroscopeManager.stopSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_ACCELEROMETER:
-                    accelerometerManager.stopSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_PROXIMITY:
-                    proximityManager.stopSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_LIGHT:
-                    lightSensorManager.stopSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_HUMIDITY:
-                    humiditySensorManager.stopSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_PRESSURE:
-                    pressureSensorManager.stopSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE:
-                    temperatureSensorManager.stopSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD:
-                    magneticFieldManager.stopSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_WIFI:
-                    wifiSensorManager.stopSensing();
-                    break;
-                case SensorUtils.SENSOR_TYPE_MICROPHONE:
-                    audioManager.stopSensing();
-                    break;
-
-                default:
-                    Log.i(TAG, "Invalid sensor ID");
-            }
+            sensorManager.getSensorById(sensorId).withConfig(config).stopSensing();
         }
         return START_STICKY;
     }
