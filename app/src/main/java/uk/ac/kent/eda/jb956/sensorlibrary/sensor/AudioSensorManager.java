@@ -117,7 +117,7 @@ public class AudioSensorManager extends BaseSensor {
         return this;
     }
 
-    private void sleep() {
+    public void sleep() {
         sleeping = true;
         logInfo(TAG, "Pausing Audio Sensing");
         stopSensingTask();
@@ -125,7 +125,7 @@ public class AudioSensorManager extends BaseSensor {
 
     }
 
-    private void wake() {
+    public void wake() {
         sleeping = false;
         startSleepingTask();
         addNewSensingTask();

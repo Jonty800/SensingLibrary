@@ -21,6 +21,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
@@ -137,7 +138,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface {
             return this;
         try {
             logInfo(TAG, "Starting Wi-Fi Fingerprinting Service");
-            startSleepingTask();
+            new DutyCyclingManager(this, context, SensorUtils.SENSOR_TYPE_WIFI, config).run(task);
             addNewSensingTask();
             sensing = true;
             getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_WIFI);
@@ -153,67 +154,40 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface {
         if (!isSensing())
             return this;
         try {
-            super.stopSensing();
             stopSensingTask();
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_WIFI);
         } catch (Exception e) {
             e.printStackTrace();
         }
         sensing = false;
-        sleepingTaskStarted = false;
         logInfo(TAG, "Sensor stopped");
         return this;
     }
 
-    boolean sleeping = false;
+    public boolean isSleeping() {
+        return sleeping;
+    }
 
-    private void sleep() {
+    private boolean sleeping = false;
+
+    @Override
+    public void sleep() {
         sleeping = true;
         try {
             stopSensingTask();
-            getSensorEvent().onSensingPaused(SensorUtils.SENSOR_TYPE_WIFI);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        logInfo(TAG, "Sensor paused");
     }
 
-    private void wake() {
+    @Override
+    public void wake() {
         sleeping = false;
         try {
-            logInfo(TAG, "Resuming Wi-Fi Fingerprinting Service");
-            startSleepingTask();
             addNewSensingTask();
-            getSensorEvent().onSensingResumed(SensorUtils.SENSOR_TYPE_WIFI);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private boolean sleepingTaskStarted = false;
-
-    private void startSleepingTask() {
-        if (sleepingTaskStarted)
-            return;
-        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), getAwakeWindowSize());
-        sleepingTaskStarted = true;
-    }
-
-    private Runnable getSleepTask() {
-        return new Runnable() {
-            @Override
-            public void run() {
-                if (!sleeping) {
-                    logInfo(TAG, "Sleeping for " + getSleepWindowSize());
-                    sleep();
-                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), getSleepWindowSize());
-                } else {
-                    logInfo(TAG, "Sensing for " + getAwakeWindowSize());
-                    wake();
-                    SensorManager.getInstance(context).getWorkerThread().postDelayedTask(getSleepTask(), getAwakeWindowSize());
-                }
-            }
-        };
     }
 
     private WifiManager wifi;

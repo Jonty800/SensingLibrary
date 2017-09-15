@@ -4,6 +4,7 @@ import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -56,6 +57,14 @@ public class BaseSensor {
         if (config.logToConsole) {
             Log.i(TAG, text);
         }
+    }
+
+    public void sleep() {
+
+    }
+
+    public void wake() {
+
     }
 
     public SensingEvent getSensorEvent() {
