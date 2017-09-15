@@ -4,13 +4,23 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
+import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.control.WorkerThread;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.SensingService;
@@ -24,6 +34,7 @@ public class SensorManager {
 
     private static SensorManager instance;
 
+    private Map<Integer, SensorConfig> activeSensors = new HashMap<>();
     private final Context context;
     private final String TAG = "SensorManager";
 
@@ -39,6 +50,11 @@ public class SensorManager {
         mSensorThread.start();
         mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
         workerThread = WorkerThread.create();
+        if(activeSensors.isEmpty()){
+            String json = getStringEntryFromPrefs("activeSensors");
+            Type type = new TypeToken<Map<Integer, SensorConfig>>(){}.getType();
+            activeSensors = new Gson().fromJson(json, type);
+        }
     }
 
     public static synchronized SensorManager getInstance(Context c) {
@@ -47,11 +63,23 @@ public class SensorManager {
         return instance;
     }
 
+    public Map<Integer, SensorConfig> getActiveSensors() {
+        return activeSensors;
+    }
+
+    public void startSensors(Map<Integer, SensorConfig> sensorMap){
+        Set<Integer> keys = sensorMap.keySet();
+        for(int key : keys) {
+            startSensor(key, sensorMap.get(key));
+        }
+    }
+
     public void startSensor(int sensorId, SensorConfig config) {
         Intent i = new Intent(context, SensingService.class);
         i.putExtra("type", sensorId);
         i.putExtra("exec", "start");
         i.putExtra("config", config);
+        putSensorIntoMap(sensorId, config);
         context.startService(i);
     }
 
@@ -59,13 +87,25 @@ public class SensorManager {
         Intent i = new Intent(context, SensingService.class);
         i.putExtra("type", sensorId);
         i.putExtra("exec", "stop");
-
+        removeSensorFromMap(sensorId);
         context.startService(i);
     }
 
     public void stopSensingService() {
         Intent i = new Intent(context, SensingService.class);
         context.stopService(i);
+    }
+
+    private void putSensorIntoMap(int sensorId, SensorConfig config){
+        activeSensors.put(sensorId, config);
+        Type type = new TypeToken<Map<Integer, SensorConfig>>(){}.getType();
+        storeIntoSharedPref("activeSensors", activeSensors, type);
+    }
+
+    private void removeSensorFromMap(int sensorId){
+        activeSensors.remove(sensorId);
+        Type type = new TypeToken<Map<Integer, SensorConfig>>(){}.getType();
+        storeIntoSharedPref("activeSensors", activeSensors, type);
     }
 
     public void subscribeToSensorListener(SensingEvent.SensingEventListener listener) {
@@ -124,5 +164,58 @@ public class SensorManager {
 
     public Handler getmSensorHandler() {
         return mSensorHandler;
+    }
+
+    public void storeIntoSharedPref(String key, Object entry, Type type) {
+
+        storeIntoSharedPref(key, entry, type, Settings.appName + "Config");
+    }
+
+    public Object getFromSharedPref(String key, Type type) {
+        return getFromSharedPref(key, type, Settings.appName + "Config");
+    }
+
+    public void deleteFromSharedPref(String key) {
+        deleteFromSharedPref(key, Settings.appName + "Config");
+    }
+
+    private synchronized void deleteFromSharedPref(String key, String dbName) {
+        SharedPreferences prefs = context.getSharedPreferences(
+                dbName, Context.MODE_PRIVATE);
+        Log.i("deleteFromSharedPref", key + "::" + dbName);
+        prefs.edit().remove(key).apply();
+    }
+
+    private void storeIntoSharedPref(String key, Object entry, Type type, String dbName) {
+        storeIntoSharedPref(key, entry, type, dbName, true);
+    }
+
+    private synchronized void storeIntoSharedPref(String key, Object entry, Type type, String dbName, boolean log) {
+        SharedPreferences prefs = context.getSharedPreferences(
+                dbName, Context.MODE_PRIVATE);
+        String json = new Gson().toJson(entry, type);
+        if (log)
+            Log.i("storeIntoSharedPref", "" + json);
+        prefs.edit().putString(key, json).apply();
+    }
+
+    private synchronized Object getFromSharedPref(String key, Type type, String dbName) {
+        SharedPreferences prefs = context.getSharedPreferences(
+                dbName, Context.MODE_PRIVATE);
+        String json = prefs.getString(key, null);
+        Log.i("getFromSharedPref: " + key, "" + json);
+        return new Gson().fromJson(json, type);
+    }
+
+    private String getStringEntryFromPrefs(String key) {
+        return getStringEntryFromPrefs(key, Settings.appName + "Config");
+    }
+
+    private synchronized String getStringEntryFromPrefs(String key, String dbName) {
+        SharedPreferences prefs = context.getSharedPreferences(
+                dbName, Context.MODE_PRIVATE);
+        String value = prefs.getString(key, null);
+        Log.i("getFromSharedPref: " + key, "" + value);
+        return value;
     }
 }
