@@ -16,7 +16,7 @@ public class BaseSensor {
     SensorConfig config = new SensorConfig(); //load default
 
     public BaseSensor() {
-        dutyCyclingManager.updateSensorConfig(config);
+        dutyCyclingManager = new DutyCyclingManager(config);
     }
 
     public boolean isSensing() {

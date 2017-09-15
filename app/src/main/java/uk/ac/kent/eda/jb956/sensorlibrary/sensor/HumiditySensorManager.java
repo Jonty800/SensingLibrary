@@ -35,7 +35,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
         return instance;
     }
 
-    private HumiditySensorManager(Context context) {
+    public HumiditySensorManager(Context context) {
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);

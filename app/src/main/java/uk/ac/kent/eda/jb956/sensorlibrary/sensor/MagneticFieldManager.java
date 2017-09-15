@@ -35,7 +35,7 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
         return instance;
     }
 
-    private MagneticFieldManager(Context context) {
+    public MagneticFieldManager(Context context) {
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);

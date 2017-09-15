@@ -88,14 +88,14 @@ public class SensorManager {
         accelerometerManager = new AccelerometerManager(context);
         gyroscopeManager = new GyroscopeManager(context);
         wifiSensorManager = new WifiSensorManager(context);
-        /*proximityManager = ProximitySensorManager.getInstance(this);
-        lightSensorManager = LightSensorManager.getInstance(this);
-        humiditySensorManager = HumiditySensorManager.getInstance(this);
-        pressureSensorManager = PressureSensorManager.getInstance(this);
-        temperatureSensorManager = TemperatureSensorManager.getInstance(this);
-        magneticFieldManager = MagneticFieldManager.getInstance(this);
+        proximityManager = new ProximitySensorManager(context);
+        lightSensorManager = new LightSensorManager(context);
+        humiditySensorManager = new HumiditySensorManager(context);
+        pressureSensorManager = new PressureSensorManager(context);
+        temperatureSensorManager = new TemperatureSensorManager(context);
+        magneticFieldManager = new MagneticFieldManager(context);
 
-        activitySensorManager = ActivitySensorManager.getInstance(this);*/
+        activitySensorManager = new ActivitySensorManager(context);
     }
 
     public static synchronized SensorManager getInstance(Context c) {

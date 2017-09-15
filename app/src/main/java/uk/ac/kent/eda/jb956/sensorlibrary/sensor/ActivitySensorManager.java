@@ -44,7 +44,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
         return instance;
     }
 
-    private ActivitySensorManager(Context context) {
+    public ActivitySensorManager(Context context) {
         this.context = context.getApplicationContext();
         sensor = null;
         setSamplingRate(1000);

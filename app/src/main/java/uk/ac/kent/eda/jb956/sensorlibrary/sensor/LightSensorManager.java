@@ -37,7 +37,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         return instance;
     }
 
-    private LightSensorManager(Context context) {
+    public LightSensorManager(Context context) {
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);

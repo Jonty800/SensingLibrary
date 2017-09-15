@@ -37,7 +37,7 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
         return instance;
     }
 
-    private PressureSensorManager(Context context) {
+    public PressureSensorManager(Context context) {
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);

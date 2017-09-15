@@ -35,7 +35,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
         return instance;
     }
 
-    private ProximitySensorManager(Context context) {
+    public ProximitySensorManager(Context context) {
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
