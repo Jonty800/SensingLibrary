@@ -99,7 +99,7 @@ public class SensingService extends Service {
         if (exec.equalsIgnoreCase("start")) {
             sensorManager.getSensorById(sensorId).withConfig(config).startSensing();
         } else if (exec.equalsIgnoreCase("stop")) {
-            sensorManager.getSensorById(sensorId).withConfig(config).stopSensing();
+            sensorManager.getSensorById(sensorId).stopSensing();
         }
         return START_STICKY;
     }
