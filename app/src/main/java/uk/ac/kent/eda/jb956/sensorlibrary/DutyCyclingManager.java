@@ -44,19 +44,19 @@ public class DutyCyclingManager {
         workerThread = WorkerThread.create();
     }
 
-    private void sleep() {
+    private void sleep(int duration) {
         sleeping = true;
         try {
-            onSleep();
+            onSleep(duration);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void wake() {
+    private void wake(int duration) {
         sleeping = false;
         try {
-            onWake();
+            onWake(duration);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -96,19 +96,19 @@ public class DutyCyclingManager {
         @Override
         public void run() {
             if (!sleeping) {
-                sleep();
+                sleep(getSleepWindowSize());
                 getWorkerThread().postDelayedTask(this, getSleepWindowSize());
             } else {
-                wake();
+                wake(getAwakeWindowSize());
                 getWorkerThread().postDelayedTask(this, getAwakeWindowSize());
             }
         }
     };
 
     private DutyCyclingEventListener dutyCyclingEventListener;
-    private void onWake() {
+    private void onWake(int duration) {
         if (dutyCyclingEventListener != null)
-            dutyCyclingEventListener.onWake();
+            dutyCyclingEventListener.onWake(duration);
     }
 
     public synchronized DutyCyclingManager subscribeToListener(DutyCyclingEventListener listener) {
@@ -116,13 +116,13 @@ public class DutyCyclingManager {
         return this;
     }
 
-    private void onSleep() {
+    private void onSleep(int duration) {
         if (dutyCyclingEventListener != null)
-            dutyCyclingEventListener.onSleep();
+            dutyCyclingEventListener.onSleep(duration);
     }
 
     public interface DutyCyclingEventListener {
-        void onWake();
-        void onSleep();
+        void onWake(int duration);
+        void onSleep(int duration);
     }
 }

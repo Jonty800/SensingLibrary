@@ -120,15 +120,15 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
     }
 
     @Override
-    public void onWake() {
-        Log.i(TAG, "Resuming sensor");
+    public void onWake(int duration) {
+        Log.i(TAG, "Resuming sensor for " + duration);
         getSensorEvent().onSensingPaused(SensorUtils.SENSOR_TYPE_MICROPHONE);
         beginSensingTask();
     }
 
     @Override
-    public void onSleep() {
-        Log.i(TAG, "Pausing sensor");
+    public void onSleep(int duration) {
+        Log.i(TAG, "Pausing sensor for " + duration);
         getSensorEvent().onSensingPaused(SensorUtils.SENSOR_TYPE_MICROPHONE);
         stopSensingTask();
     }

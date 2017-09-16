@@ -321,14 +321,14 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
     private SensorData lastEntry = null;
 
     @Override
-    public void onWake() {
-        Log.i(TAG, "Resuming sensor");
+    public void onWake(int duration) {
+        Log.i(TAG, "Resuming sensor for " + duration);
         addNewSensingTask(0);
     }
 
     @Override
-    public void onSleep() {
-        Log.i(TAG, "Pausing sensor");
+    public void onSleep(int duration) {
+        Log.i(TAG, "Pausing sensor for " + duration);
         stopSensingTask();
     }
 }
