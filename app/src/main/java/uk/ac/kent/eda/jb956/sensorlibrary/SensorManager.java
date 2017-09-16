@@ -94,8 +94,10 @@ public class SensorManager {
         pressureSensorManager = new PressureSensorManager(context);
         temperatureSensorManager = new TemperatureSensorManager(context);
         magneticFieldManager = new MagneticFieldManager(context);
-
         activitySensorManager = new ActivitySensorManager(context);
+
+        //start all sensors which were previously active
+        startSensors(getActiveSensors());
     }
 
     public static synchronized SensorManager getInstance(Context c) {
