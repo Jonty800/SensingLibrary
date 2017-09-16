@@ -48,6 +48,12 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
             wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         setSamplingRate(10000);
         dutyCyclingManager.subscribeToListener(this);
+        try {
+            context.registerReceiver(receiver, new IntentFilter(WifiManager
+                    .SCAN_RESULTS_AVAILABLE_ACTION));
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 
     private final Sensor sensor;
@@ -299,12 +305,6 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         if (!checkPermissions()) {
             logInfo(TAG, "Missing permissions for access to Wi-Fi. Aborting.");
             return;
-        }
-        try {
-            context.registerReceiver(receiver, new IntentFilter(WifiManager
-                    .SCAN_RESULTS_AVAILABLE_ACTION));
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
         }
         timeLastInitiated = System.currentTimeMillis();
         wifi.startScan();
