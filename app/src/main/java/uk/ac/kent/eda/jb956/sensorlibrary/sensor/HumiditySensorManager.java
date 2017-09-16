@@ -81,6 +81,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
         try {
             androidSensorManager.unregisterListener(this, getSensor());
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_HUMIDITY);
+            SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_HUMIDITY);
         } catch (Exception e) {
             e.printStackTrace();
         }

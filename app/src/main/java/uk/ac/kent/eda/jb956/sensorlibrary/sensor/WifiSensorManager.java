@@ -152,6 +152,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
             stopSensingTask();
             dutyCyclingManager.stop();
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_WIFI);
+            SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_WIFI);
         } catch (Exception e) {
             e.printStackTrace();
         }

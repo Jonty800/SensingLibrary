@@ -87,6 +87,7 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         try {
             androidSensorManager.unregisterListener(this, getSensor());
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_GYROSCOPE);
+            SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_GYROSCOPE);
         } catch (Exception e) {
             e.printStackTrace();
         }

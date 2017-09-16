@@ -18,6 +18,7 @@ import com.google.android.gms.location.ActivityRecognition;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
@@ -162,6 +163,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
             e.printStackTrace();
         }
         sensing = false;
+        SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_ACTIVITY);
         logInfo(TAG, "Sensor stopped");
         return this;
     }

@@ -84,7 +84,7 @@ public class SensorManager {
                 activeSensors = new Gson().fromJson(json, type);
             }
         }
-        audioManager = new AudioSensorManager();
+        audioManager = new AudioSensorManager(context);
         accelerometerManager = new AccelerometerManager(context);
         gyroscopeManager = new GyroscopeManager(context);
         wifiSensorManager = new WifiSensorManager(context);

@@ -80,6 +80,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
         try {
             androidSensorManager.unregisterListener(this, getSensor());
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_PROXIMITY);
+            uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_PROXIMITY);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -20,14 +20,15 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 public class AudioSensorManager extends BaseSensor implements DutyCyclingManager.DutyCyclingEventListener {
 
-    public AudioSensorManager() {
+    public AudioSensorManager(Context context) {
+        this.context = context;
         dutyCyclingManager.subscribeToListener(this);
     }
 
     private AudioDispatcher dispatcher;
     private final String TAG = "AudioSensorManager";
-    private static AudioSensorManager instance;
     boolean sensing = false;
+    Context context;
 
     public AudioSensorManager startSensing() {
         if (isSensing())
@@ -74,6 +75,7 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
         dutyCyclingManager.stop();
         sensing = false;
         getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_MICROPHONE);
+        SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_MICROPHONE);
         return this;
     }
 

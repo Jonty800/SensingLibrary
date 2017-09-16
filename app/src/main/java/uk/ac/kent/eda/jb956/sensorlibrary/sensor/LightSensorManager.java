@@ -94,6 +94,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         try {
             androidSensorManager.unregisterListener(this, getSensor());
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_LIGHT);
+            uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_LIGHT);
         } catch (Exception e) {
             e.printStackTrace();
         }

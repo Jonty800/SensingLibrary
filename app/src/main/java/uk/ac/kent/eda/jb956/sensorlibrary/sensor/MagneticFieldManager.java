@@ -90,6 +90,7 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
         try {
             androidSensorManager.unregisterListener(this, getSensor());
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD);
+            SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD);
         } catch (Exception e) {
             e.printStackTrace();
         }

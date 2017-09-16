@@ -64,6 +64,7 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
                 androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                 sensing = true;
                 getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
+                SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
             } else {
                 logInfo(TAG, "Cannot calculate Ambient Temperature, as Ambient Temperature sensor is not available!");
             }

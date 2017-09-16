@@ -92,6 +92,7 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
         try {
             androidSensorManager.unregisterListener(this, getSensor());
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_PRESSURE);
+            SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_PRESSURE);
         } catch (Exception e) {
             e.printStackTrace();
         }

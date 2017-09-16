@@ -134,6 +134,7 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
         }
         sensing = false;
         logInfo(TAG, "Sensor stopped");
+        SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_ACCELEROMETER);
         return this;
     }
 
