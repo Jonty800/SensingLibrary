@@ -34,27 +34,50 @@ The SensorLibrary is a library project for Android application developers. The m
 			}
 		}
 	}
-
-## Example Sensor Subscription
-
-	WifiSensorManager.getInstance(this).getSensorEventListener().subscribeToSensor(new SensingEvent.OnEventListener() {
-	  @Override
-		public void onDataSensed(SensorData sensorData) {
-			try {
-				WifiData data = sensorData.toWifiData();
-				Log.i(TAG, data.bssid);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	});
 	  
 ## Start Sensing
 
 	void startSensorsAfterPermissionAccepted(){
-		WifiSensorManager.getInstance(this).setEnabled(true);
-		WifiSensorManager.getInstance(this).startSensing();
+		SensorConfig sensorConfig = new SensorConfig();
+		sensorConfig.SAMPLING_RATE = 10000;
+		sensorConfig.AWAKE_WINDOW_SIZE = 60000 + 100;
+		sensorConfig.SLEEP_WINDOW_SIZE = 60000 * 2;
+		sensorConfig.saveToDatabase = false;
+		sensorManager.startSensor(SensorUtils.SENSOR_TYPE_WIFI, sensorConfig);
+		sensorManager.subscribeToSensorListener(this);
 	}
+	
+## Listen to Sensors
+
+	implements SensingEvent.SensingEventListener {
+	
+
+    @Override
+	public void onDataSensed(SensorData sensorData) {
+		if(sensorData.getSensorType() == SensorUtils.SENSOR_TYPE_WIFI{
+			NetworkCache.getInstance().getRawHistoricData().add(sensorData.toWifiData());
+		}
+	}
+
+    @Override
+    public void onSensingStarted(int sensorType) {
+
+    }
+
+    @Override
+    public void onSensingStopped(int sensorType) {
+
+    }
+
+    @Override
+    public void onSensingPaused(int sensorType) {
+
+    }
+
+    @Override
+    public void onSensingResumed(int sensorType) {
+
+    }
 
 ## License
 Copyright (C) Jon Baker, University of Kent
