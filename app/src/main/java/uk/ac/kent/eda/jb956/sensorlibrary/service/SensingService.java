@@ -10,6 +10,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AccelerometerManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ActivitySensorManager;
@@ -54,8 +55,8 @@ public class SensingService extends Service {
 
         Notification notification = new NotificationCompat.Builder(this)
                 .setSmallIcon(android.R.drawable.arrow_up_float)
-                .setContentTitle("Title")
-                .setContentText("Desc")
+                .setContentTitle(Settings.appName)
+                .setContentText("Collecting sensor information...")
                 .setContentIntent(pendingIntent).build();
 
         startForeground(1337, notification);

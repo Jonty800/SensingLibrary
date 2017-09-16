@@ -9,7 +9,7 @@ import android.os.Environment;
  */
 
 public class Settings {
-    public static final String appName = "SensingLibrary";
+    public static String appName = "SensingLibrary";
 
     /**
      * The database name (SQLite)
@@ -19,7 +19,7 @@ public class Settings {
     /**
      * The database version
      */
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 1;
 
     public static final String SAVE_PATH = Environment.getExternalStorageDirectory().getPath() + "/" + appName;
 
