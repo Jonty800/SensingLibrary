@@ -111,14 +111,6 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
         return config.audioConfig.RECORDER_SAMPLERATE;
     }
 
-    public void setSensingWindowDuration(int duration) {
-        config.AWAKE_WINDOW_SIZE = duration;
-    }
-
-    public void setSleepingDuration(int duration) {
-        config.SLEEP_WINDOW_SIZE = duration;
-    }
-
     @Override
     public void onWake(int duration) {
         Log.i(TAG, "Resuming sensor for " + duration);

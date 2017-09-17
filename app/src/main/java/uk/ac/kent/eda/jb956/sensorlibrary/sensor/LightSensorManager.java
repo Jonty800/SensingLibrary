@@ -8,10 +8,12 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.LightSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
@@ -23,25 +25,19 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class LightSensorManager extends BaseSensor implements SensingInterface, SensorEventListener {
+public class LightSensorManager extends BaseSensor implements SensingInterface, SensorEventListener, DutyCyclingManager.DutyCyclingEventListener {
 
     private final String TAG = "LightSensorManager";
-    private static LightSensorManager instance;
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
     private Handler mHandler;
-
-    public static synchronized LightSensorManager getInstance(Context context) {
-        if (instance == null)
-            instance = new LightSensorManager(context);
-        return instance;
-    }
 
     public LightSensorManager(Context context) {
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         mHandler = new Handler();
+        dutyCyclingManager.subscribeToListener(this);
     }
 
     private final Sensor sensor;
@@ -63,6 +59,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         try {
             logInfo(TAG, "Registering listener...");
             if (sensor != null) {
+                dutyCyclingManager.run();
                 androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
                 sensing = true;
                 getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_LIGHT);
@@ -92,6 +89,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         if (!isSensing())
             return this;
         try {
+            dutyCyclingManager.stop();
             androidSensorManager.unregisterListener(this, getSensor());
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_LIGHT);
             uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_LIGHT);
@@ -152,19 +150,15 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
     }
 
     @Override
-    public LightSensorManager withConfig(SensorConfig config) {
-        super.withConfig(config);
-        return this;
+    public void onWake(int duration) {
+        Log.i(TAG, "Resuming sensor for " + duration);
+        androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getmSensorHandler());
     }
 
     @Override
-    public void setSensingWindowDuration(int duration) {
-
-    }
-
-    @Override
-    public void setSleepingDuration(int duration) {
-
+    public void onSleep(int duration) {
+        Log.i(TAG, "Pausing sensor for " + duration);
+        androidSensorManager.unregisterListener(this, getSensor());
     }
 
     private Runnable mStatusChecker = new Runnable() {
@@ -172,18 +166,18 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         public void run() {
             try {
                 if ((System.currentTimeMillis()) - lastTimeCheckedHistory > 4000
-                        && ProximitySensorManager.getInstance(context).history.size() > 0
-                        && LightSensorManager.getInstance(context).history.size() > 0) {
+                        && ((ProximitySensorManager)uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getSensorById(SensorUtils.SENSOR_TYPE_PROXIMITY)).history.size() > 0
+                        && history.size() > 0) {
                     InPocketDetectionHelper inPocketDetectionHelper = InPocketDetectionHelper.getInstance();
                     List<Double> temp = new ArrayList<>();
-                    temp.add(ProximitySensorManager.getInstance(context).history.get(ProximitySensorManager.getInstance(context).history.size() - 1).proximity);
+                    temp.add(((ProximitySensorManager)uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getSensorById(SensorUtils.SENSOR_TYPE_PROXIMITY)).history.get(((ProximitySensorManager)uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getSensorById(SensorUtils.SENSOR_TYPE_PROXIMITY)).history.size() - 1).proximity);
                     // for (ProximitySensorData pd : ProximitySensorManager.getInstance(context).history) {
                     // temp.add(pd.proximity);
                     //}
                     inPocketDetectionHelper.proximityValues = new ArrayList<>(temp);
 
                     temp = new ArrayList<>();
-                    temp.add(LightSensorManager.getInstance(context).history.get(LightSensorManager.getInstance(context).history.size() - 1).illuminance);
+                    temp.add(history.get(history.size() - 1).illuminance);
                     //for (LightSensorData pd : LightSensorManager.getInstance(context).history) {
                     // temp.add(pd.illuminance);
                     // }
@@ -193,8 +187,8 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                     }
                     logInfo(TAG, "PocketDetectionResult: " + inPocketDetectionHelper.getDetectionResult().toString());
                     lastTimeCheckedHistory = System.currentTimeMillis();
-                    ProximitySensorManager.getInstance(context).history.clear();
-                    LightSensorManager.getInstance(context).history.clear();
+                    ((ProximitySensorManager)uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getSensorById(SensorUtils.SENSOR_TYPE_PROXIMITY)).history.clear();
+                    history.clear();
                 }
             } finally {
                 mHandler.postDelayed(mStatusChecker, 4000);

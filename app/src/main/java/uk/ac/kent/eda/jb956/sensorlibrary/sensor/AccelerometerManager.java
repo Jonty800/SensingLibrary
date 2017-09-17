@@ -6,10 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
@@ -22,10 +24,9 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class AccelerometerManager extends BaseSensor implements SensingInterface, SensorEventListener {
+public class AccelerometerManager extends BaseSensor implements SensingInterface, SensorEventListener, DutyCyclingManager.DutyCyclingEventListener {
 
     private final String TAG = "AccelerometerManager";
-    private static AccelerometerManager instance;
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
 
@@ -33,6 +34,7 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        dutyCyclingManager.subscribeToListener(this);
     }
 
     private final Sensor sensor;
@@ -40,11 +42,6 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
     @Override
     public Sensor getSensor() {
         return sensor;
-    }
-
-    @Override
-    public SensorData getLastEntry() {
-        return lastEntry;
     }
 
     @Override
@@ -107,6 +104,7 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
             return this;
         try {
             getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_ACCELEROMETER);
+            dutyCyclingManager.run();
             logInfo(TAG, "Registering listener...");
             if (sensor != null) {
                 androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
@@ -125,9 +123,9 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
     public AccelerometerManager stopSensing() {
         if (!isSensing())
             return this;
-
         try {
             androidSensorManager.unregisterListener(this, getSensor());
+            dutyCyclingManager.stop();
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_ACCELEROMETER);
         } catch (Exception e) {
             e.printStackTrace();
@@ -179,17 +177,19 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
     }
 
     @Override
-    public void setSensingWindowDuration(int duration) {
-
-    }
-
-    @Override
-    public void setSleepingDuration(int duration) {
-
-    }
-
-    @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    @Override
+    public void onWake(int duration) {
+        Log.i(TAG, "Resuming sensor for " + duration);
+        androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
+    }
+
+    @Override
+    public void onSleep(int duration) {
+        Log.i(TAG, "Pausing sensor for " + duration);
+        androidSensorManager.unregisterListener(this, getSensor());
     }
 }

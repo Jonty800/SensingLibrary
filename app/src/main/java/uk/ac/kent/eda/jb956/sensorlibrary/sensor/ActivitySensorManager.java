@@ -18,6 +18,7 @@ import com.google.android.gms.location.ActivityRecognition;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
@@ -32,7 +33,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class ActivitySensorManager extends BaseSensor implements SensingInterface, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class ActivitySensorManager extends BaseSensor implements SensingInterface, DutyCyclingManager.DutyCyclingEventListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private final String TAG = "ActivitySensorManager";
     private static ActivitySensorManager instance;
@@ -49,6 +50,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
         this.context = context.getApplicationContext();
         sensor = null;
         setSamplingRate(1000);
+        dutyCyclingManager.subscribeToListener(this);
     }
 
     private final Sensor sensor;
@@ -62,14 +64,6 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
     @Override
     public SensorData getLastEntry() {
         return lastEntry;
-    }
-
-    private SensingEvent sensorEvent = null;
-
-    @Override
-    public ActivitySensorManager withConfig(SensorConfig config) {
-        super.withConfig(config);
-        return this;
     }
 
     @Override
@@ -111,16 +105,6 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
     }
 
     @Override
-    public void setSensingWindowDuration(int duration) {
-
-    }
-
-    @Override
-    public void setSleepingDuration(int duration) {
-
-    }
-
-    @Override
     public void removeDataFromDatabaseWithRange(long start, long end) {
         String dbName = "act";
         SQLiteDatabase database = MySQLiteHelper.getInstance(context).getWritableDatabase();
@@ -134,6 +118,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
         if (isSensing())
             return this;
         try {
+            dutyCyclingManager.run();
             getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_ACTIVITY);
             mApiClient = new GoogleApiClient.Builder(context)
                     .addApi(ActivityRecognition.API)
@@ -156,6 +141,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
             return this;
 
         try {
+            dutyCyclingManager.stop();
             mApiClient.disconnect();
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_ACTIVITY);
 
@@ -217,5 +203,19 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
         logInfo(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
         mApiClient.connect();
         sensing = false;
+    }
+
+    @Override
+    public void onWake(int duration) {
+        Log.i(TAG, "Resuming sensor for " + duration);
+        if(sensing)
+            mApiClient.connect();
+    }
+
+    @Override
+    public void onSleep(int duration) {
+        Log.i(TAG, "Pausing sensor for " + duration);
+        if(sensing)
+            mApiClient.disconnect();
     }
 }

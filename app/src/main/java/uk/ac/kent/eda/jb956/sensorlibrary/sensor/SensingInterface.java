@@ -15,8 +15,6 @@ interface SensingInterface {
 
     Sensor getSensor();
 
-    SensorData getLastEntry();
-
     List<SensorData> getDataFromRange(long start, long end);
 
     List<SensorData> getAllData();
@@ -26,9 +24,5 @@ interface SensingInterface {
     void removeDataFromDatabaseWithRange(long start, long end);
 
     void removeAllDataFromDatabase();
-
-    void setSensingWindowDuration(int duration);
-
-    void setSleepingDuration(int duration);
 
 }

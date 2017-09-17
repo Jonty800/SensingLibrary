@@ -92,16 +92,6 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
     }
 
     @Override
-    public void setSensingWindowDuration(int duration) {
-        config.AWAKE_WINDOW_SIZE = duration;
-    }
-
-    @Override
-    public void setSleepingDuration(int duration) {
-        config.SLEEP_WINDOW_SIZE = duration;
-    }
-
-    @Override
     public List<SensorData> getAllData() {
         return getDataFromRange(0L, System.currentTimeMillis());
     }
@@ -165,10 +155,6 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         sensing = false;
         logInfo(TAG, "Sensor stopped");
         return this;
-    }
-
-    public boolean isSleeping() {
-        return dutyCyclingManager != null && dutyCyclingManager.isSleeping();
     }
 
     private WifiManager wifi;

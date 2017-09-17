@@ -6,10 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
@@ -22,24 +24,17 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class GyroscopeManager extends BaseSensor implements SensingInterface, SensorEventListener {
+public class GyroscopeManager extends BaseSensor implements SensingInterface, SensorEventListener, DutyCyclingManager.DutyCyclingEventListener {
 
     private final String TAG = "GyroscopeManager";
-    private static GyroscopeManager instance;
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
-
-
-    public static synchronized GyroscopeManager getInstance(Context context) {
-        if (instance == null)
-            instance = new GyroscopeManager(context);
-        return instance;
-    }
 
     public GyroscopeManager(Context context) {
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        dutyCyclingManager.subscribeToListener(this);
     }
 
     private final Sensor sensor;
@@ -55,16 +50,11 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
     }
 
     @Override
-    public GyroscopeManager withConfig(SensorConfig config) {
-        super.withConfig(config);
-        return this;
-    }
-
-    @Override
     public GyroscopeManager startSensing() {
         if (isSensing())
             return this;
         try {
+            dutyCyclingManager.run();
             getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_GYROSCOPE);
             logInfo(TAG, "Registering listener...");
             if (sensor != null) {
@@ -85,6 +75,7 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         if (!isSensing())
             return this;
         try {
+            dutyCyclingManager.stop();
             androidSensorManager.unregisterListener(this, getSensor());
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_GYROSCOPE);
             SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_GYROSCOPE);
@@ -94,13 +85,6 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         sensing = false;
         logInfo(TAG, "Sensor stopped");
         return this;
-    }
-
-    private boolean sensing = false;
-
-    @Override
-    public boolean isSensing() {
-        return sensing;
     }
 
     private long lastUpdate = 0;
@@ -134,16 +118,6 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
                 }
             }
         }
-    }
-
-    @Override
-    public void setSensingWindowDuration(int duration) {
-
-    }
-
-    @Override
-    public void setSleepingDuration(int duration) {
-
     }
 
     @Override
@@ -198,5 +172,17 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         logInfo(TAG, "Database size before delete: " + MySQLiteHelper.getInstance(context).getSize());
         database.execSQL("DELETE FROM " + dbName + " where timestamp >=" + start + " and timestamp <=" + end);
         logInfo(TAG, "Database size after delete: " + MySQLiteHelper.getInstance(context).getSize());
+    }
+
+    @Override
+    public void onWake(int duration) {
+        Log.i(TAG, "Resuming sensor for " + duration);
+        androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
+    }
+
+    @Override
+    public void onSleep(int duration) {
+        Log.i(TAG, "Pausing sensor for " + duration);
+        androidSensorManager.unregisterListener(this, getSensor());
     }
 }

@@ -6,10 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
@@ -22,24 +24,18 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class HumiditySensorManager extends BaseSensor implements SensingInterface, SensorEventListener {
+public class HumiditySensorManager extends BaseSensor implements SensingInterface, SensorEventListener, DutyCyclingManager.DutyCyclingEventListener {
 
     private final String TAG = "HumiditySensorManager";
-    private static HumiditySensorManager instance;
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
-
-    public static synchronized HumiditySensorManager getInstance(Context context) {
-        if (instance == null)
-            instance = new HumiditySensorManager(context);
-        return instance;
-    }
 
     public HumiditySensorManager(Context context) {
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
         setSamplingRate(1000);
+        dutyCyclingManager.subscribeToListener(this);
     }
 
     private final Sensor sensor;
@@ -61,6 +57,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
         try {
             logInfo(TAG, "Registering listener...");
             if (sensor != null) {
+                dutyCyclingManager.run();
                 androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                 sensing = true;
                 getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_HUMIDITY);
@@ -79,6 +76,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
         if (!isSensing())
             return this;
         try {
+            dutyCyclingManager.stop();
             androidSensorManager.unregisterListener(this, getSensor());
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_HUMIDITY);
             SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_HUMIDITY);
@@ -87,12 +85,6 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
         }
         sensing = false;
         logInfo(TAG, "Sensor stopped");
-        return this;
-    }
-
-    @Override
-    public HumiditySensorManager withConfig(SensorConfig config) {
-        super.withConfig(config);
         return this;
     }
 
@@ -132,13 +124,15 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
     }
 
     @Override
-    public void setSensingWindowDuration(int duration) {
-
+    public void onWake(int duration) {
+        Log.i(TAG, "Resuming sensor for " + duration);
+        androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
     }
 
     @Override
-    public void setSleepingDuration(int duration) {
-
+    public void onSleep(int duration) {
+        Log.i(TAG, "Pausing sensor for " + duration);
+        androidSensorManager.unregisterListener(this, getSensor());
     }
 
     @Override

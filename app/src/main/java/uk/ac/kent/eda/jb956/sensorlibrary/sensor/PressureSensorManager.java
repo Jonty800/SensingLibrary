@@ -6,10 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
@@ -22,25 +24,19 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class PressureSensorManager extends BaseSensor implements SensingInterface, SensorEventListener {
+public class PressureSensorManager extends BaseSensor implements SensingInterface, SensorEventListener, DutyCyclingManager.DutyCyclingEventListener {
 
     private final String TAG = "PressureSensorManager";
-    private static PressureSensorManager instance;
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
     public static int SAMPLING_RATE = 1000; //ms
     public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
 
-    public static synchronized PressureSensorManager getInstance(Context context) {
-        if (instance == null)
-            instance = new PressureSensorManager(context);
-        return instance;
-    }
-
     public PressureSensorManager(Context context) {
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        dutyCyclingManager.subscribeToListener(this);
     }
 
     private final Sensor sensor;
@@ -66,12 +62,25 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
     }
 
     @Override
+    public void onWake(int duration) {
+        Log.i(TAG, "Resuming sensor for " + duration);
+        androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getmSensorHandler());
+    }
+
+    @Override
+    public void onSleep(int duration) {
+        Log.i(TAG, "Pausing sensor for " + duration);
+        androidSensorManager.unregisterListener(this, getSensor());
+    }
+
+    @Override
     public PressureSensorManager startSensing() {
         if (isSensing())
             return this;
         try {
             logInfo(TAG, "Registering listener...");
             if (sensor != null) {
+                dutyCyclingManager.run();
                 androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
                 sensing = true;
                 getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_PRESSURE);
@@ -90,6 +99,7 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
         if (!isSensing())
             return this;
         try {
+            dutyCyclingManager.stop();
             androidSensorManager.unregisterListener(this, getSensor());
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_PRESSURE);
             SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_PRESSURE);
@@ -116,16 +126,6 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
 
     private long lastUpdate = 0;
     private SensorData lastEntry = null;
-
-    @Override
-    public void setSensingWindowDuration(int duration) {
-
-    }
-
-    @Override
-    public void setSleepingDuration(int duration) {
-
-    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {

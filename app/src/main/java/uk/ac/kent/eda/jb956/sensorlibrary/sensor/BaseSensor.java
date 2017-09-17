@@ -5,6 +5,7 @@ import android.util.Log;
 import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -23,24 +24,34 @@ public class BaseSensor {
         return sensing;
     }
 
+    public boolean isSleeping() {
+        return dutyCyclingManager != null && dutyCyclingManager.isSleeping();
+    }
+
     boolean sensing = false;
     DutyCyclingManager dutyCyclingManager;
 
+    private SensorData lastEntry = null;
+
+    public SensorData getLastEntry() {
+        return lastEntry;
+    }
+
     public BaseSensor withConfig(SensorConfig config) { //replace default
+        updateConfig(config);
+        return this;
+    }
+
+    public void updateConfig(SensorConfig config) { //replace default
         this.config = config;
         if(dutyCyclingManager==null)
             dutyCyclingManager = new DutyCyclingManager(config);
         else
             dutyCyclingManager.updateSensorConfig(config);
-        return this;
     }
 
     public BaseSensor withDefaultConfig() { //load default
-        this.config = new SensorConfig();
-        if(dutyCyclingManager==null)
-            dutyCyclingManager = new DutyCyclingManager(config);
-        else
-            dutyCyclingManager.updateSensorConfig(config);
+        updateConfig(config);
         return this;
     }
 
