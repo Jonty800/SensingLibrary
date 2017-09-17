@@ -45,11 +45,6 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
     }
 
     @Override
-    public SensorData getLastEntry() {
-        return lastEntry;
-    }
-
-    @Override
     public GyroscopeManager startSensing() {
         if (isSensing())
             return this;
@@ -88,7 +83,6 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
     }
 
     private long lastUpdate = 0;
-    private SensorData lastEntry = null;
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -108,7 +102,7 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
                     sensorData.Y = y;
                     sensorData.Z = z;
                     sensorData.timestamp = System.currentTimeMillis();
-                    lastEntry = sensorData;
+                    setLastEntry(sensorData);
                     if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToGyro(sensorData);
                     }
@@ -176,13 +170,13 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
 
     @Override
     public void onWake(int duration) {
-        Log.i(TAG, "Resuming sensor for " + duration);
+        logInfo(TAG, "Resuming sensor for " + duration);
         androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
     }
 
     @Override
     public void onSleep(int duration) {
-        Log.i(TAG, "Pausing sensor for " + duration);
+        logInfo(TAG, "Pausing sensor for " + duration);
         androidSensorManager.unregisterListener(this, getSensor());
     }
 }

@@ -45,11 +45,6 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
     }
 
     @Override
-    public SensorData getLastEntry() {
-        return lastEntry;
-    }
-
-    @Override
     public ProximitySensorManager startSensing() {
         if (isSensing())
             return this;
@@ -95,7 +90,6 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
     }
 
     private long lastUpdate = 0;
-    private SensorData lastEntry = null;
     public List<ProximitySensorData> history = new ArrayList<>();
 
     @Override
@@ -112,7 +106,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
                     ProximitySensorData sensorData = new ProximitySensorData(SensorUtils.SENSOR_TYPE_PROXIMITY);
                     sensorData.proximity = proximity;
                     sensorData.timestamp = System.currentTimeMillis();
-                    lastEntry = sensorData;
+                    setLastEntry(sensorData);
                     if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToProximity(sensorData);
                     }
@@ -134,13 +128,13 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
 
     @Override
     public void onWake(int duration) {
-        Log.i(TAG, "Resuming sensor for " + duration);
+        logInfo(TAG, "Resuming sensor for " + duration);
         androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getmSensorHandler());
     }
 
     @Override
     public void onSleep(int duration) {
-        Log.i(TAG, "Pausing sensor for " + duration);
+        logInfo(TAG, "Pausing sensor for " + duration);
         androidSensorManager.unregisterListener(this, getSensor());
     }
 

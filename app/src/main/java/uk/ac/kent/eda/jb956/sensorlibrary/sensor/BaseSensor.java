@@ -31,6 +31,10 @@ public class BaseSensor {
     boolean sensing = false;
     DutyCyclingManager dutyCyclingManager;
 
+    public void setLastEntry(SensorData lastEntry) {
+        this.lastEntry = lastEntry;
+    }
+
     private SensorData lastEntry = null;
 
     public SensorData getLastEntry() {
@@ -78,11 +82,7 @@ public class BaseSensor {
     public boolean canSaveToDatabase() {
         return config.saveToDatabase;
     }
-
-    public void setSaveToDatabase(boolean save) {
-        config.saveToDatabase = save;
-    }
-
+    
     public void logInfo(String TAG, String text) {
         if (config.logToConsole) {
             Log.i(TAG, text);

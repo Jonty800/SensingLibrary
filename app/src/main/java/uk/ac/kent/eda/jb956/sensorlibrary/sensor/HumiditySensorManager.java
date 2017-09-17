@@ -46,11 +46,6 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
     }
 
     @Override
-    public SensorData getLastEntry() {
-        return lastEntry;
-    }
-
-    @Override
     public HumiditySensorManager startSensing() {
         if (isSensing())
             return this;
@@ -96,7 +91,6 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
     }
 
     private long lastUpdate = 0;
-    private SensorData lastEntry = null;
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -112,7 +106,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
                     PressureSensorData sensorData = new PressureSensorData(SensorUtils.SENSOR_TYPE_HUMIDITY);
                     sensorData.pressure = millibars_of_pressure;
                     sensorData.timestamp = System.currentTimeMillis();
-                    lastEntry = sensorData;
+                    setLastEntry(sensorData);
                     if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToHumidity(sensorData);
                     }
@@ -125,13 +119,13 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
 
     @Override
     public void onWake(int duration) {
-        Log.i(TAG, "Resuming sensor for " + duration);
+        logInfo(TAG, "Resuming sensor for " + duration);
         androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
     }
 
     @Override
     public void onSleep(int duration) {
-        Log.i(TAG, "Pausing sensor for " + duration);
+        logInfo(TAG, "Pausing sensor for " + duration);
         androidSensorManager.unregisterListener(this, getSensor());
     }
 

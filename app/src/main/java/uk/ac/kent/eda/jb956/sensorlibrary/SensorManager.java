@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.support.v4.util.ArraySet;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -72,7 +73,7 @@ public class SensorManager {
      */
     private SensorManager(Context c) {
         this.context = c.getApplicationContext();
-        mSensorThread = new HandlerThread("Sensor thread", Thread.MAX_PRIORITY);
+        HandlerThread mSensorThread = new HandlerThread("Sensor thread", Thread.MAX_PRIORITY);
         mSensorThread.start();
         mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
         workerThread = WorkerThread.create();
@@ -135,14 +136,14 @@ public class SensorManager {
         return activeSensors;
     }
 
-    public void startSensors(Map<Integer, SensorConfig> sensorMap){
-        Set<Integer> keys = sensorMap.keySet();
+    public synchronized void startSensors(Map<Integer, SensorConfig> sensorMap){
+        Set<Integer> keys = new ArraySet<>(getActiveSensors().keySet());
         for(int key : keys) {
             startSensor(key, sensorMap.get(key));
         }
     }
 
-    public void startSensor(int sensorId, SensorConfig config) {
+    public synchronized void startSensor(int sensorId, SensorConfig config) {
         Intent i = new Intent(context, SensingService.class);
         i.putExtra("type", sensorId);
         i.putExtra("exec", "start");
@@ -151,7 +152,7 @@ public class SensorManager {
         context.startService(i);
     }
 
-    public void stopSensor(int sensorId) {
+    public synchronized void stopSensor(int sensorId) {
         Intent i = new Intent(context, SensingService.class);
         i.putExtra("type", sensorId);
         i.putExtra("exec", "stop");
@@ -159,18 +160,26 @@ public class SensorManager {
         context.startService(i);
     }
 
+    public synchronized void stopAllSensors(){
+        Set<Integer> keys = new ArraySet<>(getActiveSensors().keySet());
+        for(int key : keys) {
+           stopSensor(key);
+        }
+        stopSensingService();
+    }
+
     public void stopSensingService() {
         Intent i = new Intent(context, SensingService.class);
         context.stopService(i);
     }
 
-    private void putSensorIntoMap(int sensorId, SensorConfig config){
+    private synchronized void putSensorIntoMap(int sensorId, SensorConfig config){
         activeSensors.put(sensorId, config);
         Type type = new TypeToken<Map<Integer, SensorConfig>>(){}.getType();
         storeIntoSharedPref("activeSensors", activeSensors, type);
     }
 
-    private void removeSensorFromMap(int sensorId){
+    private synchronized void removeSensorFromMap(int sensorId){
         activeSensors.remove(sensorId);
         Type type = new TypeToken<Map<Integer, SensorConfig>>(){}.getType();
         storeIntoSharedPref("activeSensors", activeSensors, type);
@@ -227,7 +236,6 @@ public class SensorManager {
 
     private WorkerThread workerThread;
 
-    private HandlerThread mSensorThread;
     private Handler mSensorHandler;
 
     public Handler getmSensorHandler() {

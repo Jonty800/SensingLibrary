@@ -46,11 +46,6 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
     }
 
     @Override
-    public SensorData getLastEntry() {
-        return lastEntry;
-    }
-
-    @Override
     public TemperatureSensorManager startSensing() {
         if (isSensing())
             return this;
@@ -97,17 +92,16 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
     }
 
     private long lastUpdate = 0;
-    private SensorData lastEntry = null;
 
     @Override
     public void onWake(int duration) {
-        Log.i(TAG, "Resuming sensor for " + duration);
+        logInfo(TAG, "Resuming sensor for " + duration);
         androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getmSensorHandler());
     }
 
     @Override
     public void onSleep(int duration) {
-        Log.i(TAG, "Pausing sensor for " + duration);
+        logInfo(TAG, "Pausing sensor for " + duration);
         androidSensorManager.unregisterListener(this, getSensor());
     }
 
@@ -125,7 +119,7 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
                     TemperatureSensorData sensorData = new TemperatureSensorData(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
                     sensorData.degreesC = degreesC;
                     sensorData.timestamp = System.currentTimeMillis();
-                    lastEntry = sensorData;
+                    setLastEntry(sensorData);
                     if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToTemperature(sensorData);
                     }

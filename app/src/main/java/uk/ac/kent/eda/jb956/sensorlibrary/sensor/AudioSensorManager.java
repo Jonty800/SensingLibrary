@@ -59,6 +59,7 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
             sensorData.byte_buffer = audioEvent.getByteBuffer();
             if (getSensorEvent() != null)
                 getSensorEvent().onDataSensed(sensorData);
+            setLastEntry(sensorData);
             return true;
         }
 
@@ -113,14 +114,14 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
 
     @Override
     public void onWake(int duration) {
-        Log.i(TAG, "Resuming sensor for " + duration);
+        logInfo(TAG, "Resuming sensor for " + duration);
         getSensorEvent().onSensingPaused(SensorUtils.SENSOR_TYPE_MICROPHONE);
         beginSensingTask();
     }
 
     @Override
     public void onSleep(int duration) {
-        Log.i(TAG, "Pausing sensor for " + duration);
+        logInfo(TAG, "Pausing sensor for " + duration);
         getSensorEvent().onSensingPaused(SensorUtils.SENSOR_TYPE_MICROPHONE);
         stopSensingTask();
     }

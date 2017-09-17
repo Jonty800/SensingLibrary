@@ -1,6 +1,9 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.sensor;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.R;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
@@ -62,17 +66,6 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
     public Sensor getSensor() {
         Log.e(TAG, "getSensor() for this class is always null");
         return sensor;
-    }
-
-    @Override
-    public SensorData getLastEntry() {
-        return lastEntry;
-    }
-
-    @Override
-    public WifiSensorManager withConfig(SensorConfig config) {
-        super.withConfig(config);
-        return this;
     }
 
     @Override
@@ -199,6 +192,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
                         }
                         currentEntries.add(sensorData);
                         getSensorEvent().onDataSensed(sensorData);
+                        setLastEntry(sensorData);
                     }
                 }
 
@@ -285,10 +279,12 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
 
     private void requestWifiScan() {
         if (!canAccessWifiSignals()) {
+            checkWifiSettings();
             logInfo(TAG, "Wi-Fi not enabled or not always available - ignoring requestWifiScan");
             return;
         }
         if (!checkPermissions()) {
+            checkPermissions();
             logInfo(TAG, "Missing permissions for access to Wi-Fi. Aborting.");
             return;
         }
@@ -304,17 +300,15 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         return sensing;
     }
 
-    private SensorData lastEntry = null;
-
     @Override
     public void onWake(int duration) {
-        Log.i(TAG, "Resuming sensor for " + duration);
+        logInfo(TAG, "Resuming sensor for " + duration);
         addNewSensingTask(0);
     }
 
     @Override
     public void onSleep(int duration) {
-        Log.i(TAG, "Pausing sensor for " + duration);
+        logInfo(TAG, "Pausing sensor for " + duration);
         stopSensingTask();
     }
 }

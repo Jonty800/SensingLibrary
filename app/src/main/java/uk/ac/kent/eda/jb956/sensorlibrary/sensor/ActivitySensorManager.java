@@ -36,15 +36,8 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 public class ActivitySensorManager extends BaseSensor implements SensingInterface, DutyCyclingManager.DutyCyclingEventListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private final String TAG = "ActivitySensorManager";
-    private static ActivitySensorManager instance;
     private final Context context;
     private GoogleApiClient mApiClient;
-
-    public static synchronized ActivitySensorManager getInstance(Context context) {
-        if (instance == null)
-            instance = new ActivitySensorManager(context);
-        return instance;
-    }
 
     public ActivitySensorManager(Context context) {
         this.context = context.getApplicationContext();
@@ -59,11 +52,6 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
     public Sensor getSensor() {
         Log.e(TAG, "getSensor() for this class is always null");
         return sensor;
-    }
-
-    @Override
-    public SensorData getLastEntry() {
-        return lastEntry;
     }
 
     @Override
@@ -161,8 +149,6 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
         return sensing;
     }
 
-    private SensorData lastEntry = null;
-
     /**
      * Event which occurs when the GoogleAPI has connected to the GooglePlayServices
      * This is where we request activity updates
@@ -207,14 +193,14 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
 
     @Override
     public void onWake(int duration) {
-        Log.i(TAG, "Resuming sensor for " + duration);
+        logInfo(TAG, "Resuming sensor for " + duration);
         if(sensing)
             mApiClient.connect();
     }
 
     @Override
     public void onSleep(int duration) {
-        Log.i(TAG, "Pausing sensor for " + duration);
+        logInfo(TAG, "Pausing sensor for " + duration);
         if(sensing)
             mApiClient.disconnect();
     }

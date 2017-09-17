@@ -48,11 +48,6 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
     }
 
     @Override
-    public SensorData getLastEntry() {
-        return lastEntry;
-    }
-
-    @Override
     public LightSensorManager startSensing() {
         if (isSensing())
             return this;
@@ -112,7 +107,6 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
     }
 
     private long lastUpdate = 0;
-    private SensorData lastEntry = null;
     public List<LightSensorData> history = new ArrayList<>();
     private long lastTimeCheckedHistory = System.currentTimeMillis();
 
@@ -130,7 +124,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                     LightSensorData sensorData = new LightSensorData(SensorUtils.SENSOR_TYPE_LIGHT);
                     sensorData.illuminance = lx;
                     sensorData.timestamp = System.currentTimeMillis();
-                    lastEntry = sensorData;
+                    setLastEntry(sensorData);
                     history.add(sensorData);
                     if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToLight(sensorData);
@@ -151,13 +145,13 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
 
     @Override
     public void onWake(int duration) {
-        Log.i(TAG, "Resuming sensor for " + duration);
+        logInfo(TAG, "Resuming sensor for " + duration);
         androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getmSensorHandler());
     }
 
     @Override
     public void onSleep(int duration) {
-        Log.i(TAG, "Pausing sensor for " + duration);
+        logInfo(TAG, "Pausing sensor for " + duration);
         androidSensorManager.unregisterListener(this, getSensor());
     }
 

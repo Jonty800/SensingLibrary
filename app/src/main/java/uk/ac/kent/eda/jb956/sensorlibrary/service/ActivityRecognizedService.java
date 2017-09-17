@@ -8,6 +8,7 @@ import com.google.android.gms.location.DetectedActivity;
 
 import java.util.List;
 
+import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ActivityData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
@@ -96,9 +97,11 @@ public class ActivityRecognizedService extends IntentService {
             sensorData.activityCode = best.getType();
             sensorData.confidence = best.getConfidence();
             sensorData.timestamp = System.currentTimeMillis();
-            if (ActivitySensorManager.getInstance(this).canSaveToDatabase()) {
+
+            if (SensorManager.getInstance(this).getSensorById(SensorUtils.SENSOR_TYPE_ACTIVITY).canSaveToDatabase()) {
                 MySQLiteHelper.getInstance(this).addToActivity(sensorData);
             }
+            SensorManager.getInstance(this).getSensorById(SensorUtils.SENSOR_TYPE_ACTIVITY).setLastEntry(sensorData);
             SensingEvent.getInstance().onDataSensed(sensorData);
         }
     }
