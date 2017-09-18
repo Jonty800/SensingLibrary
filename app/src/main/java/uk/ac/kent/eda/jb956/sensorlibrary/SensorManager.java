@@ -108,6 +108,8 @@ public class SensorManager {
         switch (sensorId) {
             case SensorUtils.SENSOR_TYPE_GYROSCOPE:
                 return gyroscopeManager;
+            case SensorUtils.SENSOR_TYPE_ACTIVITY:
+                return activitySensorManager;
             case SensorUtils.SENSOR_TYPE_ACCELEROMETER:
                 return accelerometerManager;
             case SensorUtils.SENSOR_TYPE_PROXIMITY:
