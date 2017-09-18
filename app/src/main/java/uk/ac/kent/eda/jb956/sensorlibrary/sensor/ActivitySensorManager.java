@@ -44,6 +44,11 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
         sensor = null;
         setSamplingRate(1000);
         dutyCyclingManager.subscribeToListener(this);
+        mApiClient = new GoogleApiClient.Builder(context)
+                .addApi(ActivityRecognition.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
     }
 
     private final Sensor sensor;
@@ -106,20 +111,15 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
         if (isSensing())
             return this;
         try {
+            logInfo(TAG, "Attempting to start sensor");
             dutyCyclingManager.run();
             getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_ACTIVITY);
-            mApiClient = new GoogleApiClient.Builder(context)
-                    .addApi(ActivityRecognition.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
 
             mApiClient.connect();
             //sensing = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        logInfo(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         return this;
     }
 
