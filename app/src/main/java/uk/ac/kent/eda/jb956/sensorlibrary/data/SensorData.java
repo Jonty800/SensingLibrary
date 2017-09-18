@@ -41,6 +41,10 @@ public class SensorData {
         return (WifiData) this;
     }
 
+    public ProximitySensorData toProximityData() {
+        return (ProximitySensorData) this;
+    }
+
     public AudioSensorData toAudioData() {
         return (AudioSensorData) this;
     }

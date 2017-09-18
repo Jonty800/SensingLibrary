@@ -82,7 +82,7 @@ public class BaseSensor {
     public boolean canSaveToDatabase() {
         return config.saveToDatabase;
     }
-    
+
     public void logInfo(String TAG, String text) {
         if (config.logToConsole) {
             Log.i(TAG, text);
