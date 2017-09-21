@@ -95,12 +95,16 @@ public class SensingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String exec = intent.getStringExtra("exec");
-        int sensorId = intent.getIntExtra("type", -1);
-        SensorConfig config = (SensorConfig) intent.getSerializableExtra("config");
-        if (exec.equalsIgnoreCase("start")) {
-            sensorManager.getSensorById(sensorId).withConfig(config).startSensing();
-        } else if (exec.equalsIgnoreCase("stop")) {
-            sensorManager.getSensorById(sensorId).stopSensing();
+        if(exec!=null) {
+            int sensorId = intent.getIntExtra("type", -1);
+            if(sensorId>-1) {
+                SensorConfig config = (SensorConfig) intent.getSerializableExtra("config");
+                if (exec.equalsIgnoreCase("start")) {
+                    sensorManager.getSensorById(sensorId).withConfig(config).startSensing();
+                } else if (exec.equalsIgnoreCase("stop")) {
+                    sensorManager.getSensorById(sensorId).stopSensing();
+                }
+            }
         }
         return START_STICKY;
     }
