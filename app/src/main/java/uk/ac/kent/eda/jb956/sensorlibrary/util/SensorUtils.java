@@ -1,5 +1,7 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.util;
 
+import com.google.android.gms.location.DetectedActivity;
+
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
  * School of Engineering and Digital Arts, University of Kent
@@ -45,6 +47,29 @@ public class SensorUtils {
                 return "SENSOR_TYPE_MAGNETIC_FIELD";
             case SENSOR_TYPE_ACTIVITY:
                 return "SENSOR_TYPE_ACTIVITY";
+            default:
+                return "UNKNOWN";
+        }
+    }
+
+    public String getActivityFromType(int activityType){
+        switch(activityType){
+            case DetectedActivity.IN_VEHICLE:
+                return "IN_VEHICLE";
+            case DetectedActivity.ON_BICYCLE:
+                return "ON_BICYCLE";
+            case DetectedActivity.ON_FOOT:
+                return "ON_FOOT";
+            case DetectedActivity.RUNNING:
+                return "RUNNING";
+            case DetectedActivity.STILL:
+                return "STILL";
+            case DetectedActivity.TILTING:
+                return "TILTING";
+            case DetectedActivity.UNKNOWN:
+                return "UNKNOWN";
+            case DetectedActivity.WALKING:
+                return "WALKING";
             default:
                 return "UNKNOWN";
         }

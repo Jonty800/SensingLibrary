@@ -112,9 +112,6 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
             return this;
         try {
             logInfo(TAG, "Attempting to start sensor");
-            dutyCyclingManager.run();
-            getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_ACTIVITY);
-
             mApiClient.connect();
             //sensing = true;
         } catch (Exception e) {
@@ -161,6 +158,9 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(mApiClient, getSamplingRate(), pendingIntent);
         sensing = true;
+        logInfo(TAG, "Began sensing");
+        dutyCyclingManager.run();
+        getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_ACTIVITY);
     }
 
     /**

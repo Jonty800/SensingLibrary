@@ -49,12 +49,13 @@ public class GyroscopeManager extends BaseSensor implements SensingInterface, Se
         if (isSensing())
             return this;
         try {
-            dutyCyclingManager.run();
-            getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_GYROSCOPE);
+
             logInfo(TAG, "Registering listener...");
             if (sensor != null) {
                 androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                 sensing = true;
+                dutyCyclingManager.run();
+                getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_GYROSCOPE);
             } else {
                 logInfo(TAG, "Cannot calculate Gyroscope data, as gyroscope sensor is not available!");
             }

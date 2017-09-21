@@ -52,12 +52,6 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
             wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         setSamplingRate(10000);
         dutyCyclingManager.subscribeToListener(this);
-        try {
-            context.registerReceiver(receiver, new IntentFilter(WifiManager
-                    .SCAN_RESULTS_AVAILABLE_ACTION));
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
     }
 
     private final Sensor sensor;
@@ -121,6 +115,8 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
             return this;
         try {
             logInfo(TAG, "Starting Wi-Fi Fingerprinting Service");
+            context.registerReceiver(receiver, new IntentFilter(WifiManager
+                    .SCAN_RESULTS_AVAILABLE_ACTION));
             dutyCyclingManager.run();
             addNewSensingTask(0);
             sensing = true;
@@ -138,6 +134,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         if (!isSensing())
             return this;
         try {
+            context.unregisterReceiver(receiver);
             stopSensingTask();
             dutyCyclingManager.stop();
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_WIFI);

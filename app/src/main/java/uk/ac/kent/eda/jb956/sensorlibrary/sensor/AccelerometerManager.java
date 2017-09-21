@@ -103,12 +103,12 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
         if (isSensing())
             return this;
         try {
-            getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_ACCELEROMETER);
-            dutyCyclingManager.run();
             logInfo(TAG, "Registering listener...");
             if (sensor != null) {
                 androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                 sensing = true;
+                getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_ACCELEROMETER);
+                dutyCyclingManager.run();
             } else {
                 logInfo(TAG, "Cannot calculate Accelerometer data, as Accelerometer sensor is not available!");
             }
