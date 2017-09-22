@@ -96,13 +96,18 @@ public class SensingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         String exec = intent.getStringExtra("exec");
         if(exec!=null) {
-            int sensorId = intent.getIntExtra("type", -1);
-            if(sensorId>-1) {
-                SensorConfig config = (SensorConfig) intent.getSerializableExtra("config");
-                if (exec.equalsIgnoreCase("start")) {
-                    sensorManager.getSensorById(sensorId).withConfig(config).startSensing();
-                } else if (exec.equalsIgnoreCase("stop")) {
-                    sensorManager.getSensorById(sensorId).stopSensing();
+            if(exec.equalsIgnoreCase("stopservice")){
+                stopForeground(true);
+                stopSelf();
+            } else {
+                int sensorId = intent.getIntExtra("type", -1);
+                if (sensorId > -1) {
+                    SensorConfig config = (SensorConfig) intent.getSerializableExtra("config");
+                    if (exec.equalsIgnoreCase("start")) {
+                        sensorManager.getSensorById(sensorId).withConfig(config).startSensing();
+                    } else if (exec.equalsIgnoreCase("stop")) {
+                        sensorManager.getSensorById(sensorId).stopSensing();
+                    }
                 }
             }
         }

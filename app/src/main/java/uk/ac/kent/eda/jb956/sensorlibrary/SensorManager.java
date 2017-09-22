@@ -167,12 +167,13 @@ public class SensorManager {
         for(int key : keys) {
            stopSensor(key);
         }
-        stopSensingService();
+        stopSensingService(); //stop service
     }
 
     public void stopSensingService() {
         Intent i = new Intent(context, SensingService.class);
-        context.stopService(i);
+        i.putExtra("exec", "stopservice");
+        context.startService(i); //send stop command
     }
 
     private synchronized void putSensorIntoMap(int sensorId, SensorConfig config){

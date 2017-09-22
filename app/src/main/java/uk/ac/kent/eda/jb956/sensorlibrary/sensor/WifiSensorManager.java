@@ -114,7 +114,6 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         if (isSensing())
             return this;
         try {
-            logInfo(TAG, "Starting Wi-Fi Fingerprinting Service");
             context.registerReceiver(receiver, new IntentFilter(WifiManager
                     .SCAN_RESULTS_AVAILABLE_ACTION));
             dutyCyclingManager.run();
