@@ -30,7 +30,7 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
     boolean sensing = false;
     Context context;
 
-    public AudioSensorManager startSensing() {
+    public synchronized AudioSensorManager startSensing() {
         if (isSensing())
             return this;
         sensing = true;
@@ -41,7 +41,7 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
         return this;
     }
 
-    private void addNewSensingTask() {
+    private synchronized void addNewSensingTask() {
         dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(getSamplingRate(), getBufferSize(), 0);
         dispatcher.addAudioProcessor(audioProcessor);
         sensing = true;
@@ -65,29 +65,26 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
 
         @Override
         public void processingFinished() {
+
         }
     };
 
-    public AudioSensorManager stopSensing() {
+    public synchronized AudioSensorManager stopSensing() {
         if (!isSensing())
             return this;
         logInfo(TAG, "Stopped Audio Sensing");
         stopSensingTask();
         dutyCyclingManager.stop();
         sensing = false;
-        getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_MICROPHONE);
         SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_MICROPHONE);
+        getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_MICROPHONE);
         return this;
     }
 
-    private void stopSensingTask(){
+    private synchronized void stopSensingTask(){
         if (!dispatcher.isStopped())
             dispatcher.stop(); //should happen in stopSensing()
-    }
-
-    private void beginSensingTask() {
-        addNewSensingTask();
-        getSensorEvent().onSensingResumed(SensorUtils.SENSOR_TYPE_MICROPHONE);
+        dispatcher = null;
     }
 
     public boolean isSensing() {
@@ -113,16 +110,16 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
     }
 
     @Override
-    public void onWake(int duration) {
+    public synchronized void onWake(int duration) {
         logInfo(TAG, "Resuming sensor for " + duration);
         getSensorEvent().onSensingResumed(SensorUtils.SENSOR_TYPE_MICROPHONE);
-        beginSensingTask();
+        addNewSensingTask();
     }
 
     @Override
-    public void onSleep(int duration) {
+    public synchronized void onSleep(int duration) {
+        stopSensingTask();
         logInfo(TAG, "Pausing sensor for " + duration);
         getSensorEvent().onSensingPaused(SensorUtils.SENSOR_TYPE_MICROPHONE);
-        stopSensingTask();
     }
 }
