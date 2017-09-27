@@ -52,7 +52,6 @@ public class SensorManager {
     private final Context context;
     private final String TAG = "SensorManager";
 
-
     private AudioSensorManager audioManager;
     private AccelerometerManager accelerometerManager;
     private GyroscopeManager gyroscopeManager;
@@ -142,6 +141,22 @@ public class SensorManager {
         Set<Integer> keys = new ArraySet<>(getActiveSensors().keySet());
         for(int key : keys) {
             startSensor(key, sensorMap.get(key));
+        }
+    }
+
+    public synchronized void startSensor(int sensorId) {
+        SensorConfig config = new SensorConfig();
+        Intent i = new Intent(context, SensingService.class);
+        i.putExtra("type", sensorId);
+        i.putExtra("exec", "start");
+        i.putExtra("config", config);
+        putSensorIntoMap(sensorId, config);
+        context.startService(i);
+    }
+
+    public synchronized void updateConfigInMap(int sensorId, SensorConfig config) {
+        if(getActiveSensors().containsKey(sensorId)) {
+            putSensorIntoMap(sensorId, config);
         }
     }
 
