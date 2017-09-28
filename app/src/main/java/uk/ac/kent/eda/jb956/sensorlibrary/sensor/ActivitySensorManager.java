@@ -20,8 +20,6 @@ import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
@@ -194,14 +192,14 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
     @Override
     public void onWake(int duration) {
         logInfo(TAG, "Resuming sensor for " + duration);
-        if(sensing)
+        if (sensing)
             mApiClient.connect();
     }
 
     @Override
     public void onSleep(int duration) {
         logInfo(TAG, "Pausing sensor for " + duration);
-        if(sensing)
+        if (sensing)
             mApiClient.disconnect();
     }
 }

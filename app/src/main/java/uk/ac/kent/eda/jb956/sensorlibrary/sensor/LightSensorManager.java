@@ -8,14 +8,12 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.LightSensorData;
-import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
@@ -160,11 +158,11 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         public void run() {
             try {
                 if ((System.currentTimeMillis()) - lastTimeCheckedHistory > 4000
-                        && ((ProximitySensorManager)uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getSensorById(SensorUtils.SENSOR_TYPE_PROXIMITY)).history.size() > 0
+                        && ((ProximitySensorManager) uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getSensorById(SensorUtils.SENSOR_TYPE_PROXIMITY)).history.size() > 0
                         && history.size() > 0) {
                     InPocketDetectionHelper inPocketDetectionHelper = InPocketDetectionHelper.getInstance();
                     List<Double> temp = new ArrayList<>();
-                    temp.add(((ProximitySensorManager)uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getSensorById(SensorUtils.SENSOR_TYPE_PROXIMITY)).history.get(((ProximitySensorManager)uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getSensorById(SensorUtils.SENSOR_TYPE_PROXIMITY)).history.size() - 1).proximity);
+                    temp.add(((ProximitySensorManager) uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getSensorById(SensorUtils.SENSOR_TYPE_PROXIMITY)).history.get(((ProximitySensorManager) uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getSensorById(SensorUtils.SENSOR_TYPE_PROXIMITY)).history.size() - 1).proximity);
                     // for (ProximitySensorData pd : ProximitySensorManager.getInstance(context).history) {
                     // temp.add(pd.proximity);
                     //}
@@ -181,7 +179,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                     }
                     logInfo(TAG, "PocketDetectionResult: " + inPocketDetectionHelper.getDetectionResult().toString());
                     lastTimeCheckedHistory = System.currentTimeMillis();
-                    ((ProximitySensorManager)uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getSensorById(SensorUtils.SENSOR_TYPE_PROXIMITY)).history.clear();
+                    ((ProximitySensorManager) uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getSensorById(SensorUtils.SENSOR_TYPE_PROXIMITY)).history.clear();
                     history.clear();
                 }
             } finally {

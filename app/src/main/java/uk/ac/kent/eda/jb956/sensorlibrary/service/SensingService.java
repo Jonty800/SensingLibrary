@@ -7,23 +7,10 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AccelerometerManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ActivitySensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.AudioSensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.GyroscopeManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.HumiditySensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.LightSensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.MagneticFieldManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.PressureSensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ProximitySensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.TemperatureSensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.WifiSensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -95,8 +82,8 @@ public class SensingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String exec = intent.getStringExtra("exec");
-        if(exec!=null) {
-            if(exec.equalsIgnoreCase("stopservice")){
+        if (exec != null) {
+            if (exec.equalsIgnoreCase("stopservice")) {
                 stopForeground(true);
                 stopSelf();
             } else {

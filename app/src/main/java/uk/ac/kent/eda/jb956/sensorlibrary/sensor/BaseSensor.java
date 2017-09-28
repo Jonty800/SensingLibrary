@@ -48,7 +48,7 @@ public class BaseSensor {
 
     public void updateConfig(SensorConfig config) { //replace default
         this.config = config;
-        if(dutyCyclingManager==null)
+        if (dutyCyclingManager == null)
             dutyCyclingManager = new DutyCyclingManager(config);
         else
             dutyCyclingManager.updateSensorConfig(config);

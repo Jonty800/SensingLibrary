@@ -1,11 +1,8 @@
 package uk.ac.kent.eda.jb956.sensorlibrary;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.Log;
 
-import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.control.WorkerThread;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 
@@ -62,15 +59,15 @@ public class DutyCyclingManager {
         }
     }
 
-    public void run(){
+    public void run() {
         startDutyCycling();
     }
 
-    public void updateSensorConfig(SensorConfig config){
+    public void updateSensorConfig(SensorConfig config) {
         this.config = config;
     }
 
-    public void stop(){
+    public void stop() {
         getWorkerThread().removeDelayedTask(dutyCyclingTask);
         sleepingTaskStarted = false;
         sleeping = false;
@@ -85,10 +82,11 @@ public class DutyCyclingManager {
         sleepingTaskStarted = true;
     }
 
-    private int getAwakeWindowSize(){
+    private int getAwakeWindowSize() {
         return config.AWAKE_WINDOW_SIZE;
     }
-    private int getSleepWindowSize(){
+
+    private int getSleepWindowSize() {
         return config.SLEEP_WINDOW_SIZE;
     }
 
@@ -106,6 +104,7 @@ public class DutyCyclingManager {
     };
 
     private DutyCyclingEventListener dutyCyclingEventListener;
+
     private void onWake(int duration) {
         if (dutyCyclingEventListener != null)
             dutyCyclingEventListener.onWake(duration);
@@ -123,6 +122,7 @@ public class DutyCyclingManager {
 
     public interface DutyCyclingEventListener {
         void onWake(int duration);
+
         void onSleep(int duration);
     }
 }

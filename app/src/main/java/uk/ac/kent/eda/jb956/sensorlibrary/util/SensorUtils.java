@@ -21,8 +21,8 @@ public class SensorUtils {
     public final static int SENSOR_TYPE_MAGNETIC_FIELD = 5011;
     public final static int SENSOR_TYPE_ACTIVITY = 5012;
 
-    public static String getSensorName(int sensorId){
-        switch(sensorId){
+    public static String getSensorName(int sensorId) {
+        switch (sensorId) {
             case SENSOR_TYPE_ACCELEROMETER:
                 return "SENSOR_TYPE_ACCELEROMETER";
             case SENSOR_TYPE_LOCATION:
@@ -52,8 +52,8 @@ public class SensorUtils {
         }
     }
 
-    public String getActivityFromType(int activityType){
-        switch(activityType){
+    public String getActivityFromType(int activityType) {
+        switch (activityType) {
             case DetectedActivity.IN_VEHICLE:
                 return "IN_VEHICLE";
             case DetectedActivity.ON_BICYCLE:

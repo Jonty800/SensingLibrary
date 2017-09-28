@@ -5,8 +5,6 @@ import android.content.Context;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.TemperatureSensorData;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ProximitySensorManager;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.TemperatureSensorManager;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>

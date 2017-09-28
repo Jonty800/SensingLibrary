@@ -76,8 +76,8 @@ public class SensorManager {
         mSensorThread.start();
         mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
         workerThread = WorkerThread.create();
-        if(activeSensors.isEmpty()){
-            if(prefsContainsKey("activeSensors")) {
+        if (activeSensors.isEmpty()) {
+            if (prefsContainsKey("activeSensors")) {
                 String json = getStringEntryFromPrefs("activeSensors");
                 Type type = new TypeToken<Map<Integer, SensorConfig>>() {
                 }.getType();
@@ -103,7 +103,7 @@ public class SensorManager {
         return instance;
     }
 
-    public BaseSensor getSensorById(int sensorId){
+    public BaseSensor getSensorById(int sensorId) {
         switch (sensorId) {
             case SensorUtils.SENSOR_TYPE_GYROSCOPE:
                 return gyroscopeManager;
@@ -137,9 +137,9 @@ public class SensorManager {
         return activeSensors;
     }
 
-    public synchronized void startSensors(Map<Integer, SensorConfig> sensorMap){
+    public synchronized void startSensors(Map<Integer, SensorConfig> sensorMap) {
         Set<Integer> keys = new ArraySet<>(getActiveSensors().keySet());
-        for(int key : keys) {
+        for (int key : keys) {
             startSensor(key, sensorMap.get(key));
         }
     }
@@ -155,7 +155,7 @@ public class SensorManager {
     }
 
     public synchronized void updateConfigInMap(int sensorId, SensorConfig config) {
-        if(getActiveSensors().containsKey(sensorId)) {
+        if (getActiveSensors().containsKey(sensorId)) {
             putSensorIntoMap(sensorId, config);
         }
     }
@@ -177,10 +177,10 @@ public class SensorManager {
         context.startService(i);
     }
 
-    public synchronized void stopAllSensors(){
+    public synchronized void stopAllSensors() {
         Set<Integer> keys = new ArraySet<>(getActiveSensors().keySet());
-        for(int key : keys) {
-           stopSensor(key);
+        for (int key : keys) {
+            stopSensor(key);
         }
         stopSensingService(); //stop service
     }
@@ -191,15 +191,17 @@ public class SensorManager {
         context.startService(i); //send stop command
     }
 
-    private synchronized void putSensorIntoMap(int sensorId, SensorConfig config){
+    private synchronized void putSensorIntoMap(int sensorId, SensorConfig config) {
         activeSensors.put(sensorId, config);
-        Type type = new TypeToken<Map<Integer, SensorConfig>>(){}.getType();
+        Type type = new TypeToken<Map<Integer, SensorConfig>>() {
+        }.getType();
         storeIntoSharedPref("activeSensors", activeSensors, type);
     }
 
-    private synchronized void removeSensorFromMap(int sensorId){
+    private synchronized void removeSensorFromMap(int sensorId) {
         activeSensors.remove(sensorId);
-        Type type = new TypeToken<Map<Integer, SensorConfig>>(){}.getType();
+        Type type = new TypeToken<Map<Integer, SensorConfig>>() {
+        }.getType();
         storeIntoSharedPref("activeSensors", activeSensors, type);
     }
 
@@ -301,7 +303,7 @@ public class SensorManager {
         return new Gson().fromJson(json, type);
     }
 
-    private boolean prefsContainsKey(String key){
+    private boolean prefsContainsKey(String key) {
         SharedPreferences prefs = context.getSharedPreferences(
                 Settings.appName + "Config", Context.MODE_PRIVATE);
         return prefs.contains(key);
