@@ -1,6 +1,9 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.control;
 
 import java.util.LinkedList;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import android.util.Log;
 
@@ -10,7 +13,7 @@ import android.util.Log;
  *
  */
 public class TaskQueue {
-    private final LinkedList<Runnable> tasks;
+    private final BlockingQueue<Runnable> tasks;
     private Thread thread;
     private boolean running;
     private Runnable internalRunnable;
@@ -27,12 +30,16 @@ public class TaskQueue {
 
     private class InternalRunnable implements Runnable {
         public void run() {
-            internalRun();
+            try {
+                internalRun();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public TaskQueue() {
-        tasks = new LinkedList<Runnable>();
+        tasks = new LinkedBlockingQueue<>();
         internalRunnable = new InternalRunnable();
         start();
     }
@@ -52,12 +59,17 @@ public class TaskQueue {
 
     public void addNewTask(Runnable task) {
         synchronized(tasks) {
-            tasks.addLast(task);
-            tasks.notify(); // notify any waiting threads
+            try {
+                tasks.put(task);
+                tasks.notify(); // notify any waiting threads
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
-    private Runnable getNextTask() {
+    private Runnable getNextTask() throws InterruptedException {
         synchronized(tasks) {
             if (tasks.isEmpty()) {
                 try {
@@ -67,12 +79,12 @@ public class TaskQueue {
                     stop();
                 }
             }
-            return tasks.removeFirst();
+            return tasks.take();
         }
     }
 
 
-    private void internalRun() {
+    private void internalRun() throws InterruptedException {
         while(running) {
             Runnable task = getNextTask();
             try {
