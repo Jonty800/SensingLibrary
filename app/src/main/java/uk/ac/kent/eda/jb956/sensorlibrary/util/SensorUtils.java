@@ -52,6 +52,37 @@ public class SensorUtils {
         }
     }
 
+    public static String getSensorShortName(int sensorId) {
+        switch (sensorId) {
+            case SENSOR_TYPE_ACCELEROMETER:
+                return "ACCELEROMETER".toLowerCase();
+            case SENSOR_TYPE_LOCATION:
+                return "LOCATION".toLowerCase();
+            case SENSOR_TYPE_MICROPHONE:
+                return "MICROPHONE".toLowerCase();
+            case SENSOR_TYPE_PROXIMITY:
+                return "PROXIMITY".toLowerCase();
+            case SENSOR_TYPE_WIFI:
+                return "WIFI".toLowerCase();
+            case SENSOR_TYPE_GYROSCOPE:
+                return "GYROSCOPE".toLowerCase();
+            case SENSOR_TYPE_LIGHT:
+                return "LIGHT".toLowerCase();
+            case SENSOR_TYPE_AMBIENT_TEMPERATURE:
+                return "TEMPERATURE".toLowerCase();
+            case SENSOR_TYPE_PRESSURE:
+                return "PRESSURE".toLowerCase();
+            case SENSOR_TYPE_HUMIDITY:
+                return "HUMIDITY".toLowerCase();
+            case SENSOR_TYPE_MAGNETIC_FIELD:
+                return "MAGNETIC_FIELD".toLowerCase();
+            case SENSOR_TYPE_ACTIVITY:
+                return "ACTIVITY".toLowerCase();
+            default:
+                return "UNKNOWN".toLowerCase();
+        }
+    }
+
     public String getActivityFromType(int activityType) {
         switch (activityType) {
             case DetectedActivity.IN_VEHICLE:
