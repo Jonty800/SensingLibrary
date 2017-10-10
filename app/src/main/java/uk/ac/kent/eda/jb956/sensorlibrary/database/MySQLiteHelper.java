@@ -929,7 +929,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             values.put("bssid", data.bssid);
             values.put("rssi", data.rssi);
             values.put("timestamp", data.timestamp);
-            values.put("distanceEstimate", data.distanceEstimate);
             db.insert("wifi", null, values);
         } catch (Exception e) {
             e.printStackTrace();

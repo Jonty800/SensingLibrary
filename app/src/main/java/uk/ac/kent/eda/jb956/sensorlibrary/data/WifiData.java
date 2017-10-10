@@ -7,7 +7,6 @@ package uk.ac.kent.eda.jb956.sensorlibrary.data;
 public class WifiData extends SensorData {
     public String bssid;
     public double rssi;
-    public double distanceEstimate;
 
     public WifiData(int sensorType) {
         super(sensorType);
