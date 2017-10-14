@@ -158,11 +158,11 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
                     if (r.frequency < 3000) {
                         WifiData wd = new WifiData(SensorUtils.SENSOR_TYPE_WIFI);
                         wd.rssi = r.level;
-                        //if (Build.VERSION.SDK_INT >= 17) {
-                            //wd.timestamp = System.currentTimeMillis() - SystemClock.elapsedRealtime() + (r.timestamp / 1000);
-                       // } else {
+                        if (Build.VERSION.SDK_INT >= 17) {
+                            wd.timestamp = System.currentTimeMillis() - SystemClock.elapsedRealtime() + (r.timestamp / 1000);
+                        } else {
                             wd.timestamp = System.currentTimeMillis();//TODO test this
-                        //}
+                        }
                         wd.bssid = r.BSSID;
                         // long testTs = wd.timestamp / 1000;
                         // long now = System.currentTimeMillis() / 1000;
