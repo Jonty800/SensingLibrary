@@ -173,14 +173,12 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
                     }
                 }
 
-                List<WifiData> currentEntries = new ArrayList<>();
                 for (WifiData sensorData : unparsedResults) {
                     if (sensorData.timestamp <= System.currentTimeMillis() && sensorData.timestamp >= timeLastInitiated) {
                         //NetworkCache.getInstance().getFingerprintData().add(wd);
                         if (canSaveToDatabase()) {
                             MySQLiteHelper.getInstance(context).addToWifi(sensorData);
                         }
-                        currentEntries.add(sensorData);
                         getSensorEvent().onDataSensed(sensorData);
                         setLastEntry(sensorData);
                     }
