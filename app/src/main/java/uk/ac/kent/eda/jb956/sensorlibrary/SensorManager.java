@@ -205,12 +205,12 @@ public class SensorManager {
         storeIntoSharedPref("activeSensors", activeSensors, type);
     }
 
-    public void subscribeToSensorListener(SensingEvent.SensingEventListener listener) {
-        SensingEvent.getInstance().subscribeToSensor(listener);
+    public void subscribeToSensorListener(SensingEvent.SensingEventListener listener, int id) {
+        SensingEvent.getInstance().subscribeToSensor(listener,id);
     }
 
-    public void unsubscribeFromSensorListener() {
-        SensingEvent.getInstance().unsubscribeFromSensor();
+    public void unsubscribeFromSensorListener(int id) {
+        SensingEvent.getInstance().unsubscribeFromSensor(id);
     }
 
     /**
