@@ -32,35 +32,35 @@ public class SensingEvent {
         subscriptions.remove(id);
     }
 
-    public void onDataSensed(SensorData sensorData) {
+    public synchronized void onDataSensed(SensorData sensorData) {
         for(SensingEventListener sensingEventListener : subscriptions.values()) {
             if (sensingEventListener != null)
                 sensingEventListener.onDataSensed(sensorData);
         }
     }
 
-    public void onSensingStarted(int sensorType) {
+    public synchronized void onSensingStarted(int sensorType) {
         for(SensingEventListener sensingEventListener : subscriptions.values()) {
             if (sensingEventListener != null)
                 sensingEventListener.onSensingStarted(sensorType);
         }
     }
 
-    public void onSensingStopped(int sensorType) {
+    public synchronized void onSensingStopped(int sensorType) {
         for(SensingEventListener sensingEventListener : subscriptions.values()) {
             if (sensingEventListener != null)
                 sensingEventListener.onSensingStopped(sensorType);
         }
     }
 
-    public void onSensingPaused(int sensorType) {
+    public synchronized void onSensingPaused(int sensorType) {
         for(SensingEventListener sensingEventListener : subscriptions.values()) {
             if (sensingEventListener != null)
                 sensingEventListener.onSensingPaused(sensorType);
         }
     }
 
-    public void onSensingResumed(int sensorType) {
+    public synchronized void onSensingResumed(int sensorType) {
         for(SensingEventListener sensingEventListener : subscriptions.values()) {
             if (sensingEventListener != null)
                 sensingEventListener.onSensingResumed(sensorType);
