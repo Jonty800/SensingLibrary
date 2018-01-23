@@ -26,6 +26,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
+import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiType;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
@@ -152,25 +153,28 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
             //if 1 or more results found
             if (results.size() > 0) {
                 logInfo(TAG, "Inserting new Wi-Fi fingerprint");
-                //filter anything except 2.4GHZ access points
                 List<WifiData> unparsedResults = new ArrayList<>();
                 for (ScanResult r : results) {
+                    WifiType wifiType = WifiType._5GHz;
                     if (r.frequency < 3000) {
-                        WifiData wd = new WifiData(SensorUtils.SENSOR_TYPE_WIFI);
-                        wd.rssi = r.level;
-                        if (Build.VERSION.SDK_INT >= 17) {
-                            wd.timestamp = System.currentTimeMillis() - SystemClock.elapsedRealtime() + (r.timestamp / 1000);
-                        } else {
-                            wd.timestamp = System.currentTimeMillis();//TODO test this
-                        }
-                        wd.bssid = r.BSSID;
-                        // long testTs = wd.timestamp / 1000;
-                        // long now = System.currentTimeMillis() / 1000;
-                        //if (Math.abs(testTs - now) > 86400) {
-                        //ACRA.getErrorReporter().handleSilentException(new Exception("Bssid: " + wd.bssid + " | Timestamp: " + wd.timestamp + " | SystemClock.elapsedRealtime(): " + SystemClock.elapsedRealtime() + " | r.timestamp: " + r.timestamp));
-                        //}
-                        unparsedResults.add(wd);
+                        wifiType = WifiType._2_4GHz;
                     }
+                    WifiData wd = new WifiData(SensorUtils.SENSOR_TYPE_WIFI);
+                    wd.rssi = r.level;
+                    if (Build.VERSION.SDK_INT >= 17) {
+                        wd.timestamp = System.currentTimeMillis() - SystemClock.elapsedRealtime() + (r.timestamp / 1000);
+                    } else {
+                        wd.timestamp = System.currentTimeMillis();//TODO test this
+                    }
+                    wd.bssid = r.BSSID;
+                    wd.wifiType = wifiType;
+                    // long testTs = wd.timestamp / 1000;
+                    // long now = System.currentTimeMillis() / 1000;
+                    //if (Math.abs(testTs - now) > 86400) {
+                    //ACRA.getErrorReporter().handleSilentException(new Exception("Bssid: " + wd.bssid + " | Timestamp: " + wd.timestamp + " | SystemClock.elapsedRealtime(): " + SystemClock.elapsedRealtime() + " | r.timestamp: " + r.timestamp));
+                    //}
+                    unparsedResults.add(wd);
+
                 }
 
                 for (WifiData sensorData : unparsedResults) {
