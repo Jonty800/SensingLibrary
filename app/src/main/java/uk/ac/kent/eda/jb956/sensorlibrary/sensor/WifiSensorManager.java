@@ -168,6 +168,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
                     }
                     wd.bssid = r.BSSID;
                     wd.wifiType = wifiType;
+                    wd.ssid = r.SSID;
                     // long testTs = wd.timestamp / 1000;
                     // long now = System.currentTimeMillis() / 1000;
                     //if (Math.abs(testTs - now) > 86400) {

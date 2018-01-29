@@ -8,6 +8,7 @@ public class WifiData extends SensorData {
     public String bssid;
     public double rssi;
     public WifiType wifiType;
+    public String ssid;
 
     public WifiData(int sensorType) {
         super(sensorType);
