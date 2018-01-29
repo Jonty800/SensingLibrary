@@ -169,6 +169,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
                     wd.bssid = r.BSSID;
                     wd.wifiType = wifiType;
                     wd.ssid = r.SSID;
+                    wd.channel = ieee80211_frequency_to_channel(r.frequency);
                     // long testTs = wd.timestamp / 1000;
                     // long now = System.currentTimeMillis() / 1000;
                     //if (Math.abs(testTs - now) > 86400) {
@@ -219,6 +220,17 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
             requestWifiScan();
         }
     };
+
+    private int ieee80211_frequency_to_channel(int freq)
+    {
+        if (freq == 2484)
+            return 14;
+
+        if (freq < 2484)
+            return (freq - 2407) / 5;
+
+        return freq/5 - 1000;
+    }
 
     private boolean isDialogShowing = false;
 
