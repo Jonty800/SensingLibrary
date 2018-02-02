@@ -68,7 +68,7 @@ public class DutyCyclingManager {
     }
 
     public void stop() {
-        getWorkerThread().removeDelayedTask(dutyCyclingTask);
+        getWorkerThread().removeTask(dutyCyclingTask);
         sleepingTaskStarted = false;
         sleeping = false;
     }
@@ -78,7 +78,7 @@ public class DutyCyclingManager {
     private void startDutyCycling() {
         if (sleepingTaskStarted)
             return;
-        getWorkerThread().postDelayedTask(dutyCyclingTask, getAwakeWindowSize());
+        getWorkerThread().postDelayed(dutyCyclingTask, getAwakeWindowSize());
         sleepingTaskStarted = true;
     }
 
@@ -95,10 +95,10 @@ public class DutyCyclingManager {
         public void run() {
             if (!sleeping) {
                 sleep(getSleepWindowSize());
-                getWorkerThread().postDelayedTask(this, getSleepWindowSize());
+                getWorkerThread().postDelayed(this, getSleepWindowSize());
             } else {
                 wake(getAwakeWindowSize());
-                getWorkerThread().postDelayedTask(this, getAwakeWindowSize());
+                getWorkerThread().postDelayed(this, getAwakeWindowSize());
             }
         }
     };

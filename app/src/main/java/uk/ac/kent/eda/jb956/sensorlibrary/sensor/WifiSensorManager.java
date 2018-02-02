@@ -206,12 +206,12 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
     }
 
     private void stopSensingTask() {
-        SensorManager.getInstance(context).getWorkerThread().removeDelayedTask(task);
+        SensorManager.getInstance(context).getWorkerThread().removeTask(task);
     }
 
     private void addNewSensingTask(int delay) {
         checkWifiSettings();
-        SensorManager.getInstance(context).getWorkerThread().postDelayedTask(task, delay);
+        SensorManager.getInstance(context).getWorkerThread().postDelayed(task, delay);
     }
 
     private Runnable task = new Runnable() {
