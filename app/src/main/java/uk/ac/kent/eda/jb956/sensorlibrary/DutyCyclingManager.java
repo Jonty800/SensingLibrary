@@ -175,6 +175,10 @@ public class DutyCyclingManager {
         return this;
     }
 
+    public synchronized void unsubscribeListener(){
+        dutyCyclingEventListener = null;
+    }
+
     private void onSleep(int duration) {
         if (dutyCyclingEventListener != null)
             dutyCyclingEventListener.onSleep(duration);

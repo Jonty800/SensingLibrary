@@ -48,7 +48,6 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         if (wifi == null)
             wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         setSamplingRate(10000);
-        dutyCyclingManager.subscribeToListener(this);
     }
 
     private final Sensor sensor;
@@ -114,6 +113,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
             context.registerReceiver(receiver, new IntentFilter(WifiManager
                     .SCAN_RESULTS_AVAILABLE_ACTION));
             if(config.dutyCycle) {
+                dutyCyclingManager.subscribeToListener(this);
                 dutyCyclingManager.run();
             }
             addNewSensingTask(0);
@@ -134,6 +134,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         try {
             context.unregisterReceiver(receiver);
             stopSensingTask();
+            dutyCyclingManager.unsubscribeListener();
             dutyCyclingManager.stop();
             getSensorEvent().onSensingStopped(SensorUtils.SENSOR_TYPE_WIFI);
             SensorManager.getInstance(context).stopSensor(SensorUtils.SENSOR_TYPE_WIFI);

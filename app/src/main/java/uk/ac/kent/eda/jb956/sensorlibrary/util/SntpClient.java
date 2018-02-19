@@ -1,5 +1,6 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.util;
 
+import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.Config;
 import android.util.Log;
