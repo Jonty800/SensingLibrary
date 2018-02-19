@@ -112,7 +112,7 @@ public class DutyCyclingManager {
                 }else{ //if clock is ahead
                     newDuration = (int) (getSleepWindowSize() - diff);
                 }
-                Log.i(TAG,"Type=getSleepWindowSize() Offset: " + diff + " ahead=" + ahead + " actual_ts=" + currentTs + " old_ts=" + nextTaskExpectedTimstamp + " new_ts=" + newDuration);
+                Log.i(TAG,"Type=getSleepWindowSize() offset=" + diff + " ahead=" + ahead + " actual_ts=" + currentTs + " old_ts=" + nextTaskExpectedTimstamp + " new_ts=" + newDuration);
                 sleep(newDuration);
                 nextTaskExpectedTimstamp = NTC.currentTimeMillis() + newDuration;
                 getWorkerThread().postDelayed(this, newDuration);
@@ -123,7 +123,7 @@ public class DutyCyclingManager {
                 }else{ //if clock is ahead
                     newDuration = (int) (getAwakeWindowSize() - diff);
                 }
-                Log.i(TAG,"Type=getAwakeWindowSize() Offset: " + diff + " ahead=" + ahead + " actual_ts=" + currentTs + " old_ts=" + nextTaskExpectedTimstamp + " new_ts=" + newDuration);
+                Log.i(TAG,"Type=getAwakeWindowSize() offset=" + diff + " ahead=" + ahead + " actual_ts=" + currentTs + " old_ts=" + nextTaskExpectedTimstamp + " new_ts=" + newDuration);
                 wake(newDuration);
                 getWorkerThread().postDelayed(this, newDuration);
                 nextTaskExpectedTimstamp = NTC.currentTimeMillis() + newDuration;

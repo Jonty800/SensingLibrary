@@ -15,6 +15,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ProximitySensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.NTC;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
@@ -93,7 +94,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (sensor.getType() == Sensor.TYPE_PROXIMITY) {
-            long curTime = System.currentTimeMillis();
+            long curTime = NTC.currentTimeMillis();
 
             Sensor mySensor = event.sensor;
             if (mySensor.getType() == Sensor.TYPE_PROXIMITY) {
@@ -103,7 +104,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
                     float proximity = event.values[0]; //cm
                     ProximitySensorData sensorData = new ProximitySensorData(SensorUtils.SENSOR_TYPE_PROXIMITY);
                     sensorData.proximity = proximity;
-                    sensorData.timestamp = System.currentTimeMillis();
+                    sensorData.timestamp = NTC.currentTimeMillis();
                     setLastEntry(sensorData);
                     if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToProximity(sensorData);
@@ -111,14 +112,14 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
                     history.add(sensorData);
                     List<ProximitySensorData> temp = new ArrayList<>();
                     for (ProximitySensorData data : history) {
-                        if (data.timestamp > (System.currentTimeMillis() - 4000))
+                        if (data.timestamp > (NTC.currentTimeMillis() - 4000))
                             temp.add(data);
                     }
                     history = new ArrayList<>(temp);
                     if (getSensorEvent() != null)
                         getSensorEvent().onDataSensed(sensorData);
                 }
-                // System.out.println(""+(System.currentTimeMillis() - lastTimeCheckedHistory));
+                // System.out.println(""+(NTC.currentTimeMillis() - lastTimeCheckedHistory));
 
             }
         }
@@ -153,7 +154,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
 
     @Override
     public List<SensorData> getAllData() {
-        return getDataFromRange(0L, System.currentTimeMillis());
+        return getDataFromRange(0L, NTC.currentTimeMillis());
     }
 
     @Override

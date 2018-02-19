@@ -9,6 +9,7 @@ import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.AudioSensorData;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.NTC;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
@@ -51,7 +52,7 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
         @Override
         public boolean process(final AudioEvent audioEvent) {
             AudioSensorData sensorData = new AudioSensorData(SensorUtils.SENSOR_TYPE_MICROPHONE);
-            sensorData.timestamp = System.currentTimeMillis();
+            sensorData.timestamp = NTC.currentTimeMillis();
             sensorData.buffer = audioEvent.getFloatBuffer();
             sensorData.bufferSize = getBufferSize();
             sensorData.byte_buffer = audioEvent.getByteBuffer();

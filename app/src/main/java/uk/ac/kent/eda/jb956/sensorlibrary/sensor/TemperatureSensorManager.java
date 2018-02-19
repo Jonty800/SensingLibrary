@@ -15,6 +15,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.TemperatureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.NTC;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
@@ -106,7 +107,7 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
-            long curTime = System.currentTimeMillis();
+            long curTime = NTC.currentTimeMillis();
 
             Sensor mySensor = event.sensor;
             if (mySensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
@@ -116,7 +117,7 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
                     float degreesC = event.values[0];
                     TemperatureSensorData sensorData = new TemperatureSensorData(SensorUtils.SENSOR_TYPE_AMBIENT_TEMPERATURE);
                     sensorData.degreesC = degreesC;
-                    sensorData.timestamp = System.currentTimeMillis();
+                    sensorData.timestamp = NTC.currentTimeMillis();
                     setLastEntry(sensorData);
                     if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToTemperature(sensorData);
@@ -145,7 +146,7 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
 
     @Override
     public List<SensorData> getAllData() {
-        return getDataFromRange(0L, System.currentTimeMillis());
+        return getDataFromRange(0L, NTC.currentTimeMillis());
     }
 
     @Override

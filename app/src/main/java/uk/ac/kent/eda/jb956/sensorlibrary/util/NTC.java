@@ -10,10 +10,10 @@ import android.os.SystemClock;
  */
 
 public class NTC {
-
     private static long real_time = 0;
     private static long offset = 0;
     private static boolean ahead = true;
+    private static long lastTimeSync = 0L;
     public static synchronized long currentTimeMillis(){
         SntpClient client = new SntpClient();
         if (real_time == 0 && client.requestTime("pool.ntp.org", 3000)) {
@@ -29,20 +29,23 @@ public class NTC {
                 //remove the missing time
                 test = System.currentTimeMillis() - offset;
             }
-            System.out.println("Offset: " + offset + " ahead="+ahead + " actual_ts=" + real_time + " old_ts=" + time + " new_ts="+test );
+            lastTimeSync = real_time;
+            System.out.println("Timestamp Sync Results: Offset=" + offset + " ahead="+ahead + " actual_ts=" + real_time + " old_ts=" + time + " new_ts="+test );
         }else{
             //server failed. Dont set real_time and just return currentTimeMillis
             return System.currentTimeMillis();
         }
+        long adjustedTimestamp;
         if(!ahead){ //if clock is behind
             //add on the missing time
-            return System.currentTimeMillis() + offset;
+            adjustedTimestamp = System.currentTimeMillis() + offset;
         }else{ //if clock is ahead
             //remove the missing time
-            return System.currentTimeMillis() - offset;
+            adjustedTimestamp = System.currentTimeMillis() - offset;
         }
-
-
+        if(lastTimeSync != 0 && Math.abs(lastTimeSync - adjustedTimestamp) > (60000 * 10))
+            real_time = 0;
+        return adjustedTimestamp;
     }
 }
 
