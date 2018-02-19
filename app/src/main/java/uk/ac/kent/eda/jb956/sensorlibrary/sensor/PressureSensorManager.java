@@ -16,7 +16,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
-import uk.ac.kent.eda.jb956.sensorlibrary.util.NTC;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.NTP;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
@@ -124,7 +124,7 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (sensor.getType() == Sensor.TYPE_PRESSURE) {
-            long curTime = NTC.currentTimeMillis();
+            long curTime = NTP.currentTimeMillis();
 
             Sensor mySensor = event.sensor;
             if (mySensor.getType() == Sensor.TYPE_PRESSURE) {
@@ -134,7 +134,7 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
                     float pressure = event.values[0];
                     PressureSensorData sensorData = new PressureSensorData(SensorUtils.SENSOR_TYPE_PRESSURE);
                     sensorData.pressure = pressure;
-                    sensorData.timestamp = NTC.currentTimeMillis();
+                    sensorData.timestamp = NTP.currentTimeMillis();
                     if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToPressure(sensorData);
                     }
@@ -148,7 +148,7 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
 
     @Override
     public List<SensorData> getAllData() {
-        return getDataFromRange(0L, NTC.currentTimeMillis());
+        return getDataFromRange(0L, NTP.currentTimeMillis());
     }
 
     @Override

@@ -16,7 +16,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
-import uk.ac.kent.eda.jb956.sensorlibrary.util.NTC;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.NTP;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
@@ -63,7 +63,7 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
 
     @Override
     public List<SensorData> getAllData() {
-        return getDataFromRange(0L, NTC.currentTimeMillis());
+        return getDataFromRange(0L, NTP.currentTimeMillis());
     }
 
     @Override
@@ -148,7 +148,7 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            long curTime = NTC.currentTimeMillis();
+            long curTime = NTP.currentTimeMillis();
 
             Sensor mySensor = event.sensor;
             if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -162,7 +162,7 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
                     sensorData.X = x;
                     sensorData.Y = y;
                     sensorData.Z = z;
-                    sensorData.timestamp = NTC.currentTimeMillis();
+                    sensorData.timestamp = NTP.currentTimeMillis();
                     setLastEntry(sensorData);
                     if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToAcc(sensorData);

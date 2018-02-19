@@ -24,7 +24,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
 import uk.ac.kent.eda.jb956.sensorlibrary.service.ActivityRecognizedService;
-import uk.ac.kent.eda.jb956.sensorlibrary.util.NTC;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.NTP;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
@@ -76,7 +76,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
 
     @Override
     public List<SensorData> getAllData() {
-        return getDataFromRange(0L, NTC.currentTimeMillis());
+        return getDataFromRange(0L, NTP.currentTimeMillis());
     }
 
     @Override

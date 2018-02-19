@@ -6,7 +6,7 @@ import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.control.WorkerThread;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
-import uk.ac.kent.eda.jb956.sensorlibrary.util.NTC;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.NTP;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -98,7 +98,7 @@ public class DutyCyclingManager {
     private Runnable dutyCyclingTask = new Runnable() {
         @Override
         public void run() {
-            long currentTs = NTC.currentTimeMillis();
+            long currentTs = NTP.currentTimeMillis();
             long diff = Math.abs(currentTs-nextTaskExpectedTimstamp);
             boolean ahead;
             if(nextTaskExpectedTimstamp == 0L)
@@ -114,7 +114,7 @@ public class DutyCyclingManager {
                 }
                 Log.i(TAG,"Type=getSleepWindowSize() offset=" + diff + " ahead=" + ahead + " actual_ts=" + currentTs + " old_ts=" + nextTaskExpectedTimstamp + " new_ts=" + newDuration);
                 sleep(newDuration);
-                nextTaskExpectedTimstamp = NTC.currentTimeMillis() + newDuration;
+                nextTaskExpectedTimstamp = NTP.currentTimeMillis() + newDuration;
                 getWorkerThread().postDelayed(this, newDuration);
             } else {
                 int newDuration;
@@ -126,7 +126,7 @@ public class DutyCyclingManager {
                 Log.i(TAG,"Type=getAwakeWindowSize() offset=" + diff + " ahead=" + ahead + " actual_ts=" + currentTs + " old_ts=" + nextTaskExpectedTimstamp + " new_ts=" + newDuration);
                 wake(newDuration);
                 getWorkerThread().postDelayed(this, newDuration);
-                nextTaskExpectedTimstamp = NTC.currentTimeMillis() + newDuration;
+                nextTaskExpectedTimstamp = NTP.currentTimeMillis() + newDuration;
             }
         }
     };

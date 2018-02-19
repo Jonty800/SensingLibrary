@@ -9,7 +9,7 @@ import android.os.SystemClock;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class NTC {
+public class NTP {
     private static long real_time = 0;
     private static long offset = 0;
     private static boolean ahead = true;

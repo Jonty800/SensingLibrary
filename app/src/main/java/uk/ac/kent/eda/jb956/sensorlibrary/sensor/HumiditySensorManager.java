@@ -15,7 +15,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.PressureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
-import uk.ac.kent.eda.jb956.sensorlibrary.util.NTC;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.NTP;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 /**
@@ -94,7 +94,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
-            long curTime = NTC.currentTimeMillis();
+            long curTime = NTP.currentTimeMillis();
 
             Sensor mySensor = event.sensor;
             if (mySensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
@@ -104,7 +104,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
                     float millibars_of_pressure = event.values[0];
                     PressureSensorData sensorData = new PressureSensorData(SensorUtils.SENSOR_TYPE_HUMIDITY);
                     sensorData.pressure = millibars_of_pressure;
-                    sensorData.timestamp = NTC.currentTimeMillis();
+                    sensorData.timestamp = NTP.currentTimeMillis();
                     setLastEntry(sensorData);
                     if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToHumidity(sensorData);
@@ -145,7 +145,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
 
     @Override
     public List<SensorData> getAllData() {
-        return getDataFromRange(0L, NTC.currentTimeMillis());
+        return getDataFromRange(0L, NTP.currentTimeMillis());
     }
 
     @Override

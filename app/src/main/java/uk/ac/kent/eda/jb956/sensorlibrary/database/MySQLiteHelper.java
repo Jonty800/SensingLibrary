@@ -27,7 +27,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.ProximitySensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.TemperatureSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.WifiData;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.XYZSensorData;
-import uk.ac.kent.eda.jb956.sensorlibrary.util.NTC;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.NTP;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -183,7 +183,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportWifiDB-" + NTC.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportWifiDB-" + NTP.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
@@ -209,7 +209,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportPressureDB-" + NTC.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportPressureDB-" + NTP.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
@@ -235,7 +235,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportHumidityDB-" + NTC.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportHumidityDB-" + NTP.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
@@ -261,7 +261,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportPocketDetectionDB-" + NTC.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportPocketDetectionDB-" + NTP.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
@@ -287,7 +287,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportGyroDB-" + NTC.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportGyroDB-" + NTP.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
@@ -313,7 +313,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportMagneticFieldDB-" + NTC.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportMagneticFieldDB-" + NTP.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
@@ -339,7 +339,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportTemperatureDB-" + NTC.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportTemperatureDB-" + NTP.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
@@ -365,7 +365,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportAccDB-" + NTC.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportAccDB-" + NTP.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
@@ -643,7 +643,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportActDB-" + NTC.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportActDB-" + NTP.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
@@ -669,7 +669,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             exportDir.mkdirs();
         }
 
-        File file = new File(exportDir, "exportProximityDB-" + NTC.currentTimeMillis() + ".csv");
+        File file = new File(exportDir, "exportProximityDB-" + NTP.currentTimeMillis() + ".csv");
         try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
