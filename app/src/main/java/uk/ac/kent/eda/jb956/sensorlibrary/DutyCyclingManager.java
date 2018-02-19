@@ -2,9 +2,11 @@ package uk.ac.kent.eda.jb956.sensorlibrary;
 
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.control.WorkerThread;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.NTC;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -12,6 +14,8 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
  */
 
 public class DutyCyclingManager {
+
+    public static String TAG = "DutyCyclingManager";
 
     public boolean isSleeping() {
         return sleeping;
@@ -90,15 +94,39 @@ public class DutyCyclingManager {
         return config.SLEEP_WINDOW_SIZE;
     }
 
+    private long nextTaskExpectedTimstamp = 0L;
     private Runnable dutyCyclingTask = new Runnable() {
         @Override
         public void run() {
+            long currentTs = NTC.currentTimeMillis();
+            long diff = Math.abs(currentTs-nextTaskExpectedTimstamp);
+            boolean ahead;
+            if(nextTaskExpectedTimstamp == 0L)
+                diff = 0;
+            ahead = nextTaskExpectedTimstamp > currentTs;
+
             if (!sleeping) {
-                sleep(getSleepWindowSize());
-                getWorkerThread().postDelayed(this, getSleepWindowSize());
+                int newDuration;
+                if(!ahead){ //if clock is behind
+                    newDuration = (int) (getSleepWindowSize() + diff);
+                }else{ //if clock is ahead
+                    newDuration = (int) (getSleepWindowSize() - diff);
+                }
+                Log.i(TAG,"Type=getSleepWindowSize() Offset: " + diff + " ahead=" + ahead + " actual_ts=" + currentTs + " old_ts=" + nextTaskExpectedTimstamp + " new_ts=" + newDuration);
+                sleep(newDuration);
+                nextTaskExpectedTimstamp = NTC.currentTimeMillis() + newDuration;
+                getWorkerThread().postDelayed(this, newDuration);
             } else {
-                wake(getAwakeWindowSize());
-                getWorkerThread().postDelayed(this, getAwakeWindowSize());
+                int newDuration;
+                if(!ahead){ //if clock is behind
+                    newDuration = (int) (getAwakeWindowSize() + diff);
+                }else{ //if clock is ahead
+                    newDuration = (int) (getAwakeWindowSize() - diff);
+                }
+                Log.i(TAG,"Type=getAwakeWindowSize() Offset: " + diff + " ahead=" + ahead + " actual_ts=" + currentTs + " old_ts=" + nextTaskExpectedTimstamp + " new_ts=" + newDuration);
+                wake(newDuration);
+                getWorkerThread().postDelayed(this, newDuration);
+                nextTaskExpectedTimstamp = NTC.currentTimeMillis() + newDuration;
             }
         }
     };
