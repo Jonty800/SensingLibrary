@@ -151,6 +151,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context c, Intent intent) {
+            logInfo(TAG, "onReceive();");
             wasBroadcastReceiverTriggered = true;
             List<ScanResult> results = wifi.getScanResults();
             //if 1 or more results found
@@ -297,6 +298,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
             return;
         }
         timeLastInitiated = NTP.currentTimeMillis();
+        logInfo(TAG, "Starting a Wi-Fi scan");
         wifi.startScan();
         addNewSensingTask(getSamplingRate());
     }
