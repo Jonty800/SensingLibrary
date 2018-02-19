@@ -123,7 +123,7 @@ public class DutyCyclingManager {
                         nextCycleType = "sleep";
                     }
 
-                    if(next_timestamp < currentTs){
+                    if(next_timestamp > currentTs){
                         if(sleeping && nextCycleType.equals("wake")){
                             nextTaskExpectedTimestamp = next_timestamp;
                             diff = Math.abs(currentTs-nextTaskExpectedTimestamp);
