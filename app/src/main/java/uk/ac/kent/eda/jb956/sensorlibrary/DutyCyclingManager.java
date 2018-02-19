@@ -82,10 +82,11 @@ public class DutyCyclingManager {
     private void startDutyCycling() {
         if (sleepingTaskStarted)
             return;
-        if(getAwakeWindowSize() != -1 && getSleepWindowSize() != -1) {
-            getWorkerThread().postDelayed(dutyCyclingTask, getAwakeWindowSize());
-            sleepingTaskStarted = true;
+        if(getAwakeWindowSize() == -1 || getSleepWindowSize() == -1) {
+            stop();
         }
+        getWorkerThread().postDelayed(dutyCyclingTask, getAwakeWindowSize());
+        sleepingTaskStarted = true;
     }
 
     private int getAwakeWindowSize() {
