@@ -134,7 +134,7 @@ public class DutyCyclingManager {
                 }
             }
 
-            boolean ahead = nextTaskExpectedTimestamp > currentTs;
+            boolean ahead = nextTaskExpectedTimestamp < currentTs;
             if (!sleeping) {
                 int newDuration = (int) (getSleepWindowSize() + diff);
                 if(ahead)
