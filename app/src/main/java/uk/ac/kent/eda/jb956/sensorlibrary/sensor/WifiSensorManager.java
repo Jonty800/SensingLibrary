@@ -77,7 +77,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
 
     @Override
     public List<SensorData> getAllData() {
-        return getDataFromRange(0L, System.currentTimeMillis());
+        return getDataFromRange(0L, NTP.currentTimeMillis());
     }
 
     @Override
@@ -165,16 +165,16 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
                     WifiData wd = new WifiData(SensorUtils.SENSOR_TYPE_WIFI);
                     wd.rssi = r.level;
                     if (Build.VERSION.SDK_INT >= 17) {
-                        wd.timestamp = System.currentTimeMillis() - SystemClock.elapsedRealtime() + (r.timestamp / 1000);
+                        wd.timestamp = NTP.currentTimeMillis() - SystemClock.elapsedRealtime() + (r.timestamp / 1000);
                     } else {
-                        wd.timestamp = System.currentTimeMillis();//TODO test this
+                        wd.timestamp = NTP.currentTimeMillis();//TODO test this
                     }
                     wd.bssid = r.BSSID;
                     wd.wifiType = wifiType;
                     wd.ssid = r.SSID;
                     wd.channel = ieee80211_frequency_to_channel(r.frequency);
                     // long testTs = wd.timestamp / 1000;
-                    // long now = System.currentTimeMillis() / 1000;
+                    // long now = NTP.currentTimeMillis() / 1000;
                     //if (Math.abs(testTs - now) > 86400) {
                     //ACRA.getErrorReporter().handleSilentException(new Exception("Bssid: " + wd.bssid + " | Timestamp: " + wd.timestamp + " | SystemClock.elapsedRealtime(): " + SystemClock.elapsedRealtime() + " | r.timestamp: " + r.timestamp));
                     //}
@@ -183,7 +183,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
                 }
 
                 for (WifiData sensorData : unparsedResults) {
-                    if (sensorData.timestamp <= System.currentTimeMillis() && sensorData.timestamp >= timeLastInitiated) {
+                    if (sensorData.timestamp <= NTP.currentTimeMillis() && sensorData.timestamp >= timeLastInitiated) {
                         //NetworkCache.getInstance().getFingerprintData().add(wd);
                         if (canSaveToDatabase()) {
                             MySQLiteHelper.getInstance(context).addToWifi(sensorData);
@@ -296,7 +296,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
             logInfo(TAG, "Missing permissions for access to Wi-Fi. Aborting.");
             return;
         }
-        timeLastInitiated = System.currentTimeMillis();
+        timeLastInitiated = NTP.currentTimeMillis();
         wifi.startScan();
         addNewSensingTask(getSamplingRate());
     }
