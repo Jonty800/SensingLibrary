@@ -82,8 +82,10 @@ public class DutyCyclingManager {
     private void startDutyCycling() {
         if (sleepingTaskStarted)
             return;
-        getWorkerThread().postDelayed(dutyCyclingTask, getAwakeWindowSize());
-        sleepingTaskStarted = true;
+        if(getAwakeWindowSize() != -1 && getSleepWindowSize() != -1) {
+            getWorkerThread().postDelayed(dutyCyclingTask, getAwakeWindowSize());
+            sleepingTaskStarted = true;
+        }
     }
 
     private int getAwakeWindowSize() {
@@ -153,8 +155,8 @@ public class DutyCyclingManager {
                     newDuration = getAwakeWindowSize();
                 Log.i(TAG,"Type=getAwakeWindowSize() offset=" + diff + " ahead="+ahead + " very_late="+very_late +" actual_ts=" + currentTs + " expected_ts=" + nextTaskExpectedTimestamp + " new_ts=" + newDuration);
                 wake(newDuration);
-                getWorkerThread().postDelayed(this, newDuration);
                 nextTaskExpectedTimestamp = NTP.currentTimeMillis() + newDuration;
+                getWorkerThread().postDelayed(this, newDuration);
             }
         }
     };
