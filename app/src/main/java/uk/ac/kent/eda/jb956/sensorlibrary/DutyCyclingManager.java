@@ -94,39 +94,56 @@ public class DutyCyclingManager {
         return config.SLEEP_WINDOW_SIZE;
     }
 
-    private long nextTaskExpectedTimstamp = 0L;
+    private long nextTaskExpectedTimestamp = 0L;
     private Runnable dutyCyclingTask = new Runnable() {
         @Override
         public void run() {
             long currentTs = NTP.currentTimeMillis();
-            long diff = Math.abs(currentTs-nextTaskExpectedTimstamp);
-            boolean ahead;
-            if(nextTaskExpectedTimstamp == 0L)
+            long diff = Math.abs(currentTs-nextTaskExpectedTimestamp);
+            if(nextTaskExpectedTimestamp == 0L)
                 diff = 0;
-            ahead = nextTaskExpectedTimstamp > currentTs;
+
+            long next_timestamp = nextTaskExpectedTimestamp;
+            boolean sleep = true;
+            if(currentTs > nextTaskExpectedTimestamp + (sleeping ? getSleepWindowSize() : getAwakeWindowSize())){
+                //if the delay was so long that it has missed a task
+                //find the next task
+                while(true){
+                    if(sleep) {
+                        next_timestamp += getSleepWindowSize();
+                        sleep = false;
+                    }else{
+                        next_timestamp += getAwakeWindowSize();
+                        sleep = true;
+                    }
+
+                    if(next_timestamp < currentTs){
+                        if(sleeping && sleep){
+                            nextTaskExpectedTimestamp = next_timestamp;
+                            diff = Math.abs(currentTs-nextTaskExpectedTimestamp);
+                            break;
+                        }
+                        if(!sleeping && !sleep){
+                            nextTaskExpectedTimestamp = next_timestamp;
+                            diff = Math.abs(currentTs-nextTaskExpectedTimestamp);
+                            break;
+                        }
+                    }
+                }
+            }
 
             if (!sleeping) {
-                int newDuration;
-                if(!ahead){ //if clock is behind
-                    newDuration = (int) (getSleepWindowSize() + diff);
-                }else{ //if clock is ahead
-                    newDuration = (int) (getSleepWindowSize() - diff);
-                }
-                Log.i(TAG,"Type=getSleepWindowSize() offset=" + diff + " ahead=" + ahead + " actual_ts=" + currentTs + " old_ts=" + nextTaskExpectedTimstamp + " new_ts=" + newDuration);
+                int newDuration = (int) (getSleepWindowSize() + diff);
+                Log.i(TAG,"Type=getSleepWindowSize() offset=" + diff + " actual_ts=" + currentTs + " expected_ts=" + nextTaskExpectedTimestamp + " new_ts=" + newDuration);
                 sleep(newDuration);
-                nextTaskExpectedTimstamp = NTP.currentTimeMillis() + newDuration;
+                nextTaskExpectedTimestamp = NTP.currentTimeMillis() + newDuration;
                 getWorkerThread().postDelayed(this, newDuration);
             } else {
-                int newDuration;
-                if(!ahead){ //if clock is behind
-                    newDuration = (int) (getAwakeWindowSize() + diff);
-                }else{ //if clock is ahead
-                    newDuration = (int) (getAwakeWindowSize() - diff);
-                }
-                Log.i(TAG,"Type=getAwakeWindowSize() offset=" + diff + " ahead=" + ahead + " actual_ts=" + currentTs + " old_ts=" + nextTaskExpectedTimstamp + " new_ts=" + newDuration);
+                int newDuration = (int) (getAwakeWindowSize() + diff);
+                Log.i(TAG,"Type=getAwakeWindowSize() offset=" + diff + " actual_ts=" + currentTs + " expected_ts=" + nextTaskExpectedTimestamp + " new_ts=" + newDuration);
                 wake(newDuration);
                 getWorkerThread().postDelayed(this, newDuration);
-                nextTaskExpectedTimstamp = NTP.currentTimeMillis() + newDuration;
+                nextTaskExpectedTimestamp = NTP.currentTimeMillis() + newDuration;
             }
         }
     };
