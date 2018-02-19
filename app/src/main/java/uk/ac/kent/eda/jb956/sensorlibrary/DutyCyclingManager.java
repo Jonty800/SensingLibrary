@@ -104,26 +104,26 @@ public class DutyCyclingManager {
                 diff = 0;
 
             long next_timestamp = nextTaskExpectedTimestamp;
-            boolean sleep = true;
-            if(currentTs > nextTaskExpectedTimestamp + (sleeping ? getSleepWindowSize() : getAwakeWindowSize())){
+            String nextCycleType = sleeping ? "wake" : "sleep";
+            if(nextTaskExpectedTimestamp > 0 && currentTs > nextTaskExpectedTimestamp + (sleeping ? getSleepWindowSize() : getAwakeWindowSize())){
                 //if the delay was so long that it has missed a task
                 //find the next task
                 while(true){
-                    if(sleep) {
+                    if(nextCycleType.equals("sleep")) {
                         next_timestamp += getSleepWindowSize();
-                        sleep = false;
+                        nextCycleType = "wake";
                     }else{
                         next_timestamp += getAwakeWindowSize();
-                        sleep = true;
+                        nextCycleType = "sleep";
                     }
 
                     if(next_timestamp < currentTs){
-                        if(sleeping && sleep){
+                        if(sleeping && nextCycleType.equals("wake")){
                             nextTaskExpectedTimestamp = next_timestamp;
                             diff = Math.abs(currentTs-nextTaskExpectedTimestamp);
                             break;
                         }
-                        if(!sleeping && !sleep){
+                        if(!sleeping && nextCycleType.equals("sleep")){
                             nextTaskExpectedTimestamp = next_timestamp;
                             diff = Math.abs(currentTs-nextTaskExpectedTimestamp);
                             break;
