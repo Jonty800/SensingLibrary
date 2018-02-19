@@ -113,7 +113,9 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         try {
             context.registerReceiver(receiver, new IntentFilter(WifiManager
                     .SCAN_RESULTS_AVAILABLE_ACTION));
-            dutyCyclingManager.run();
+            if(config.dutyCycle) {
+                dutyCyclingManager.run();
+            }
             addNewSensingTask(0);
             sensing = true;
             getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_WIFI);

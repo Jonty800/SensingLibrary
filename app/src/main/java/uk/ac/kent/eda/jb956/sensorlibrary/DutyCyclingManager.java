@@ -80,11 +80,12 @@ public class DutyCyclingManager {
     private boolean sleepingTaskStarted = false;
 
     private void startDutyCycling() {
+        if(!config.dutyCycle){
+            Log.i(TAG, "Unable to start: Duty cycling disabled for this sensor");
+            return;
+        }
         if (sleepingTaskStarted)
             return;
-        if(getAwakeWindowSize() == -1 || getSleepWindowSize() == -1) {
-            stop();
-        }
         getWorkerThread().postDelayed(dutyCyclingTask, getAwakeWindowSize());
         sleepingTaskStarted = true;
     }
@@ -137,24 +138,24 @@ public class DutyCyclingManager {
                 }
             }
 
-            boolean ahead = nextTaskExpectedTimestamp < currentTs;
+            boolean late = nextTaskExpectedTimestamp < currentTs;
             if (!sleeping) {
                 int newDuration = (int) (getSleepWindowSize() + diff);
-                if(ahead)
+                if(late)
                     newDuration = (int) (getSleepWindowSize() - diff);
                 if(very_late)
                     newDuration = getSleepWindowSize();
-                Log.i(TAG,"Type=getSleepWindowSize() offset=" + diff + " ahead="+ahead + " very_late="+very_late + " actual_ts=" + currentTs + " expected_ts=" + nextTaskExpectedTimestamp + " new_ts=" + newDuration);
+                Log.i(TAG,"Type=getSleepWindowSize() offset=" + diff + " late="+late + " very_late="+very_late + " actual_ts=" + currentTs + " expected_ts=" + nextTaskExpectedTimestamp + " new_ts=" + newDuration);
                 sleep(newDuration);
                 nextTaskExpectedTimestamp = NTP.currentTimeMillis() + newDuration;
                 getWorkerThread().postDelayed(this, newDuration);
             } else {
                 int newDuration = (int) (getAwakeWindowSize() + diff);
-                if(ahead)
+                if(late)
                     newDuration = (int) (getAwakeWindowSize() - diff);
                 if(very_late)
                     newDuration = getAwakeWindowSize();
-                Log.i(TAG,"Type=getAwakeWindowSize() offset=" + diff + " ahead="+ahead + " very_late="+very_late +" actual_ts=" + currentTs + " expected_ts=" + nextTaskExpectedTimestamp + " new_ts=" + newDuration);
+                Log.i(TAG,"Type=getAwakeWindowSize() offset=" + diff + " late="+late + " very_late="+very_late +" actual_ts=" + currentTs + " expected_ts=" + nextTaskExpectedTimestamp + " new_ts=" + newDuration);
                 wake(newDuration);
                 nextTaskExpectedTimestamp = NTP.currentTimeMillis() + newDuration;
                 getWorkerThread().postDelayed(this, newDuration);
