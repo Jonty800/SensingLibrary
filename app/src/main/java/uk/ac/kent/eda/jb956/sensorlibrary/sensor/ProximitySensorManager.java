@@ -94,7 +94,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (sensor.getType() == Sensor.TYPE_PROXIMITY) {
-            long curTime = NTP.currentTimeMillis();
+            long curTime = NTP.getInstance().currentTimeMillis();
 
             Sensor mySensor = event.sensor;
             if (mySensor.getType() == Sensor.TYPE_PROXIMITY) {
@@ -104,7 +104,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
                     float proximity = event.values[0]; //cm
                     ProximitySensorData sensorData = new ProximitySensorData(SensorUtils.SENSOR_TYPE_PROXIMITY);
                     sensorData.proximity = proximity;
-                    sensorData.timestamp = NTP.currentTimeMillis();
+                    sensorData.timestamp = NTP.getInstance().currentTimeMillis();
                     setLastEntry(sensorData);
                     if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToProximity(sensorData);
@@ -112,7 +112,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
                     history.add(sensorData);
                     List<ProximitySensorData> temp = new ArrayList<>();
                     for (ProximitySensorData data : history) {
-                        if (data.timestamp > (NTP.currentTimeMillis() - 4000))
+                        if (data.timestamp > (NTP.getInstance().currentTimeMillis() - 4000))
                             temp.add(data);
                     }
                     history = new ArrayList<>(temp);
@@ -154,7 +154,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
 
     @Override
     public List<SensorData> getAllData() {
-        return getDataFromRange(0L, NTP.currentTimeMillis());
+        return getDataFromRange(0L, NTP.getInstance().currentTimeMillis());
     }
 
     @Override

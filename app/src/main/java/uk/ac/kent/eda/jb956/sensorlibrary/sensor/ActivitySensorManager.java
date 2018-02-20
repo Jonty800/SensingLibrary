@@ -74,7 +74,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
 
     @Override
     public List<SensorData> getAllData() {
-        return getDataFromRange(0L, NTP.currentTimeMillis());
+        return getDataFromRange(0L, NTP.getInstance().currentTimeMillis());
     }
 
     @Override

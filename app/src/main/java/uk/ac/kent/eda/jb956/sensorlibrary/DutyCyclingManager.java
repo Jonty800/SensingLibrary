@@ -190,7 +190,7 @@ public class DutyCyclingManager {
                 }
             }*/
 
-            long currentTs = NTP.currentTimeMillis();
+            long currentTs = NTP.getInstance().currentTimeMillis();
             long next_timestamp = 0;
             try {
                 next_timestamp = getNextExpectedTimestamp(currentTs);

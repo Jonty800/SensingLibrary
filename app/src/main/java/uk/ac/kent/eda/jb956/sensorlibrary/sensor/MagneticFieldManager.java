@@ -112,7 +112,7 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-            long curTime = NTP.currentTimeMillis();
+            long curTime = NTP.getInstance().currentTimeMillis();
 
             Sensor mySensor = event.sensor;
             if (mySensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
@@ -126,7 +126,7 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
                     sensorData.X = x;
                     sensorData.Y = y;
                     sensorData.Z = z;
-                    sensorData.timestamp = NTP.currentTimeMillis();
+                    sensorData.timestamp = NTP.getInstance().currentTimeMillis();
                     lastEntry = sensorData;
                     if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToMag(sensorData);
@@ -158,7 +158,7 @@ public class MagneticFieldManager extends BaseSensor implements SensingInterface
 
     @Override
     public List<SensorData> getAllData() {
-        return getDataFromRange(0L, NTP.currentTimeMillis());
+        return getDataFromRange(0L, NTP.getInstance().currentTimeMillis());
     }
 
     @Override

@@ -52,7 +52,7 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
         @Override
         public boolean process(final AudioEvent audioEvent) {
             AudioSensorData sensorData = new AudioSensorData(SensorUtils.SENSOR_TYPE_MICROPHONE);
-            sensorData.timestamp = NTP.currentTimeMillis();
+            sensorData.timestamp = NTP.getInstance().currentTimeMillis();
             sensorData.buffer = audioEvent.getFloatBuffer();
             sensorData.bufferSize = getBufferSize();
             sensorData.byte_buffer = audioEvent.getByteBuffer();

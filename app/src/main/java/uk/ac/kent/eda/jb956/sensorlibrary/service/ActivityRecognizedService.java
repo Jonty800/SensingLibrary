@@ -97,11 +97,12 @@ public class ActivityRecognizedService extends IntentService {
             ActivityData sensorData = new ActivityData(SensorUtils.SENSOR_TYPE_ACTIVITY);
             sensorData.activityCode = best.getType();
             sensorData.confidence = best.getConfidence();
-            sensorData.timestamp = NTP.currentTimeMillis();
+            sensorData.timestamp = NTP.getInstance().currentTimeMillis();
 
             if (SensorManager.getInstance(this).getSensorById(SensorUtils.SENSOR_TYPE_ACTIVITY).canSaveToDatabase()) {
                 MySQLiteHelper.getInstance(this).addToActivity(sensorData);
             }
+            
             SensorManager.getInstance(this).getSensorById(SensorUtils.SENSOR_TYPE_ACTIVITY).setLastEntry(sensorData);
             SensingEvent.getInstance().onDataSensed(sensorData);
         }

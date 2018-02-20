@@ -93,7 +93,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
-            long curTime = NTP.currentTimeMillis();
+            long curTime = NTP.getInstance().currentTimeMillis();
 
             Sensor mySensor = event.sensor;
             if (mySensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
@@ -103,7 +103,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
                     float millibars_of_pressure = event.values[0];
                     PressureSensorData sensorData = new PressureSensorData(SensorUtils.SENSOR_TYPE_HUMIDITY);
                     sensorData.pressure = millibars_of_pressure;
-                    sensorData.timestamp = NTP.currentTimeMillis();
+                    sensorData.timestamp = NTP.getInstance().currentTimeMillis();
                     setLastEntry(sensorData);
                     if (canSaveToDatabase()) {
                         MySQLiteHelper.getInstance(context).addToHumidity(sensorData);
@@ -144,7 +144,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
 
     @Override
     public List<SensorData> getAllData() {
-        return getDataFromRange(0L, NTP.currentTimeMillis());
+        return getDataFromRange(0L, NTP.getInstance().currentTimeMillis());
     }
 
     @Override

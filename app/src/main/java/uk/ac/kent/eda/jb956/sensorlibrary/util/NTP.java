@@ -14,13 +14,13 @@ public class NTP {
     private long lastTimeSync = 0L;
     private int interval = 120_000;
 
-    public NTP getInstance() {
+    public static NTP getInstance() {
         if(instance == null)
             instance = new NTP();
         return instance;
     }
 
-    private NTP instance;
+    private static NTP instance;
 
     public void setUpdateInterval(int intervalInMilliseconds){
         interval = intervalInMilliseconds;

@@ -75,7 +75,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
 
     @Override
     public List<SensorData> getAllData() {
-        return getDataFromRange(0L, NTP.currentTimeMillis());
+        return getDataFromRange(0L, NTP.getInstance().currentTimeMillis());
     }
 
     @Override
@@ -166,9 +166,9 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
                     WifiData wd = new WifiData(SensorUtils.SENSOR_TYPE_WIFI);
                     wd.rssi = r.level;
                     if (Build.VERSION.SDK_INT >= 17) {
-                        wd.timestamp = NTP.currentTimeMillis() - SystemClock.elapsedRealtime() + (r.timestamp / 1000);
+                        wd.timestamp = NTP.getInstance().currentTimeMillis() - SystemClock.elapsedRealtime() + (r.timestamp / 1000);
                     } else {
-                        wd.timestamp = NTP.currentTimeMillis();//TODO test this
+                        wd.timestamp = NTP.getInstance().currentTimeMillis();//TODO test this
                     }
                     wd.bssid = r.BSSID;
                     wd.wifiType = wifiType;
@@ -184,7 +184,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
                 }
 
                 for (WifiData sensorData : unparsedResults) {
-                    if (sensorData.timestamp <= NTP.currentTimeMillis() && sensorData.timestamp >= timeLastInitiated) {
+                    if (sensorData.timestamp <= NTP.getInstance().currentTimeMillis() && sensorData.timestamp >= timeLastInitiated) {
                         //NetworkCache.getInstance().getFingerprintData().add(wd);
                         if (canSaveToDatabase()) {
                             MySQLiteHelper.getInstance(context).addToWifi(sensorData);
@@ -297,7 +297,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
             logInfo(TAG, "Missing permissions for access to Wi-Fi. Aborting.");
             return;
         }
-        timeLastInitiated = NTP.currentTimeMillis();
+        timeLastInitiated = NTP.getInstance().currentTimeMillis();
         logInfo(TAG, "Starting a Wi-Fi scan");
         wifi.startScan();
         addNewSensingTask(getSamplingRate());

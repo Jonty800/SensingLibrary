@@ -107,12 +107,12 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
 
     private long lastUpdate = 0;
     public List<LightSensorData> history = new ArrayList<>();
-    private long lastTimeCheckedHistory = NTP.currentTimeMillis();
+    private long lastTimeCheckedHistory = NTP.getInstance().currentTimeMillis();
 
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (sensor.getType() == Sensor.TYPE_LIGHT) {
-            long curTime = NTP.currentTimeMillis();
+            long curTime = NTP.getInstance().currentTimeMillis();
 
             Sensor mySensor = event.sensor;
             if (mySensor.getType() == Sensor.TYPE_LIGHT) {
@@ -122,7 +122,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                     double lx = event.values[0];
                     LightSensorData sensorData = new LightSensorData(SensorUtils.SENSOR_TYPE_LIGHT);
                     sensorData.illuminance = lx;
-                    sensorData.timestamp = NTP.currentTimeMillis();
+                    sensorData.timestamp = NTP.getInstance().currentTimeMillis();
                     setLastEntry(sensorData);
                     history.add(sensorData);
                     if (canSaveToDatabase()) {
@@ -131,7 +131,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                     // Log.i(TAG, "Lx: " + lx);
                     List<LightSensorData> temp = new ArrayList<>();
                     for (LightSensorData data : history) {
-                        if (data.timestamp > (NTP.currentTimeMillis() - 4000))
+                        if (data.timestamp > (NTP.getInstance().currentTimeMillis() - 4000))
                             temp.add(data);
                     }
                     history = new ArrayList<>(temp);
@@ -158,7 +158,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         @Override
         public void run() {
             try {
-                if ((NTP.currentTimeMillis()) - lastTimeCheckedHistory > 4000
+                if ((NTP.getInstance().currentTimeMillis()) - lastTimeCheckedHistory > 4000
                         && ((ProximitySensorManager) uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getSensorById(SensorUtils.SENSOR_TYPE_PROXIMITY)).history.size() > 0
                         && history.size() > 0) {
                     InPocketDetectionHelper inPocketDetectionHelper = InPocketDetectionHelper.getInstance();
@@ -176,10 +176,10 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
                     // }
                     inPocketDetectionHelper.lightValues = new ArrayList<>(temp);
                     if (canSaveToDatabase()) {
-                        MySQLiteHelper.getInstance(context).addToPocket(inPocketDetectionHelper.getDetectionResult(), NTP.currentTimeMillis());
+                        MySQLiteHelper.getInstance(context).addToPocket(inPocketDetectionHelper.getDetectionResult(), NTP.getInstance().currentTimeMillis());
                     }
                     logInfo(TAG, "PocketDetectionResult: " + inPocketDetectionHelper.getDetectionResult().toString());
-                    lastTimeCheckedHistory = NTP.currentTimeMillis();
+                    lastTimeCheckedHistory = NTP.getInstance().currentTimeMillis();
                     ((ProximitySensorManager) uk.ac.kent.eda.jb956.sensorlibrary.SensorManager.getInstance(context).getSensorById(SensorUtils.SENSOR_TYPE_PROXIMITY)).history.clear();
                     history.clear();
                 }
@@ -214,7 +214,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
 
     @Override
     public List<SensorData> getAllData() {
-        return getDataFromRange(0L, NTP.currentTimeMillis());
+        return getDataFromRange(0L, NTP.getInstance().currentTimeMillis());
     }
 
     @Override
