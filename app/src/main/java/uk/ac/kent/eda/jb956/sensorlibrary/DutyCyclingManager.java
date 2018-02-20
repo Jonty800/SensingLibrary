@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 
+import java.security.InvalidParameterException;
+
 import uk.ac.kent.eda.jb956.sensorlibrary.control.WorkerThread;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.NTP;
@@ -95,8 +97,13 @@ public class DutyCyclingManager {
     private long validTaskCache = 0L;
     private long getNextExpectedTimestamp(long currentTs){
         long next_timestamp = validTaskCache == 0L ? config.startTimestamp : validTaskCache;
+        if(config.startTimestamp <= 0)
+            throw new InvalidParameterException("Duty cycling config missing startTimestamp");
+        String initialTaskType = null;
         while(true){
             String nextCycleType = sleeping ? "wake" : "sleep";
+            if(initialTaskType == null)
+                initialTaskType = sleeping ? "sleep" : "wake";
             if(nextCycleType.equals("sleep")) {
                 next_timestamp += getSleepWindowSize();
                 nextCycleType = "wake";
@@ -105,17 +112,11 @@ public class DutyCyclingManager {
                 nextCycleType = "sleep";
             }
 
-            if(next_timestamp > currentTs){
-                if(sleeping && nextCycleType.equals("wake")){
-                    break;
-                }
-                if(!sleeping && nextCycleType.equals("sleep")){
-                    break;
-                }
+            if(next_timestamp > currentTs && initialTaskType.equals(nextCycleType)){
+                validTaskCache = next_timestamp;
+                return next_timestamp;
             }
         }
-        validTaskCache = next_timestamp;
-        return next_timestamp;
     }
 
     private int getAwakeWindowSize() {
