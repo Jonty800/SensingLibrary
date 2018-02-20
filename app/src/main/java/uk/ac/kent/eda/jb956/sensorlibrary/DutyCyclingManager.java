@@ -128,6 +128,9 @@ public class DutyCyclingManager {
             if(debug)
                 Log.i(TAG, "next=" + next_timestamp);
 
+            if(debug)
+                Log.i(TAG,next_timestamp+ " > " + currentTs + " && " + initialTaskType.equals(pendingCycleType) + "(" + initialTaskType + "|" +pendingCycleType+")");
+
             if(next_timestamp > currentTs && initialTaskType.equals(pendingCycleType)){
                 validTaskCache = next_timestamp;
                 if(debug)
