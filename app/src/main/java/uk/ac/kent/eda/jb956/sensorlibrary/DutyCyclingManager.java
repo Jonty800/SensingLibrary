@@ -95,6 +95,8 @@ public class DutyCyclingManager {
         sleepingTaskStarted = true;
     }
 
+    boolean debug = true;
+
     private long validTaskCache = 0L;
     private long getNextExpectedTimestamp(long currentTs) throws Exception{
         if(config == null){
@@ -112,10 +114,15 @@ public class DutyCyclingManager {
             if(pendingCycleType.equals("sleep")) {
                 next_timestamp += getSleepWindowSize();
                 pendingCycleType = "wake";
+                Log.i(TAG, "adding sleep=" + getSleepWindowSize());
             }else{
                 next_timestamp += getAwakeWindowSize();
                 pendingCycleType = "sleep";
+                Log.i(TAG, "adding wake=" + getAwakeWindowSize());
             }
+
+            if(debug)
+                Log.i(TAG, "next=" + next_timestamp);
 
             if(next_timestamp > currentTs && initialTaskType.equals(pendingCycleType)){
                 validTaskCache = next_timestamp;
