@@ -104,10 +104,11 @@ public class DutyCyclingManager {
         }
         if(config.startTimestamp <= 0)
             throw new Exception("Duty cycling config missing startTimestamp");
-        long next_timestamp = config.startTimestamp;
+       // long next_timestamp = config.startTimestamp;
+        long next_timestamp = validTaskCache == 0L ? config.startTimestamp : validTaskCache;
         if(debug)
             Log.i(TAG, "config ts=" + config.startTimestamp);
-        //long next_timestamp = validTaskCache == 0L ? config.startTimestamp : validTaskCache;
+
         String initialTaskType = null;
         String pendingCycleType = sleeping ? "wake" : "sleep";
         while(true){

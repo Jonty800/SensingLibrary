@@ -97,6 +97,8 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
         return this;
     }
 
+    //1519131451
+
     @Override
     public AccelerometerManager startSensing() {
         if (isSensing())

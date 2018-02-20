@@ -43,7 +43,7 @@ public class NTP {
             //remove the missing time
             adjustedTimestamp = System.currentTimeMillis() - offset;
         }
-        if(lastTimeSync != 0 && Math.abs(lastTimeSync - adjustedTimestamp) > (60000 * 10))
+        if(lastTimeSync != 0 && Math.abs(lastTimeSync - adjustedTimestamp) > (60000 * 2))
             real_time = 0;
         return adjustedTimestamp;
     }
