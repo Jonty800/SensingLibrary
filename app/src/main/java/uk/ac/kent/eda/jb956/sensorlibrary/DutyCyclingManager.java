@@ -100,23 +100,24 @@ public class DutyCyclingManager {
         if(config == null){
             throw new Exception("getNextExpectedTimestamp: Config has not yet been set");
         }
-        long next_timestamp = validTaskCache == 0L ? config.startTimestamp : validTaskCache;
         if(config.startTimestamp <= 0)
             throw new Exception("Duty cycling config missing startTimestamp");
+        long next_timestamp = config.startTimestamp;
+        //long next_timestamp = validTaskCache == 0L ? config.startTimestamp : validTaskCache;
         String initialTaskType = null;
         while(true){
-            String nextCycleType = sleeping ? "wake" : "sleep";
+            String pendingCycleType = sleeping ? "wake" : "sleep";
             if(initialTaskType == null)
                 initialTaskType = sleeping ? "sleep" : "wake";
-            if(nextCycleType.equals("sleep")) {
+            if(pendingCycleType.equals("sleep")) {
                 next_timestamp += getSleepWindowSize();
-                nextCycleType = "wake";
+                pendingCycleType = "wake";
             }else{
                 next_timestamp += getAwakeWindowSize();
-                nextCycleType = "sleep";
+                pendingCycleType = "sleep";
             }
 
-            if(next_timestamp > currentTs && initialTaskType.equals(nextCycleType)){
+            if(next_timestamp > currentTs && initialTaskType.equals(pendingCycleType)){
                 validTaskCache = next_timestamp;
                 return next_timestamp;
             }

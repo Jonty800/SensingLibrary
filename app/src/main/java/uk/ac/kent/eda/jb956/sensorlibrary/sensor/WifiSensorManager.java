@@ -151,7 +151,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context c, Intent intent) {
-            logInfo(TAG, "onReceive();");
+          //  logInfo(TAG, "onReceive();");
             wasBroadcastReceiverTriggered = true;
             List<ScanResult> results = wifi.getScanResults();
             //if 1 or more results found
