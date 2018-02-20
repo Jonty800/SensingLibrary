@@ -105,20 +105,24 @@ public class DutyCyclingManager {
         if(config.startTimestamp <= 0)
             throw new Exception("Duty cycling config missing startTimestamp");
         long next_timestamp = config.startTimestamp;
+        if(debug)
+            Log.i(TAG, "config ts=" + config.startTimestamp);
         //long next_timestamp = validTaskCache == 0L ? config.startTimestamp : validTaskCache;
         String initialTaskType = null;
+        String pendingCycleType = sleeping ? "wake" : "sleep";
         while(true){
-            String pendingCycleType = sleeping ? "wake" : "sleep";
             if(initialTaskType == null)
                 initialTaskType = sleeping ? "sleep" : "wake";
             if(pendingCycleType.equals("sleep")) {
                 next_timestamp += getSleepWindowSize();
                 pendingCycleType = "wake";
-                Log.i(TAG, "adding sleep=" + getSleepWindowSize());
+                if(debug)
+                    Log.i(TAG, "adding sleep=" + getSleepWindowSize());
             }else{
                 next_timestamp += getAwakeWindowSize();
                 pendingCycleType = "sleep";
-                Log.i(TAG, "adding wake=" + getAwakeWindowSize());
+                if(debug)
+                    Log.i(TAG, "adding wake=" + getAwakeWindowSize());
             }
 
             if(debug)
@@ -126,9 +130,12 @@ public class DutyCyclingManager {
 
             if(next_timestamp > currentTs && initialTaskType.equals(pendingCycleType)){
                 validTaskCache = next_timestamp;
+                if(debug)
+                    Log.i(TAG, "returning");
                 return next_timestamp;
             }
         }
+
     }
 
     private int getAwakeWindowSize() {
