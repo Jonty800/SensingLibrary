@@ -47,7 +47,6 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         sensor = null;
         if (wifi == null)
             wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        setSamplingRate(10000);
     }
 
     private final Sensor sensor;
