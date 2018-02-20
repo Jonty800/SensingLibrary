@@ -21,7 +21,6 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
 
     public AudioSensorManager(Context context) {
         this.context = context;
-        dutyCyclingManager.subscribeToListener(this);
     }
 
     private AudioDispatcher dispatcher;
@@ -33,6 +32,7 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
         if (isSensing())
             return this;
         sensing = true;
+        dutyCyclingManager.subscribeToListener(this);
         dutyCyclingManager.run();
         addNewSensingTask();
         getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_MICROPHONE);
