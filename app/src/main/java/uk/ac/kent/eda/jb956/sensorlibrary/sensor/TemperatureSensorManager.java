@@ -33,7 +33,6 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-        setSamplingRate(1000);
     }
 
     private final Sensor sensor;

@@ -41,7 +41,6 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
     public ActivitySensorManager(Context context) {
         this.context = context.getApplicationContext();
         sensor = null;
-        setSamplingRate(1000);
         mApiClient = new GoogleApiClient.Builder(context)
                 .addApi(ActivityRecognition.API)
                 .addConnectionCallbacks(this)
