@@ -14,10 +14,10 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 
 public class BaseSensor {
 
-    SensorConfig config = new SensorConfig(); //load default
+    SensorConfig config; //load default
 
     public BaseSensor() {
-        dutyCyclingManager = new DutyCyclingManager(config);
+
     }
 
     public boolean isSensing() {
@@ -48,15 +48,12 @@ public class BaseSensor {
 
     public void updateConfig(SensorConfig config) { //replace default
         this.config = config;
-        if (dutyCyclingManager == null)
-            dutyCyclingManager = new DutyCyclingManager(config);
+        if (dutyCyclingManager == null) {
+            dutyCyclingManager = new DutyCyclingManager();
+            dutyCyclingManager.updateSensorConfig(config);
+        }
         else
             dutyCyclingManager.updateSensorConfig(config);
-    }
-
-    public BaseSensor withDefaultConfig() { //load default
-        updateConfig(config);
-        return this;
     }
 
     public int getSamplingRateMicroseconds() {

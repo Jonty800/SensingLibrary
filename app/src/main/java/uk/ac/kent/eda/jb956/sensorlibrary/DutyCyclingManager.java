@@ -39,10 +39,7 @@ public class DutyCyclingManager {
     private boolean sleeping = false;
     private SensorConfig config;
 
-    private long sensingTaskInitialStartTimestamp;
-
-    public DutyCyclingManager(SensorConfig config) {
-        this.config = config;
+    public DutyCyclingManager() {
         mSensorThread = new HandlerThread("DutyCycling thread", Thread.NORM_PRIORITY);
         mSensorThread.start();
         mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
@@ -84,6 +81,10 @@ public class DutyCyclingManager {
     private boolean sleepingTaskStarted = false;
 
     private void startDutyCycling() {
+        if(config == null){
+            Log.i(TAG, "Unable to start: Config has not yet been set");
+            return;
+        }
         if(!config.dutyCycle){
             Log.i(TAG, "Unable to start: Duty cycling disabled for this sensor");
             return;
@@ -95,10 +96,13 @@ public class DutyCyclingManager {
     }
 
     private long validTaskCache = 0L;
-    private long getNextExpectedTimestamp(long currentTs){
+    private long getNextExpectedTimestamp(long currentTs) throws Exception{
+        if(config == null){
+            throw new Exception("getNextExpectedTimestamp: Config has not yet been set");
+        }
         long next_timestamp = validTaskCache == 0L ? config.startTimestamp : validTaskCache;
         if(config.startTimestamp <= 0)
-            throw new InvalidParameterException("Duty cycling config missing startTimestamp");
+            throw new Exception("Duty cycling config missing startTimestamp");
         String initialTaskType = null;
         while(true){
             String nextCycleType = sleeping ? "wake" : "sleep";
@@ -168,7 +172,12 @@ public class DutyCyclingManager {
             }*/
 
             long currentTs = NTP.currentTimeMillis();
-            long next_timestamp = getNextExpectedTimestamp(currentTs);
+            long next_timestamp = 0;
+            try {
+                next_timestamp = getNextExpectedTimestamp(currentTs);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             long delay = Math.abs(currentTs - next_timestamp);
             //boolean late = nextTaskExpectedTimestamp < currentTs;
 
