@@ -37,6 +37,16 @@ public class DutyCyclingManager {
     private boolean sleeping = false;
     private SensorConfig config;
 
+    public long getSensingTaskInitialStartTimestamp() {
+        return sensingTaskInitialStartTimestamp;
+    }
+
+    public void setSensingTaskInitialStartTimestamp(long sensingTaskInitialStartTimestamp) {
+        this.sensingTaskInitialStartTimestamp = sensingTaskInitialStartTimestamp;
+    }
+
+    private long sensingTaskInitialStartTimestamp;
+
     public DutyCyclingManager(SensorConfig config) {
         this.config = config;
         mSensorThread = new HandlerThread("DutyCycling thread", Thread.NORM_PRIORITY);
@@ -90,6 +100,32 @@ public class DutyCyclingManager {
         sleepingTaskStarted = true;
     }
 
+    private long validTaskCache = 0L;
+    private long getNextExpectedTimestamp(long currentTs){
+        long next_timestamp = validTaskCache == 0L ? getSensingTaskInitialStartTimestamp() : validTaskCache;
+        while(true){
+            String nextCycleType = sleeping ? "wake" : "sleep";
+            if(nextCycleType.equals("sleep")) {
+                next_timestamp += getSleepWindowSize();
+                nextCycleType = "wake";
+            }else{
+                next_timestamp += getAwakeWindowSize();
+                nextCycleType = "sleep";
+            }
+
+            if(next_timestamp > currentTs){
+                if(sleeping && nextCycleType.equals("wake")){
+                    break;
+                }
+                if(!sleeping && nextCycleType.equals("sleep")){
+                    break;
+                }
+            }
+        }
+        validTaskCache = next_timestamp;
+        return next_timestamp;
+    }
+
     private int getAwakeWindowSize() {
         return config.AWAKE_WINDOW_SIZE;
     }
@@ -98,11 +134,11 @@ public class DutyCyclingManager {
         return config.SLEEP_WINDOW_SIZE;
     }
 
-    private long nextTaskExpectedTimestamp = 0L;
+    //private long nextTaskExpectedTimestamp = 0L;
     private Runnable dutyCyclingTask = new Runnable() {
         @Override
         public void run() {
-            long currentTs = NTP.currentTimeMillis();
+            /*long currentTs = NTP.currentTimeMillis();
             long diff = Math.abs(currentTs-nextTaskExpectedTimestamp);
             if(nextTaskExpectedTimestamp == 0L)
                 diff = 0;
@@ -136,10 +172,22 @@ public class DutyCyclingManager {
                         }
                     }
                 }
+            }*/
+
+            long currentTs = NTP.currentTimeMillis();
+            long next_timestamp = getNextExpectedTimestamp(currentTs);
+            long delay = Math.abs(currentTs - next_timestamp);
+            //boolean late = nextTaskExpectedTimestamp < currentTs;
+
+            if (!sleeping) {
+                sleep((int) delay);
+                getWorkerThread().postDelayed(this, (int) delay);
+            } else {
+                wake((int) delay);
+                getWorkerThread().postDelayed(this, (int) delay);
             }
 
-            boolean late = nextTaskExpectedTimestamp < currentTs;
-            if (!sleeping) {
+            /*if (!sleeping) {
                 int newDuration = (int) (getSleepWindowSize() + diff);
                 if(late)
                     newDuration = (int) (getSleepWindowSize() - diff);
@@ -157,9 +205,9 @@ public class DutyCyclingManager {
                     newDuration = getAwakeWindowSize();
                 Log.i(TAG,"Type=getAwakeWindowSize() offset=" + diff + " late="+late + " very_late="+very_late +" actual_ts=" + currentTs + " expected_ts=" + nextTaskExpectedTimestamp + " new_ts=" + newDuration);
                 wake(newDuration);
-                nextTaskExpectedTimestamp = NTP.currentTimeMillis() + newDuration;
                 getWorkerThread().postDelayed(this, newDuration);
-            }
+                nextTaskExpectedTimestamp = NTP.currentTimeMillis() + newDuration;
+            }*/
         }
     };
 
