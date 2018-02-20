@@ -102,7 +102,7 @@ public class ActivityRecognizedService extends IntentService {
             if (SensorManager.getInstance(this).getSensorById(SensorUtils.SENSOR_TYPE_ACTIVITY).canSaveToDatabase()) {
                 MySQLiteHelper.getInstance(this).addToActivity(sensorData);
             }
-            
+
             SensorManager.getInstance(this).getSensorById(SensorUtils.SENSOR_TYPE_ACTIVITY).setLastEntry(sensorData);
             SensingEvent.getInstance().onDataSensed(sensorData);
         }

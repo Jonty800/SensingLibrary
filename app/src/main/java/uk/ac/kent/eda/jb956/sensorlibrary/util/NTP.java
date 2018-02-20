@@ -26,27 +26,23 @@ public class NTP {
         interval = intervalInMilliseconds;
     }
 
-    public synchronized long currentTimeMillis(){
+    public synchronized long currentTimeMillis() {
         SntpClient client = new SntpClient();
         if (real_time == 0L && client.requestTime("pool.ntp.org", 3000)) {
             real_time = client.getNtpTime() + SystemClock.elapsedRealtime() - client.getNtpTimeReference();
             long time = System.currentTimeMillis();
-            offset = Math.abs(real_time-time);
+            offset = Math.abs(real_time - time);
             ahead = time > real_time;
             long test = 0;
-            if(!ahead){ //if clock is behind
+            if (!ahead) { //if clock is behind
                 //add on the missing time
                 test = System.currentTimeMillis() + offset;
-            }else{ //if clock is ahead
+            } else { //if clock is ahead
                 //remove the missing time
                 test = System.currentTimeMillis() - offset;
             }
             lastTimeSync = real_time;
-            System.out.println("Timestamp Sync Results: Offset=" + offset + " ahead="+ahead + " actual_ts=" + real_time + " old_ts=" + time + " new_ts="+test );
-        }else{
-            //server failed. Dont set real_time and just return currentTimeMillis
-            System.out.println("Unable to get time, returning System.currentTimeMillis()");
-            return System.currentTimeMillis();
+            System.out.println("Timestamp Sync Results: Offset=" + offset + " ahead=" + ahead + " actual_ts=" + real_time + " old_ts=" + time + " new_ts=" + test);
         }
         long adjustedTimestamp;
         if(!ahead){ //if clock is behind
