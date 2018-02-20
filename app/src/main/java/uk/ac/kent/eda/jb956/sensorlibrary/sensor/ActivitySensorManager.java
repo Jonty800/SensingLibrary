@@ -42,7 +42,6 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
         this.context = context.getApplicationContext();
         sensor = null;
         setSamplingRate(1000);
-        dutyCyclingManager.subscribeToListener(this);
         mApiClient = new GoogleApiClient.Builder(context)
                 .addApi(ActivityRecognition.API)
                 .addConnectionCallbacks(this)
@@ -110,6 +109,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
         if (isSensing())
             return this;
         try {
+            dutyCyclingManager.subscribeToListener(this);
             logInfo(TAG, "Attempting to start sensor");
             mApiClient.connect();
             //sensing = true;

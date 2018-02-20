@@ -34,7 +34,6 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        dutyCyclingManager.subscribeToListener(this);
     }
 
     private final Sensor sensor;
@@ -105,6 +104,7 @@ public class AccelerometerManager extends BaseSensor implements SensingInterface
         try {
             logInfo(TAG, "Registering listener...");
             if (sensor != null) {
+                dutyCyclingManager.subscribeToListener(this);
                 androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                 sensing = true;
                 getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_ACCELEROMETER);

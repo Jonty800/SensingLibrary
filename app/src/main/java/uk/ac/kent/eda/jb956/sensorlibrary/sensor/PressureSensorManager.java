@@ -36,7 +36,6 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        dutyCyclingManager.subscribeToListener(this);
     }
 
     private final Sensor sensor;
@@ -75,6 +74,7 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
         try {
             logInfo(TAG, "Registering listener...");
             if (sensor != null) {
+                dutyCyclingManager.subscribeToListener(this);
                 dutyCyclingManager.run();
                 androidSensorManager.registerListener(this, getSensor(), SAMPLING_RATE_MICRO, SensorManager.getInstance(context).getmSensorHandler());
                 sensing = true;

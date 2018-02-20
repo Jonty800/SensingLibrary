@@ -34,7 +34,6 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         setSamplingRate(1000);
-        dutyCyclingManager.subscribeToListener(this);
     }
 
     private final Sensor sensor;
@@ -51,6 +50,7 @@ public class TemperatureSensorManager extends BaseSensor implements SensingInter
         try {
             logInfo(TAG, "Registering listener...");
             if (sensor != null) {
+                dutyCyclingManager.subscribeToListener(this);
                 dutyCyclingManager.run();
                 androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                 sensing = true;

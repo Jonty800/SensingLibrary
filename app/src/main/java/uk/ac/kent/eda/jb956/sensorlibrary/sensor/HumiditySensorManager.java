@@ -34,7 +34,6 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
         setSamplingRate(1000);
-        dutyCyclingManager.subscribeToListener(this);
     }
 
     private final Sensor sensor;
@@ -51,6 +50,7 @@ public class HumiditySensorManager extends BaseSensor implements SensingInterfac
         try {
             logInfo(TAG, "Registering listener...");
             if (sensor != null) {
+                dutyCyclingManager.subscribeToListener(this);
                 dutyCyclingManager.run();
                 androidSensorManager.registerListener(this, getSensor(), getSamplingRateMicroseconds(), SensorManager.getInstance(context).getmSensorHandler());
                 sensing = true;

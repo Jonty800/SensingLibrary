@@ -33,7 +33,6 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
         this.context = context.getApplicationContext();
         androidSensorManager = (android.hardware.SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = androidSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        dutyCyclingManager.subscribeToListener(this);
     }
 
     private final Sensor sensor;
@@ -50,6 +49,7 @@ public class ProximitySensorManager extends BaseSensor implements SensingInterfa
         try {
             logInfo(TAG, "Registering listener...");
             if (sensor != null) {
+                dutyCyclingManager.subscribeToListener(this);
                 dutyCyclingManager.run();
                 androidSensorManager.registerListener(this, getSensor(), SensorManager.SENSOR_DELAY_NORMAL);
                 sensing = true;
