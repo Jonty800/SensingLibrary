@@ -11,6 +11,7 @@ import android.support.v4.app.NotificationCompat;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
+import uk.ac.kent.eda.jb956.sensorlibrary.util.NTP;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>

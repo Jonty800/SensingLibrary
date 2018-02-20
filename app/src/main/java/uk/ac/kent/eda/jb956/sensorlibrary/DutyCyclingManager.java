@@ -37,14 +37,6 @@ public class DutyCyclingManager {
     private boolean sleeping = false;
     private SensorConfig config;
 
-    public long getSensingTaskInitialStartTimestamp() {
-        return sensingTaskInitialStartTimestamp;
-    }
-
-    public void setSensingTaskInitialStartTimestamp(long sensingTaskInitialStartTimestamp) {
-        this.sensingTaskInitialStartTimestamp = sensingTaskInitialStartTimestamp;
-    }
-
     private long sensingTaskInitialStartTimestamp;
 
     public DutyCyclingManager(SensorConfig config) {
@@ -102,7 +94,7 @@ public class DutyCyclingManager {
 
     private long validTaskCache = 0L;
     private long getNextExpectedTimestamp(long currentTs){
-        long next_timestamp = validTaskCache == 0L ? getSensingTaskInitialStartTimestamp() : validTaskCache;
+        long next_timestamp = validTaskCache == 0L ? config.startTimestamp : validTaskCache;
         while(true){
             String nextCycleType = sleeping ? "wake" : "sleep";
             if(nextCycleType.equals("sleep")) {

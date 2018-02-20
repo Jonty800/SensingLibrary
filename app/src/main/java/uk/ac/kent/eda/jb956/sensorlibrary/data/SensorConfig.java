@@ -15,6 +15,7 @@ public class SensorConfig implements Serializable {
     public boolean saveToDatabase = true;
     public boolean logToConsole = true;
     public boolean dutyCycle = true;
+    public long startTimestamp;
 
     public AudioConfig audioConfig = new AudioConfig();
 
