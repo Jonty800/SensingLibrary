@@ -89,37 +89,37 @@ public class DutyCyclingManager {
             Log.i(TAG, "Unable to start: Duty cycling disabled for this sensor");
             return;
         }
-        if (sleepingTaskStarted)
-            return;
-        getWorkerThread().postDelayed(dutyCyclingTask, getAwakeWindowSize());
-        sleepingTaskStarted = true;
+        if (!sleepingTaskStarted) {
+            getWorkerThread().postDelayed(dutyCyclingTask, getAwakeWindowSize());
+            sleepingTaskStarted = true;
+        }
     }
 
     boolean debug = true;
 
-    private long previousTaskCache = 0L;
+    private long validTaskCache = 0L;
     private long getNextExpectedTimestamp(long currentTs) throws Exception{
         if(config == null){
             throw new Exception("getNextExpectedTimestamp: Config has not yet been set");
         }
         if(config.startTimestamp <= 0)
             throw new Exception("Duty cycling config missing startTimestamp");
-       // long next_timestamp = config.startTimestamp;
-        long next_timestamp = previousTaskCache == 0L ? config.startTimestamp : previousTaskCache;
+        // long next_timestamp = config.startTimestamp;
+        long next_timestamp = validTaskCache == 0L ? config.startTimestamp : validTaskCache;
         if(debug)
             Log.i(TAG, "config ts=" + config.startTimestamp);
 
-        String nextTaskType = sleeping ? "wake" : "sleep";
-        String tempCycleType = sleeping ? "wake" : "sleep";
+        String initialTaskType = sleeping ? "sleep" : "wake";
+        String pendingCycleType = sleeping ? "wake" : "sleep";
         while(true){
-            if(tempCycleType.equals("sleep")) {
+            if(pendingCycleType.equals("sleep")) {
                 next_timestamp += getSleepWindowSize();
-                tempCycleType = "wake";
+                pendingCycleType = "wake";
                 if(debug)
                     Log.i(TAG, "adding sleep=" + getSleepWindowSize());
             }else{
                 next_timestamp += getAwakeWindowSize();
-                tempCycleType = "sleep";
+                pendingCycleType = "sleep";
                 if(debug)
                     Log.i(TAG, "adding wake=" + getAwakeWindowSize());
             }
@@ -128,10 +128,10 @@ public class DutyCyclingManager {
                 Log.i(TAG, "next=" + next_timestamp);
 
             if(debug)
-                Log.i(TAG,next_timestamp+ " > " + currentTs + " && " + nextTaskType.equals(tempCycleType) + "(" + nextTaskType + "|" +tempCycleType+")");
+                Log.i(TAG,next_timestamp+ " > " + currentTs + " && " + initialTaskType.equals(pendingCycleType) + "(" + initialTaskType + "|" +pendingCycleType+")");
 
-            if(next_timestamp > currentTs && nextTaskType.equals(tempCycleType)){
-                previousTaskCache = next_timestamp;
+            if(next_timestamp > currentTs && initialTaskType.equals(pendingCycleType)){
+                validTaskCache = next_timestamp;
                 if(debug)
                     Log.i(TAG, "returning");
                 return next_timestamp;
