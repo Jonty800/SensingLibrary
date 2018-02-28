@@ -97,7 +97,7 @@ public class DutyCyclingManager {
 
     boolean debug = true;
 
-    private long validTaskCache = 0L;
+    private long previousTaskCache = 0L;
     private long getNextExpectedTimestamp(long currentTs) throws Exception{
         if(config == null){
             throw new Exception("getNextExpectedTimestamp: Config has not yet been set");
@@ -105,23 +105,21 @@ public class DutyCyclingManager {
         if(config.startTimestamp <= 0)
             throw new Exception("Duty cycling config missing startTimestamp");
        // long next_timestamp = config.startTimestamp;
-        long next_timestamp = validTaskCache == 0L ? config.startTimestamp : validTaskCache;
+        long next_timestamp = previousTaskCache == 0L ? config.startTimestamp : previousTaskCache;
         if(debug)
             Log.i(TAG, "config ts=" + config.startTimestamp);
 
-        String initialTaskType = null;
-        String pendingCycleType = sleeping ? "wake" : "sleep";
+        String nextTaskType = sleeping ? "wake" : "sleep";
+        String tempCycleType = sleeping ? "wake" : "sleep";
         while(true){
-            if(initialTaskType == null)
-                initialTaskType = sleeping ? "sleep" : "wake";
-            if(pendingCycleType.equals("sleep")) {
+            if(tempCycleType.equals("sleep")) {
                 next_timestamp += getSleepWindowSize();
-                pendingCycleType = "wake";
+                tempCycleType = "wake";
                 if(debug)
                     Log.i(TAG, "adding sleep=" + getSleepWindowSize());
             }else{
                 next_timestamp += getAwakeWindowSize();
-                pendingCycleType = "sleep";
+                tempCycleType = "sleep";
                 if(debug)
                     Log.i(TAG, "adding wake=" + getAwakeWindowSize());
             }
@@ -130,10 +128,10 @@ public class DutyCyclingManager {
                 Log.i(TAG, "next=" + next_timestamp);
 
             if(debug)
-                Log.i(TAG,next_timestamp+ " > " + currentTs + " && " + initialTaskType.equals(pendingCycleType) + "(" + initialTaskType + "|" +pendingCycleType+")");
+                Log.i(TAG,next_timestamp+ " > " + currentTs + " && " + nextTaskType.equals(tempCycleType) + "(" + nextTaskType + "|" +tempCycleType+")");
 
-            if(next_timestamp > currentTs && initialTaskType.equals(pendingCycleType)){
-                validTaskCache = next_timestamp;
+            if(next_timestamp > currentTs && nextTaskType.equals(tempCycleType)){
+                previousTaskCache = next_timestamp;
                 if(debug)
                     Log.i(TAG, "returning");
                 return next_timestamp;
