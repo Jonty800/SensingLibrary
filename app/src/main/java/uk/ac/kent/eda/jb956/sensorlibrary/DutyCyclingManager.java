@@ -40,6 +40,10 @@ public class DutyCyclingManager {
     private SensorConfig config;
 
     public DutyCyclingManager() {
+
+    }
+
+    void createNewThread(){
         mSensorThread = new HandlerThread("DutyCycling Thread", Thread.MAX_PRIORITY);
         mSensorThread.start();
         mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
@@ -90,6 +94,8 @@ public class DutyCyclingManager {
             Log.i(TAG, "Unable to start: Duty cycling disabled for this sensor");
             return;
         }
+        if(mSensorThread == null)
+            createNewThread();
         if (!sleepingTaskStarted) {
             getWorkerThread().postDelayed(dutyCyclingTask, getAwakeWindowSize());
             sleepingTaskStarted = true;
