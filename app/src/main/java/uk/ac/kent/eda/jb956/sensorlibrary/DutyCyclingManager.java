@@ -40,10 +40,11 @@ public class DutyCyclingManager {
     private SensorConfig config;
 
     public DutyCyclingManager() {
-        mSensorThread = new HandlerThread("DutyCycling thread", Thread.NORM_PRIORITY);
+        mSensorThread = new HandlerThread("DutyCycling Thread", Thread.MAX_PRIORITY);
         mSensorThread.start();
         mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
         workerThread = WorkerThread.create();
+        Log.d(TAG,"DutyCyclingManager thread created");
     }
 
     private void sleep(int duration) {
