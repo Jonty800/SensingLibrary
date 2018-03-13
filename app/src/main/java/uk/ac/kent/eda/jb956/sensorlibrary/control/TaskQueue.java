@@ -1,21 +1,25 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.control;
 
-import android.util.Log;
-
+import java.util.LinkedList;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import android.util.Log;
 
 
 /**
  * Source: http://google-ukdev.blogspot.com/2009/01/crimes-against-code-and-using-threads.html
+ *
  */
 public class TaskQueue {
     private final BlockingQueue<Runnable> tasks;
+    private Thread thread;
     private boolean running;
-    private final Runnable internalRunnable;
+    private Runnable internalRunnable;
 
     public static TaskQueue getInstance() {
-        if (instance == null)
+        if(instance == null)
             instance = new TaskQueue();
         return instance;
     }
@@ -34,27 +38,27 @@ public class TaskQueue {
         }
     }
 
-    private TaskQueue() {
+    public TaskQueue() {
         tasks = new LinkedBlockingQueue<>();
         internalRunnable = new InternalRunnable();
         start();
     }
 
-    private void start() {
+    public void start() {
         if (!running) {
-            Thread thread = new Thread(internalRunnable);
+            thread = new Thread(internalRunnable);
             thread.setDaemon(true);
             running = true;
             thread.start();
         }
     }
 
-    private void stop() {
+    public void stop() {
         running = false;
     }
 
     public void addNewTask(Runnable task) {
-        synchronized (tasks) {
+        synchronized(tasks) {
             try {
                 tasks.put(task);
                 tasks.notify(); // notify any waiting threads
@@ -66,7 +70,7 @@ public class TaskQueue {
     }
 
     private Runnable getNextTask() throws InterruptedException {
-        synchronized (tasks) {
+        synchronized(tasks) {
             if (tasks.isEmpty()) {
                 try {
                     tasks.wait();
@@ -81,7 +85,7 @@ public class TaskQueue {
 
 
     private void internalRun() throws InterruptedException {
-        while (running) {
+        while(running) {
             Runnable task = getNextTask();
             try {
                 task.run();

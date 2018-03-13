@@ -170,7 +170,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_MAG);
     }
 
-    private String[] arrayTrim(String[] input) {
+    public String[] arrayTrim(String[] input) {
         int n = input.length - 1;
         String[] newArray = new String[n];
         System.arraycopy(input, 1, newArray, 0, n);

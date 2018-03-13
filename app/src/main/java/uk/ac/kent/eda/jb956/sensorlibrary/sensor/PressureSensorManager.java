@@ -29,8 +29,8 @@ public class PressureSensorManager extends BaseSensor implements SensingInterfac
     private final String TAG = "PressureSensorManager";
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
-    private static int SAMPLING_RATE = 1000; //ms
-    private static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
+    public static int SAMPLING_RATE = 1000; //ms
+    public static final int SAMPLING_RATE_MICRO = SAMPLING_RATE * 1000;
 
     public PressureSensorManager(Context context) {
         this.context = context.getApplicationContext();

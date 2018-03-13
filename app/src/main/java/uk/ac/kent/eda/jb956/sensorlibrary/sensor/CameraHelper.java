@@ -37,10 +37,10 @@ import java.util.Locale;
 /**
  * Camera related utilities.
  */
-class CameraHelper {
+public class CameraHelper {
 
-    private static final int MEDIA_TYPE_IMAGE = 1;
-    private static final int MEDIA_TYPE_VIDEO = 2;
+    public static final int MEDIA_TYPE_IMAGE = 1;
+    public static final int MEDIA_TYPE_VIDEO = 2;
 
     /**
      * Iterate over supported camera video sizes to see which one best fits the

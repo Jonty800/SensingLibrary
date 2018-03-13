@@ -23,8 +23,6 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 
 public class ActivityRecognizedService extends IntentService {
 
-    ActivitySensorManager sensor;
-
     public ActivityRecognizedService() {
         super("ActivityRecognizedService");
     }

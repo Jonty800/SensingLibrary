@@ -13,7 +13,7 @@ import be.tarsos.dsp.util.fft.HammingWindow;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-class AudioUtil {
+public class AudioUtil {
 
     public static double soundPressureLevel(final float[] buffer) {
         double value = Math.pow(localEnergy(buffer), 0.5);
@@ -21,7 +21,7 @@ class AudioUtil {
         return linearToDecibel(value);
     }
 
-    private static double linearToDecibel(double value) {
+    public static double linearToDecibel(double value) {
         return 20.0D * Math.log10(value);
     }
 
@@ -35,7 +35,7 @@ class AudioUtil {
         return rms;
     }
 
-    private static double localEnergy(final float[] buffer) {
+    public static double localEnergy(final float[] buffer) {
         double power = 0.0D;
         for (float element : buffer) {
             power += element * element;
@@ -44,7 +44,6 @@ class AudioUtil {
     }
 
     private static double prior;
-
     public static void applyPreemphasis(float[] in, double preemphasisFactor) {
         // set the prior value for the next Audio
         double nextPrior = prior;
@@ -77,7 +76,7 @@ class AudioUtil {
         return mfcc.cepCoefficients(f);
     }
 
-    public static float[] getMagnitudeSpectrum(float frame[]) {
+    public static float[] getMagnitudeSpectrum(float frame[]){
         float magSpectrum[] = new float[frame.length];
         FFT fft = new FFT(frame.length, new HammingWindow());
         // calculate FFT for current frame
@@ -85,9 +84,9 @@ class AudioUtil {
         fft.forwardTransform(frame);
 
         // calculate magnitude spectrum
-        for (int k = 0; k < frame.length / 2; k++) {
-            magSpectrum[frame.length / 2 + k] = fft.modulus(frame, frame.length / 2 - 1 - k);
-            magSpectrum[frame.length / 2 - 1 - k] = magSpectrum[frame.length / 2 + k];
+        for (int k = 0; k < frame.length/2; k++){
+            magSpectrum[frame.length/2+k] = fft.modulus(frame, frame.length/2-1-k);
+            magSpectrum[frame.length/2-1-k] = magSpectrum[frame.length/2+k];
         }
 
         return magSpectrum;
@@ -108,7 +107,7 @@ class AudioUtil {
         return indexesOfTopElements(subsample, numberOfMagnitudes);
     }
 
-    private static float[] subsample(List<Float> input, int amount) {
+    public static float[] subsample(List<Float> input, int amount){
         int count = 0;
         float[] target2 = new float[input.size()];
         for (int i = 0; i < target2.length; i += amount) {
@@ -121,7 +120,7 @@ class AudioUtil {
         return Arrays.copyOf(target2, count);
     }
 
-    public static float[] subsample(float[] input, int amount) {
+    public static float[] subsample(float[] input, int amount){
         int count = 0;
         float[] target2 = new float[input.length];
         for (int i = 0; i < target2.length; i += amount) {

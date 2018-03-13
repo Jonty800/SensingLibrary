@@ -16,11 +16,11 @@ public class BaseSensor {
 
     SensorConfig config; //load default
 
-    BaseSensor() {
+    public BaseSensor() {
         dutyCyclingManager = new DutyCyclingManager();
     }
 
-    boolean isSensing() {
+    public boolean isSensing() {
         return sensing;
     }
 
@@ -46,16 +46,17 @@ public class BaseSensor {
         return this;
     }
 
-    private void updateConfig(SensorConfig config) { //replace default
+    public void updateConfig(SensorConfig config) { //replace default
         this.config = config;
         if (dutyCyclingManager == null) {
             dutyCyclingManager = new DutyCyclingManager();
             dutyCyclingManager.updateSensorConfig(config);
-        } else
+        }
+        else
             dutyCyclingManager.updateSensorConfig(config);
     }
 
-    int getSamplingRateMicroseconds() {
+    public int getSamplingRateMicroseconds() {
         return config.SAMPLING_RATE * 1000;
     }
 
@@ -63,7 +64,7 @@ public class BaseSensor {
         config.SAMPLING_RATE = rate;
     }
 
-    int getSamplingRate() {
+    public int getSamplingRate() {
         return config.SAMPLING_RATE;
     }
 
@@ -79,13 +80,13 @@ public class BaseSensor {
         return config.saveToDatabase;
     }
 
-    void logInfo(String TAG, String text) {
+    public void logInfo(String TAG, String text) {
         if (config.logToConsole) {
             Log.i(TAG, text);
         }
     }
 
-    SensingEvent getSensorEvent() {
+    public SensingEvent getSensorEvent() {
         return SensingEvent.getInstance();
     }
 

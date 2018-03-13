@@ -1,5 +1,6 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.util;
 
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.Log;
@@ -15,38 +16,41 @@ public class NTP {
     private boolean ahead = true;
     private long lastTimeSync = 0L;
     private int interval = 120_000;
-    private boolean fetching = false;
+    boolean fetching = false;
+    private GetTimeAsyncTask timeAsyncTask;
 
-    private final String TAG = getClass().getSimpleName();
+    public final String TAG = getClass().getSimpleName();
 
     public static NTP getInstance() {
-        if (instance == null)
+        if(instance == null)
             instance = new NTP();
         return instance;
     }
 
     private static NTP instance;
 
-    public void setUpdateInterval(int intervalInMilliseconds) {
+    public void setUpdateInterval(int intervalInMilliseconds){
         interval = intervalInMilliseconds;
     }
 
     public synchronized long currentTimeMillis() {
         if (real_time == 0L) {
-            if (!fetching) {
+            if(!fetching) {
                 fetching = true;
-                new GetTimeAsyncTask().execute();
+                if(timeAsyncTask==null)
+                    timeAsyncTask = new GetTimeAsyncTask();
+                timeAsyncTask.execute();
             }
         }
         long adjustedTimestamp;
-        if (!ahead) { //if clock is behind
+        if(!ahead){ //if clock is behind
             //add on the missing time
             adjustedTimestamp = System.currentTimeMillis() + offset;
-        } else { //if clock is ahead
+        }else{ //if clock is ahead
             //remove the missing time
             adjustedTimestamp = System.currentTimeMillis() - offset;
         }
-        if (lastTimeSync != 0L && Math.abs(lastTimeSync - adjustedTimestamp) > interval)
+        if(lastTimeSync != 0L && Math.abs(lastTimeSync - adjustedTimestamp) > interval)
             real_time = 0L;
         return adjustedTimestamp;
     }
@@ -54,7 +58,7 @@ public class NTP {
     private class GetTimeAsyncTask extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
             SntpClient client = new SntpClient();
-            if (client.requestTime("pool.ntp.org", 3000)) {
+            if(client.requestTime("pool.ntp.org", 3000)){
                 real_time = client.getNtpTime() + SystemClock.elapsedRealtime() - client.getNtpTimeReference();
                 long test = 0;
                 if (!ahead) { //if clock is behind
@@ -69,10 +73,10 @@ public class NTP {
                 ahead = time > real_time;
                 System.out.println("Timestamp Sync Results: Offset=" + offset + " ahead=" + ahead + " actual_ts=" + real_time + " old_ts=" + time + " new_ts=" + test);
                 lastTimeSync = real_time;
-            } else {
+            }else {
                 Log.e(TAG, "Unable to download time");
             }
-            return null;
+          return null;
         }
 
         protected void onPostExecute(Void real_time) {

@@ -11,7 +11,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.TemperatureSensorData;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-class Util {
+public class Util {
 
     /*  Dv: Absolute humidity in grams/meter3
         m: Mass constant
@@ -22,7 +22,7 @@ class Util {
         A: Pressure constant in hP
         K: Temperature constant for converting to kelvin
     */
-    private static float calculateAbsoluteHumidity(float temperature, float relativeHumidity) {
+    public static float calculateAbsoluteHumidity(float temperature, float relativeHumidity) {
         float Dv;
         float m = 17.62f;
         float Tn = 243.12f;

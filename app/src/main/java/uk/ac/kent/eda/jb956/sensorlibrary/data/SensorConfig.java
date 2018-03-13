@@ -10,14 +10,14 @@ import java.io.Serializable;
 public class SensorConfig implements Serializable {
 
     public int SAMPLING_RATE = 100; //ms
-    public final int SLEEP_WINDOW_SIZE = 20000; //ms
-    public final int AWAKE_WINDOW_SIZE = 30000; //ms
-    public final boolean saveToDatabase = true;
-    public final boolean logToConsole = true;
-    public final boolean dutyCycle = true;
+    public int SLEEP_WINDOW_SIZE = 20000; //ms
+    public int AWAKE_WINDOW_SIZE = 30000; //ms
+    public boolean saveToDatabase = true;
+    public boolean logToConsole = true;
+    public boolean dutyCycle = true;
     public long startTimestamp;
 
-    public final AudioConfig audioConfig = new AudioConfig();
+    public AudioConfig audioConfig = new AudioConfig();
 
     public class AudioConfig implements Serializable {
         public int BUFFER_SIZE = 2000;

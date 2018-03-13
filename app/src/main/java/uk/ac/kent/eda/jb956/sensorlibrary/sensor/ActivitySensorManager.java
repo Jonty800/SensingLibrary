@@ -36,7 +36,7 @@ public class ActivitySensorManager extends BaseSensor implements SensingInterfac
 
     private final String TAG = "ActivitySensorManager";
     private final Context context;
-    private final GoogleApiClient mApiClient;
+    private GoogleApiClient mApiClient;
 
     public ActivitySensorManager(Context context) {
         this.context = context.getApplicationContext();

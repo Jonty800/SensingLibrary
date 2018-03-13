@@ -8,8 +8,8 @@ package uk.ac.kent.eda.jb956.sensorlibrary.util;
 /*
  * @author fabien
  */
-class GPS {
-    private static final StringBuilder sb = new StringBuilder(20);
+public class GPS {
+    private static StringBuilder sb = new StringBuilder(20);
 
     /**
      * returns ref for latitude which is S or N.
@@ -39,7 +39,7 @@ class GPS {
      * @param latitude could be longitude.
      * @return
      */
-    synchronized public static String convert(double latitude) {
+    synchronized public static final String convert(double latitude) {
         latitude = Math.abs(latitude);
         int degree = (int) latitude;
         latitude *= 60;
