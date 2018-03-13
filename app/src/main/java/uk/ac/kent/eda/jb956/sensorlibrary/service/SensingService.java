@@ -43,7 +43,7 @@ public class SensingService extends Service {
         Notification notification = new NotificationCompat.Builder(this)
                 .setSmallIcon(android.R.drawable.arrow_up_float)
                 .setContentTitle(Settings.appName)
-                .setContentText("Collecting sensor information...")
+                .setContentText("Running...")
                 .setContentIntent(pendingIntent).build();
 
         startForeground(1337, notification);
