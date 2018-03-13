@@ -25,8 +25,8 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
 
     private AudioDispatcher dispatcher;
     private final String TAG = "AudioSensorManager";
-    boolean sensing = false;
-    Context context;
+    private boolean sensing = false;
+    private final Context context;
 
     public synchronized AudioSensorManager startSensing() {
         if (isSensing())
@@ -48,7 +48,7 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
         logInfo(TAG, "Started Audio Sensing at " + getSamplingRate() + " Hz with buffer size " + getBufferSize());
     }
 
-    private AudioProcessor audioProcessor = new AudioProcessor() {
+    private final AudioProcessor audioProcessor = new AudioProcessor() {
         @Override
         public boolean process(final AudioEvent audioEvent) {
             AudioSensorData sensorData = new AudioSensorData(SensorUtils.SENSOR_TYPE_MICROPHONE);
@@ -101,7 +101,7 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
         config.audioConfig.BUFFER_SIZE = bufferSize;
     }
 
-    public int getBufferSize() {
+    private int getBufferSize() {
         return config.audioConfig.BUFFER_SIZE;
     }
 

@@ -11,11 +11,8 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.InPocketContext;
  * School of Engineering and Digital Arts, University of Kent
  */
 
-public class InPocketDetectionHelper {
+class InPocketDetectionHelper {
 
-    private double th_pocket = 1.50;
-    private double th_bag = 2;
-    private double i_dark = 50; //below 50
     public List<Double> lightValues = new ArrayList<>();
     public List<Double> proximityValues = new ArrayList<>();
     //private List<Double> lightValuesNorm = new ArrayList<>();
@@ -40,6 +37,8 @@ public class InPocketDetectionHelper {
 
         // System.out.println(m_proximity + " - " + th_bag + " - " + m_light + " - " + i_dark);
 
+        double i_dark = 50;
+        double th_bag = 2;
         if (m_proximity < th_bag && m_light < i_dark) {
             int numClose = 0;
             int numNear = 0;
@@ -62,6 +61,7 @@ public class InPocketDetectionHelper {
             //double mDistancePocket = manhattanDistance(pocketArr, f);
             //double mDistancBag = manhattanDistance(bagArr, f);
 
+            double th_pocket = 1.50;
             if (m_proximity <= th_pocket) {
                 return InPocketContext.IN_POCKET;
             } else {
@@ -85,9 +85,7 @@ public class InPocketDetectionHelper {
 
     private double maxValue(List<Double> array) {
         List<Double> list = new ArrayList<>();
-        for (double d : array) {
-            list.add(d);
-        }
+        list.addAll(array);
         return Collections.max(list);
     }
 

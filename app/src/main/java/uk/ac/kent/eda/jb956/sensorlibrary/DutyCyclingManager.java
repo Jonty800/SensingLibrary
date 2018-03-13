@@ -4,8 +4,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 
-import java.security.InvalidParameterException;
-
 import uk.ac.kent.eda.jb956.sensorlibrary.control.WorkerThread;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.NTP;
@@ -17,7 +15,7 @@ import uk.ac.kent.eda.jb956.sensorlibrary.util.NTP;
 
 public class DutyCyclingManager {
 
-    public static String TAG = "DutyCyclingManager";
+    private static final String TAG = "DutyCyclingManager";
 
     public boolean isSleeping() {
         return sleeping;
@@ -43,12 +41,12 @@ public class DutyCyclingManager {
 
     }
 
-    void createNewThread(){
+    private void createNewThread() {
         mSensorThread = new HandlerThread("DutyCycling Thread", Thread.MAX_PRIORITY);
         mSensorThread.start();
         mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
         workerThread = WorkerThread.create();
-        Log.d(TAG,"DutyCyclingManager thread created");
+        Log.d(TAG, "DutyCyclingManager thread created");
     }
 
     private void sleep(int duration) {
@@ -86,15 +84,15 @@ public class DutyCyclingManager {
     private boolean sleepingTaskStarted = false;
 
     private void startDutyCycling() {
-        if(config == null){
+        if (config == null) {
             Log.i(TAG, "Unable to start: Config has not yet been set");
             return;
         }
-        if(!config.dutyCycle){
+        if (!config.dutyCycle) {
             Log.i(TAG, "Unable to start: Duty cycling disabled for this sensor");
             return;
         }
-        if(mSensorThread == null)
+        if (mSensorThread == null)
             createNewThread();
         if (!sleepingTaskStarted) {
             getWorkerThread().postDelayed(dutyCyclingTask, getAwakeWindowSize());
@@ -102,44 +100,45 @@ public class DutyCyclingManager {
         }
     }
 
-    boolean debug = true;
+    private final boolean debug = true;
 
     private long validTaskCache = 0L;
-    private long getNextExpectedTimestamp(long currentTs) throws Exception{
-        if(config == null){
+
+    private long getNextExpectedTimestamp(long currentTs) throws Exception {
+        if (config == null) {
             throw new Exception("getNextExpectedTimestamp: Config has not yet been set");
         }
-        if(config.startTimestamp <= 0)
+        if (config.startTimestamp <= 0)
             throw new Exception("Duty cycling config missing startTimestamp");
         // long next_timestamp = config.startTimestamp;
         long next_timestamp = validTaskCache == 0L ? config.startTimestamp : validTaskCache;
-        if(debug)
+        if (debug)
             Log.i(TAG, "config ts=" + config.startTimestamp);
 
         String initialTaskType = sleeping ? "sleep" : "wake";
         String pendingCycleType = sleeping ? "wake" : "sleep";
-        while(true){
-            if(pendingCycleType.equals("sleep")) {
+        while (true) {
+            if (pendingCycleType.equals("sleep")) {
                 next_timestamp += getSleepWindowSize();
                 pendingCycleType = "wake";
-                if(debug)
+                if (debug)
                     Log.i(TAG, "adding sleep=" + getSleepWindowSize());
-            }else{
+            } else {
                 next_timestamp += getAwakeWindowSize();
                 pendingCycleType = "sleep";
-                if(debug)
+                if (debug)
                     Log.i(TAG, "adding wake=" + getAwakeWindowSize());
             }
 
-            if(debug)
+            if (debug)
                 Log.i(TAG, "next=" + next_timestamp);
 
-            if(debug)
-                Log.i(TAG,next_timestamp+ " > " + currentTs + " && " + initialTaskType.equals(pendingCycleType) + "(" + initialTaskType + "|" +pendingCycleType+")");
+            if (debug)
+                Log.i(TAG, next_timestamp + " > " + currentTs + " && " + initialTaskType.equals(pendingCycleType) + "(" + initialTaskType + "|" + pendingCycleType + ")");
 
-            if(next_timestamp > currentTs && initialTaskType.equals(pendingCycleType)){
+            if (next_timestamp > currentTs && initialTaskType.equals(pendingCycleType)) {
                 validTaskCache = next_timestamp;
-                if(debug)
+                if (debug)
                     Log.i(TAG, "returning");
                 return next_timestamp;
             }
@@ -156,7 +155,7 @@ public class DutyCyclingManager {
     }
 
     //private long nextTaskExpectedTimestamp = 0L;
-    private Runnable dutyCyclingTask = new Runnable() {
+    private final Runnable dutyCyclingTask = new Runnable() {
         @Override
         public void run() {
             /*long currentTs = NTP.currentTimeMillis();
@@ -249,7 +248,7 @@ public class DutyCyclingManager {
         return this;
     }
 
-    public synchronized void unsubscribeListener(){
+    public synchronized void unsubscribeListener() {
         dutyCyclingEventListener = null;
     }
 

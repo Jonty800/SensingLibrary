@@ -17,10 +17,9 @@ import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 
 public class BootReceiver extends BroadcastReceiver {
 
-    private final String TAG = "BootReceiver";
-
     @Override
     public void onReceive(Context context, Intent intent) {
+        String TAG = "BootReceiver";
         Log.d(TAG, "onReceive");
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             boolean ok = true;

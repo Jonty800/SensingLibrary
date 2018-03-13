@@ -32,14 +32,15 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Camera related utilities.
  */
-public class CameraHelper {
+class CameraHelper {
 
-    public static final int MEDIA_TYPE_IMAGE = 1;
-    public static final int MEDIA_TYPE_VIDEO = 2;
+    private static final int MEDIA_TYPE_IMAGE = 1;
+    private static final int MEDIA_TYPE_VIDEO = 2;
 
     /**
      * Iterate over supported camera video sizes to see which one best fits the
@@ -73,7 +74,6 @@ public class CameraHelper {
         double minDiff = Double.MAX_VALUE;
 
         // Target view height
-        int targetHeight = h;
 
         // Try to find a video size that matches aspect ratio and the target view size.
         // Iterate over all available sizes and pick the largest size that can fit in the view and
@@ -82,9 +82,9 @@ public class CameraHelper {
             double ratio = (double) size.width / size.height;
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
                 continue;
-            if (Math.abs(size.height - targetHeight) < minDiff && previewSizes.contains(size)) {
+            if (Math.abs(size.height - h) < minDiff && previewSizes.contains(size)) {
                 optimalSize = size;
-                minDiff = Math.abs(size.height - targetHeight);
+                minDiff = Math.abs(size.height - h);
             }
         }
 
@@ -92,9 +92,9 @@ public class CameraHelper {
         if (optimalSize == null) {
             minDiff = Double.MAX_VALUE;
             for (Camera.Size size : videoSizes) {
-                if (Math.abs(size.height - targetHeight) < minDiff && previewSizes.contains(size)) {
+                if (Math.abs(size.height - h) < minDiff && previewSizes.contains(size)) {
                     optimalSize = size;
-                    minDiff = Math.abs(size.height - targetHeight);
+                    minDiff = Math.abs(size.height - h);
                 }
             }
         }
@@ -177,7 +177,7 @@ public class CameraHelper {
         }
 
         // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.UK).format(new Date());
         File mediaFile;
         if (type == MEDIA_TYPE_IMAGE) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +

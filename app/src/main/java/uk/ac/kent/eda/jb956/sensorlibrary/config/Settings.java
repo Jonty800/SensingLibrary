@@ -9,7 +9,7 @@ import android.os.Environment;
  */
 
 public class Settings {
-    public static String appName = "SensingLibrary";
+    public static final String appName = "SensingLibrary";
 
     /**
      * The database name (SQLite)

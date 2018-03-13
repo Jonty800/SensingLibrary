@@ -111,7 +111,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         try {
             context.registerReceiver(receiver, new IntentFilter(WifiManager
                     .SCAN_RESULTS_AVAILABLE_ACTION));
-            if(config.dutyCycle) {
+            if (config.dutyCycle) {
                 dutyCyclingManager.subscribeToListener(this);
                 dutyCyclingManager.run();
             }
@@ -147,12 +147,11 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
 
     private WifiManager wifi;
     private long timeLastInitiated = 0;
-    private boolean wasBroadcastReceiverTriggered = false;
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context c, Intent intent) {
-          //  logInfo(TAG, "onReceive();");
-            wasBroadcastReceiverTriggered = true;
+            //  logInfo(TAG, "onReceive();");
+            boolean wasBroadcastReceiverTriggered = true;
             List<ScanResult> results = wifi.getScanResults();
             //if 1 or more results found
             if (results.size() > 0) {
@@ -200,7 +199,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         }
     };
 
-    public boolean checkPermissions() {
+    private boolean checkPermissions() {
         return Build.VERSION.SDK_INT < 23 || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
@@ -218,22 +217,21 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         SensorManager.getInstance(context).getWorkerThread().postDelayed(task, delay);
     }
 
-    private Runnable task = new Runnable() {
+    private final Runnable task = new Runnable() {
         @Override
         public void run() {
             requestWifiScan();
         }
     };
 
-    private int ieee80211_frequency_to_channel(int freq)
-    {
+    private int ieee80211_frequency_to_channel(int freq) {
         if (freq == 2484)
             return 14;
 
         if (freq < 2484)
             return (freq - 2407) / 5;
 
-        return freq/5 - 1000;
+        return freq / 5 - 1000;
     }
 
     private boolean isDialogShowing = false;
@@ -277,7 +275,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         }
     }
 
-    public boolean canAccessWifiSignals() {
+    private boolean canAccessWifiSignals() {
         boolean canProceed = wifi.isWifiEnabled();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             canProceed = canProceed || ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) &&

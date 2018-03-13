@@ -9,7 +9,9 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.v4.util.ArraySet;
+import android.support.v4.util.SparseArrayCompat;
 import android.util.Log;
+import android.util.SparseArray;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -48,21 +50,20 @@ public class SensorManager {
 
     private static SensorManager instance;
 
-    private Map<Integer, SensorConfig> activeSensors = new HashMap<>();
+    private SparseArray<SensorConfig> activeSensors = new SparseArray<>();
     private final Context context;
-    private final String TAG = "SensorManager";
 
-    private AudioSensorManager audioManager;
-    private AccelerometerManager accelerometerManager;
-    private GyroscopeManager gyroscopeManager;
-    private ProximitySensorManager proximityManager;
-    private LightSensorManager lightSensorManager;
-    private HumiditySensorManager humiditySensorManager;
-    private PressureSensorManager pressureSensorManager;
-    private TemperatureSensorManager temperatureSensorManager;
-    private MagneticFieldManager magneticFieldManager;
-    private WifiSensorManager wifiSensorManager;
-    private ActivitySensorManager activitySensorManager;
+    private final AudioSensorManager audioManager;
+    private final AccelerometerManager accelerometerManager;
+    private final GyroscopeManager gyroscopeManager;
+    private final ProximitySensorManager proximityManager;
+    private final LightSensorManager lightSensorManager;
+    private final HumiditySensorManager humiditySensorManager;
+    private final PressureSensorManager pressureSensorManager;
+    private final TemperatureSensorManager temperatureSensorManager;
+    private final MagneticFieldManager magneticFieldManager;
+    private final WifiSensorManager wifiSensorManager;
+    private final ActivitySensorManager activitySensorManager;
 
     /**
      * Upon creation of this singleton class, it will attempt to start the
@@ -76,7 +77,7 @@ public class SensorManager {
         mSensorThread.start();
         mSensorHandler = new Handler(mSensorThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
         workerThread = WorkerThread.create();
-        if (activeSensors.isEmpty()) {
+        if (activeSensors.size() == 0) {
             if (prefsContainsKey("activeSensors")) {
                 String json = getStringEntryFromPrefs("activeSensors");
                 Type type = new TypeToken<Map<Integer, SensorConfig>>() {
@@ -128,18 +129,19 @@ public class SensorManager {
             case SensorUtils.SENSOR_TYPE_MICROPHONE:
                 return audioManager;
             default:
+                String TAG = "SensorManager";
                 Log.i(TAG, "Invalid sensor ID");
         }
         return null;
     }
 
-    public Map<Integer, SensorConfig> getActiveSensors() {
+    public SparseArray<SensorConfig> getActiveSensors() {
         return activeSensors;
     }
 
-    public synchronized void startSensors(Map<Integer, SensorConfig> sensorMap) {
-        Set<Integer> keys = new ArraySet<>(getActiveSensors().keySet());
-        for (int key : keys) {
+    public synchronized void startSensors(SparseArray<SensorConfig> sensorMap) {
+        for (int i=0; i<sensorMap.size(); i++) {
+            int key = sensorMap.keyAt(i);
             startSensor(key, sensorMap.get(key));
         }
     }
@@ -155,12 +157,12 @@ public class SensorManager {
     }
 
     public synchronized void updateConfigInMap(int sensorId, SensorConfig config) {
-        if (getActiveSensors().containsKey(sensorId)) {
+        if (getActiveSensors().indexOfKey(sensorId)!=-1) {
             putSensorIntoMap(sensorId, config);
         }
     }
 
-    public synchronized void startSensor(int sensorId, SensorConfig config) {
+    private synchronized void startSensor(int sensorId, SensorConfig config) {
         Intent i = new Intent(context, SensingService.class);
         i.putExtra("type", sensorId);
         i.putExtra("exec", "start");
@@ -178,14 +180,14 @@ public class SensorManager {
     }
 
     public synchronized void stopAllSensors() {
-        Set<Integer> keys = new ArraySet<>(getActiveSensors().keySet());
-        for (int key : keys) {
+        for (int i=0; i<getActiveSensors().size(); i++) {
+            int key = getActiveSensors().keyAt(i);
             stopSensor(key);
         }
         stopSensingService(); //stop service
     }
 
-    public void stopSensingService() {
+    private void stopSensingService() {
         Intent i = new Intent(context, SensingService.class);
         i.putExtra("exec", "stopservice");
         context.startService(i); //send stop command
@@ -206,7 +208,7 @@ public class SensorManager {
     }
 
     public void subscribeToSensorListener(SensingEvent.SensingEventListener listener, int id) {
-        SensingEvent.getInstance().subscribeToSensor(listener,id);
+        SensingEvent.getInstance().subscribeToSensor(listener, id);
     }
 
     public void unsubscribeFromSensorListener(int id) {
@@ -254,15 +256,15 @@ public class SensorManager {
         return workerThread;
     }
 
-    private WorkerThread workerThread;
+    private final WorkerThread workerThread;
 
-    private Handler mSensorHandler;
+    private final Handler mSensorHandler;
 
     public Handler getmSensorHandler() {
         return mSensorHandler;
     }
 
-    public void storeIntoSharedPref(String key, Object entry, Type type) {
+    private void storeIntoSharedPref(String key, Object entry, Type type) {
 
         storeIntoSharedPref(key, entry, type, Settings.appName + "Config");
     }

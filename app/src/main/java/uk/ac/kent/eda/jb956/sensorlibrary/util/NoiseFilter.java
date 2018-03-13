@@ -22,18 +22,9 @@ import java.util.Arrays;
  * Minimum-Mean-Square-Error Noise Reduction Algorithm On Mel-Frequency Cepstra
  * For Robust Speech Recognition by Dong Yu and others
  **/
-public class NoiseFilter {
+class NoiseFilter {
 
-    private double lambdaPower = 0.7;
-    private double lambdaA = 0.995;
-    private double lambdaB = 0.5;
-    private double lambdaT = 0.85;
-
-    private double muT = 0.2; //0.2
-
-    private double maxGain = 20.0;
-
-    private int smoothWindow = 4; //4
+    private final double maxGain = 20.0;
 
     private float[] power;
     private float[] noise;
@@ -78,12 +69,15 @@ public class NoiseFilter {
 
     private void updatePower(float[] input) {
         for (int i = 0; i < input.length; i++) {
+            double lambdaPower = 0.7;
             power[i] = (float) (lambdaPower * power[i] + (1 - lambdaPower) * input[i]);
         }
     }
 
     private void estimateEnvelope(float[] signal, float[] envelope) {
         for (int i = 0; i < signal.length; i++) {
+            double lambdaB = 0.5;
+            double lambdaA = 0.995;
             if (signal[i] > envelope[i])
                 envelope[i] = (float) (lambdaA * envelope[i] + (1 - lambdaA) * signal[i]);
             else
@@ -94,6 +88,7 @@ public class NoiseFilter {
     private float[] smooth(float[] gain) {
         float[] result = new float[gain.length];
         for (int i = 0; i < gain.length; i++) {
+            int smoothWindow = 4;
             int start = Math.max(i - smoothWindow, 0);
             int end = Math.min(i + smoothWindow + 1, gain.length);
             float sum = 0;
@@ -116,7 +111,9 @@ public class NoiseFilter {
         for (int i = 0; i < signal.length; i++) {
             float in = signal[i];
 
+            double lambdaT = 0.85;
             peak[i] *= lambdaT;
+            double muT = 0.2;
             if (signal[i] < lambdaT * peak[i])
                 signal[i] = (float) (peak[i] * muT);
 

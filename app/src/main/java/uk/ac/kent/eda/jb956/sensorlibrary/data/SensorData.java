@@ -11,9 +11,9 @@ public class SensorData {
         return sensorType;
     }
 
-    private int sensorType;
+    private final int sensorType;
 
-    public SensorData(int sensorType) {
+    SensorData(int sensorType) {
         this.sensorType = sensorType;
     }
 

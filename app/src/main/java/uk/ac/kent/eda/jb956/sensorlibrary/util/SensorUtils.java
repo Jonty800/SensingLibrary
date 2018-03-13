@@ -9,7 +9,7 @@ import com.google.android.gms.location.DetectedActivity;
 
 public class SensorUtils {
     public final static int SENSOR_TYPE_ACCELEROMETER = 5001;
-    public final static int SENSOR_TYPE_LOCATION = 5002;
+    private final static int SENSOR_TYPE_LOCATION = 5002;
     public final static int SENSOR_TYPE_MICROPHONE = 5003;
     public final static int SENSOR_TYPE_PROXIMITY = 5004;
     public final static int SENSOR_TYPE_WIFI = 5005;

@@ -29,7 +29,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
     private final String TAG = "LightSensorManager";
     private final Context context;
     private final android.hardware.SensorManager androidSensorManager;
-    private Handler mHandler;
+    private final Handler mHandler;
 
     public LightSensorManager(Context context) {
         this.context = context.getApplicationContext();
@@ -106,7 +106,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
     }
 
     private long lastUpdate = 0;
-    public List<LightSensorData> history = new ArrayList<>();
+    private List<LightSensorData> history = new ArrayList<>();
     private long lastTimeCheckedHistory = NTP.getInstance().currentTimeMillis();
 
     @Override
@@ -154,7 +154,7 @@ public class LightSensorManager extends BaseSensor implements SensingInterface, 
         androidSensorManager.unregisterListener(this, getSensor());
     }
 
-    private Runnable mStatusChecker = new Runnable() {
+    private final Runnable mStatusChecker = new Runnable() {
         @Override
         public void run() {
             try {

@@ -1,8 +1,8 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.callback;
 
-import java.util.ArrayList;
+import android.util.SparseArray;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
@@ -14,7 +14,8 @@ import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorData;
 
 public class SensingEvent {
 
-    private Map<Integer, SensingEventListener> subscriptions = new HashMap<>();
+    private final SparseArray<SensingEventListener> subscriptions = new SparseArray<>();
+
     public static SensingEvent getInstance() {
         if (instance == null)
             instance = new SensingEvent();
@@ -33,37 +34,37 @@ public class SensingEvent {
     }
 
     public synchronized void onDataSensed(SensorData sensorData) {
-        for(SensingEventListener sensingEventListener : subscriptions.values()) {
-            if (sensingEventListener != null)
-                sensingEventListener.onDataSensed(sensorData);
+        for (int i = 0; i < subscriptions.size(); i++) {
+            if (subscriptions.get(subscriptions.keyAt(i)) != null)
+                subscriptions.get(subscriptions.keyAt(i)).onDataSensed(sensorData);
         }
     }
 
     public synchronized void onSensingStarted(int sensorType) {
-        for(SensingEventListener sensingEventListener : subscriptions.values()) {
-            if (sensingEventListener != null)
-                sensingEventListener.onSensingStarted(sensorType);
+        for (int i = 0; i < subscriptions.size(); i++) {
+            if (subscriptions.get(subscriptions.keyAt(i)) != null)
+                subscriptions.get(subscriptions.keyAt(i)).onSensingStarted(sensorType);
         }
     }
 
     public synchronized void onSensingStopped(int sensorType) {
-        for(SensingEventListener sensingEventListener : subscriptions.values()) {
-            if (sensingEventListener != null)
-                sensingEventListener.onSensingStopped(sensorType);
+        for (int i = 0; i < subscriptions.size(); i++) {
+            if (subscriptions.get(subscriptions.keyAt(i)) != null)
+                subscriptions.get(subscriptions.keyAt(i)).onSensingStopped(sensorType);
         }
     }
 
     public synchronized void onSensingPaused(int sensorType) {
-        for(SensingEventListener sensingEventListener : subscriptions.values()) {
-            if (sensingEventListener != null)
-                sensingEventListener.onSensingPaused(sensorType);
+        for (int i = 0; i < subscriptions.size(); i++) {
+            if (subscriptions.get(subscriptions.keyAt(i)) != null)
+                subscriptions.get(subscriptions.keyAt(i)).onSensingPaused(sensorType);
         }
     }
 
     public synchronized void onSensingResumed(int sensorType) {
-        for(SensingEventListener sensingEventListener : subscriptions.values()) {
-            if (sensingEventListener != null)
-                sensingEventListener.onSensingResumed(sensorType);
+        for (int i = 0; i < subscriptions.size(); i++) {
+            if (subscriptions.get(subscriptions.keyAt(i)) != null)
+                subscriptions.get(subscriptions.keyAt(i)).onSensingResumed(sensorType);
         }
     }
 

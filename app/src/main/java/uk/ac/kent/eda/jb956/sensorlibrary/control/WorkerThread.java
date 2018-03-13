@@ -28,6 +28,7 @@ public class WorkerThread extends HandlerThread {
 
     /**
      * Create the worker thread and start if needed
+     *
      * @return The worker thread for this instance
      */
     public static WorkerThread create() {
@@ -67,6 +68,7 @@ public class WorkerThread extends HandlerThread {
 
     /**
      * Posts a task immediately
+     *
      * @param runnable The task to post
      */
     public void postNow(Runnable runnable) {
@@ -86,6 +88,7 @@ public class WorkerThread extends HandlerThread {
 
     /**
      * Removes a task callback from the stack
+     *
      * @param task The task to remove
      */
     public void removeTask(Runnable task) {
@@ -105,7 +108,8 @@ public class WorkerThread extends HandlerThread {
 
     /**
      * Posts a task with a delay
-     * @param task Task to post
+     *
+     * @param task  Task to post
      * @param delay Delay in milliseconds
      */
     public void postDelayed(Runnable task, long delay) {
@@ -125,7 +129,8 @@ public class WorkerThread extends HandlerThread {
 
     /**
      * Posts a task at a certain timestamp
-     * @param task Task to post
+     *
+     * @param task      Task to post
      * @param timestamp Timestamp in milliseconds
      */
     public void postAtTime(Runnable task, long timestamp) {
@@ -146,7 +151,7 @@ public class WorkerThread extends HandlerThread {
     /**
      * Clears all tasks from the stack
      */
-    public void clearTasks() {
+    private void clearTasks() {
         workerHandler.removeCallbacksAndMessages(null);
     }
 }

@@ -60,7 +60,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public static MySQLiteHelper getInstance(Context c) {
         if (instance == null)
-            instance = new MySQLiteHelper(c);
+            instance = new MySQLiteHelper(c.getApplicationContext());
         return instance;
     }
 
@@ -170,7 +170,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_MAG);
     }
 
-    public String[] arrayTrim(String[] input) {
+    private String[] arrayTrim(String[] input) {
         int n = input.length - 1;
         String[] newArray = new String[n];
         System.arraycopy(input, 1, newArray, 0, n);
@@ -396,9 +396,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
-            long start_ts = timestampAInSeconds;
-            long end_ts = timestampBInSeconds;
-            Cursor curCSV = db.rawQuery("SELECT * FROM acc where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
+            Cursor curCSV = db.rawQuery("SELECT * FROM acc where timestamp >=" + timestampAInSeconds + " and timestamp <=" + timestampBInSeconds, null);
             csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
@@ -424,9 +422,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
-            long start_ts = timestampAInSeconds;
-            long end_ts = timestampBInSeconds;
-            Cursor curCSV = db.rawQuery("SELECT * FROM mag where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
+            Cursor curCSV = db.rawQuery("SELECT * FROM mag where timestamp >=" + timestampAInSeconds + " and timestamp <=" + timestampBInSeconds, null);
             csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
@@ -452,9 +448,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
-            long start_ts = timestampAInSeconds;
-            long end_ts = timestampBInSeconds;
-            Cursor curCSV = db.rawQuery("SELECT * FROM humidity where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
+            Cursor curCSV = db.rawQuery("SELECT * FROM humidity where timestamp >=" + timestampAInSeconds + " and timestamp <=" + timestampBInSeconds, null);
             csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
@@ -480,9 +474,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
-            long start_ts = timestampAInSeconds;
-            long end_ts = timestampBInSeconds;
-            Cursor curCSV = db.rawQuery("SELECT * FROM pocket where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
+            Cursor curCSV = db.rawQuery("SELECT * FROM pocket where timestamp >=" + timestampAInSeconds + " and timestamp <=" + timestampBInSeconds, null);
             csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
@@ -508,9 +500,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
-            long start_ts = timestampAInSeconds;
-            long end_ts = timestampBInSeconds;
-            Cursor curCSV = db.rawQuery("SELECT * FROM pressure where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
+            Cursor curCSV = db.rawQuery("SELECT * FROM pressure where timestamp >=" + timestampAInSeconds + " and timestamp <=" + timestampBInSeconds, null);
             csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
@@ -536,9 +526,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
-            long start_ts = timestampAInSeconds;
-            long end_ts = timestampBInSeconds;
-            Cursor curCSV = db.rawQuery("SELECT * FROM temperature where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
+            Cursor curCSV = db.rawQuery("SELECT * FROM temperature where timestamp >=" + timestampAInSeconds + " and timestamp <=" + timestampBInSeconds, null);
             csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
@@ -564,9 +552,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
-            long start_ts = timestampAInSeconds;
-            long end_ts = timestampBInSeconds;
-            Cursor curCSV = db.rawQuery("SELECT * FROM gyro where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
+            Cursor curCSV = db.rawQuery("SELECT * FROM gyro where timestamp >=" + timestampAInSeconds + " and timestamp <=" + timestampBInSeconds, null);
             csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
@@ -592,9 +578,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
-            long start_ts = timestampAInSeconds;
-            long end_ts = timestampBInSeconds;
-            Cursor curCSV = db.rawQuery("SELECT * FROM light where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
+            Cursor curCSV = db.rawQuery("SELECT * FROM light where timestamp >=" + timestampAInSeconds + " and timestamp <=" + timestampBInSeconds, null);
             csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
@@ -620,9 +604,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = this.getReadableDatabase();
-            long start_ts = timestampAInSeconds;
-            long end_ts = timestampBInSeconds;
-            Cursor curCSV = db.rawQuery("SELECT * FROM positions where timestamp >=" + start_ts + " and timestamp <=" + end_ts, null);
+            Cursor curCSV = db.rawQuery("SELECT * FROM positions where timestamp >=" + timestampAInSeconds + " and timestamp <=" + timestampBInSeconds, null);
             csvWrite.writeNext(arrayTrim(curCSV.getColumnNames()));
             while (curCSV.moveToNext()) {
                 //Which column you want to export
