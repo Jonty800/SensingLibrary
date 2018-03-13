@@ -206,7 +206,7 @@ public class SensorManager {
     }
 
     public void subscribeToSensorListener(SensingEvent.SensingEventListener listener, int id) {
-        SensingEvent.getInstance().subscribeToSensor(listener,id);
+        SensingEvent.getInstance().subscribeToSensor(listener, id);
     }
 
     public void unsubscribeFromSensorListener(int id) {

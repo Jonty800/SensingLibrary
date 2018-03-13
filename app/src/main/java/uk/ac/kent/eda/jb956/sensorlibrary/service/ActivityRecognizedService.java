@@ -12,7 +12,6 @@ import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.callback.SensingEvent;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.ActivityData;
 import uk.ac.kent.eda.jb956.sensorlibrary.database.MySQLiteHelper;
-import uk.ac.kent.eda.jb956.sensorlibrary.sensor.ActivitySensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.NTP;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
 

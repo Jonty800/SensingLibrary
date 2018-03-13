@@ -11,7 +11,6 @@ import android.support.v4.app.NotificationCompat;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.config.Settings;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.SensorConfig;
-import uk.ac.kent.eda.jb956.sensorlibrary.util.NTP;
 
 /**
  * Copyright (c) 2017, Jon Baker <Jonty800@gmail.com>
@@ -82,7 +81,7 @@ public class SensingService extends Service {
     }*/
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(intent != null) {
+        if (intent != null) {
             String exec = intent.getStringExtra("exec");
             if (exec != null) {
                 if (exec.equalsIgnoreCase("stopservice")) {

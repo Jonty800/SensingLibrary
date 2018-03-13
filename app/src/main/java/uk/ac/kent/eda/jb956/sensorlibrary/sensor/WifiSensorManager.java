@@ -111,7 +111,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         try {
             context.registerReceiver(receiver, new IntentFilter(WifiManager
                     .SCAN_RESULTS_AVAILABLE_ACTION));
-            if(config.dutyCycle) {
+            if (config.dutyCycle) {
                 dutyCyclingManager.subscribeToListener(this);
                 dutyCyclingManager.run();
             }
@@ -151,7 +151,7 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context c, Intent intent) {
-          //  logInfo(TAG, "onReceive();");
+            //  logInfo(TAG, "onReceive();");
             wasBroadcastReceiverTriggered = true;
             List<ScanResult> results = wifi.getScanResults();
             //if 1 or more results found
@@ -225,15 +225,14 @@ public class WifiSensorManager extends BaseSensor implements SensingInterface, D
         }
     };
 
-    private int ieee80211_frequency_to_channel(int freq)
-    {
+    private int ieee80211_frequency_to_channel(int freq) {
         if (freq == 2484)
             return 14;
 
         if (freq < 2484)
             return (freq - 2407) / 5;
 
-        return freq/5 - 1000;
+        return freq / 5 - 1000;
     }
 
     private boolean isDialogShowing = false;
