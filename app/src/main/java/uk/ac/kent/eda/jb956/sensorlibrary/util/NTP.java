@@ -1,5 +1,6 @@
 package uk.ac.kent.eda.jb956.sensorlibrary.util;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.Log;
@@ -16,7 +17,6 @@ public class NTP {
     private long lastTimeSync = 0L;
     private int interval = 120_000;
     boolean fetching = false;
-    private GetTimeAsyncTask timeAsyncTask;
 
     public final String TAG = getClass().getSimpleName();
 
@@ -36,9 +36,7 @@ public class NTP {
         if (real_time == 0L) {
             if (!fetching) {
                 fetching = true;
-                if (timeAsyncTask == null)
-                    timeAsyncTask = new GetTimeAsyncTask();
-                timeAsyncTask.execute();
+                new GetTimeAsyncTask().execute();
             }
         }
         long adjustedTimestamp;
@@ -54,10 +52,11 @@ public class NTP {
         return adjustedTimestamp;
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class GetTimeAsyncTask extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
             SntpClient client = new SntpClient();
-            if (client.requestTime("pool.ntp.org", 3000)) {
+            if (client.requestTime("pool.ntp.org", 10000)) {
                 real_time = client.getNtpTime() + SystemClock.elapsedRealtime() - client.getNtpTimeReference();
                 long test = 0;
                 if (!ahead) { //if clock is behind
