@@ -75,7 +75,7 @@ public class NTP {
                 long time = System.currentTimeMillis();
                 offset = Math.abs(real_time - time);
                 ahead = time > real_time;
-                System.out.println("Timestamp Sync Results: Offset=" + offset + " ahead=" + ahead + " actual_ts=" + real_time + " old_ts=" + time + " new_ts=" + test);
+                System.out.println("Timestamp Sync Results ("+ntpServerURL+"): Offset=" + offset + " ahead=" + ahead + " actual_ts=" + real_time + " old_ts=" + time + " new_ts=" + test);
                 lastTimeSync = real_time;
             } else {
                 Log.e(TAG, "Unable to download time");
