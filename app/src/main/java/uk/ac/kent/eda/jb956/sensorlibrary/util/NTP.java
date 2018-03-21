@@ -20,6 +20,7 @@ public class NTP {
 
     public void setNtpServerURL(String ntpServerURL) {
         this.ntpServerURL = ntpServerURL;
+        this.real_time = 0L;
     }
 
     private String ntpServerURL = "pool.ntp.org";
