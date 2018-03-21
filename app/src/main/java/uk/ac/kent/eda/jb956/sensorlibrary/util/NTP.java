@@ -18,6 +18,12 @@ public class NTP {
     private int interval = 120_000;
     boolean fetching = false;
 
+    public void setNtpServerURL(String ntpServerURL) {
+        this.ntpServerURL = ntpServerURL;
+    }
+
+    private String ntpServerURL = "pool.ntp.org";
+
     public final String TAG = getClass().getSimpleName();
 
     public static NTP getInstance() {
@@ -56,7 +62,7 @@ public class NTP {
     private class GetTimeAsyncTask extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
             SntpClient client = new SntpClient();
-            if (client.requestTime("pool.ntp.org", 10000)) {
+            if (client.requestTime(ntpServerURL, 10000)) {
                 real_time = client.getNtpTime() + SystemClock.elapsedRealtime() - client.getNtpTimeReference();
                 long test = 0;
                 if (!ahead) { //if clock is behind
