@@ -8,6 +8,7 @@ import be.tarsos.dsp.AudioProcessor;
 import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import uk.ac.kent.eda.jb956.sensorlibrary.DutyCyclingManager;
 import uk.ac.kent.eda.jb956.sensorlibrary.SensorManager;
+import uk.ac.kent.eda.jb956.sensorlibrary.control.TaskQueue;
 import uk.ac.kent.eda.jb956.sensorlibrary.data.AudioSensorData;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.NTP;
 import uk.ac.kent.eda.jb956.sensorlibrary.util.SensorUtils;
@@ -34,8 +35,23 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
         sensing = true;
         dutyCyclingManager.subscribeToListener(this);
         dutyCyclingManager.run();
-        addNewSensingTask();
-        getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_MICROPHONE);
+        //Choose next duty cycling point
+        long next_ts = NTP.getInstance().currentTimeMillis();
+        try {
+            next_ts = dutyCyclingManager.getNextExpectedTimestamp(NTP.getInstance().currentTimeMillis());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        long delay = next_ts - NTP.getInstance().currentTimeMillis();
+        logInfo(TAG, "Starting sensor for first time in " + delay);
+        dutyCyclingManager.getWorkerThread().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                addNewSensingTask();
+                getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_MICROPHONE);
+            }
+        }, delay);
+
         logInfo(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         return this;
     }

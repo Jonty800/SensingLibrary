@@ -23,7 +23,7 @@ public class DutyCyclingManager {
         return sleeping;
     }
 
-    private WorkerThread getWorkerThread() {
+    public WorkerThread getWorkerThread() {
         return workerThread;
     }
 
