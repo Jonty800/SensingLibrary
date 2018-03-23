@@ -105,7 +105,7 @@ public class DutyCyclingManager {
     boolean debug = true;
 
     private long validTaskCache = 0L;
-    private long getNextExpectedTimestamp(long currentTs) throws Exception{
+    public long getNextExpectedTimestamp(long currentTs) throws Exception{
         if(config == null){
             throw new Exception("getNextExpectedTimestamp: Config has not yet been set");
         }

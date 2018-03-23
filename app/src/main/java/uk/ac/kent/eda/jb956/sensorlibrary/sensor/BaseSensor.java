@@ -29,6 +29,11 @@ public class BaseSensor {
     }
 
     boolean sensing = false;
+
+    public DutyCyclingManager getDutyCyclingManager() {
+        return dutyCyclingManager;
+    }
+
     DutyCyclingManager dutyCyclingManager;
 
     public void setLastEntry(SensorData lastEntry) {
