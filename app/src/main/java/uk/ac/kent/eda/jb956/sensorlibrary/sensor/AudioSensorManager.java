@@ -36,21 +36,6 @@ public class AudioSensorManager extends BaseSensor implements DutyCyclingManager
         dutyCyclingManager.subscribeToListener(this);
         dutyCyclingManager.run();
         //Choose next duty cycling point
-        long next_ts = NTP.getInstance().currentTimeMillis();
-        try {
-            next_ts = dutyCyclingManager.getNextExpectedTimestamp(NTP.getInstance().currentTimeMillis());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        long delay = next_ts - NTP.getInstance().currentTimeMillis();
-        logInfo(TAG, "Starting sensor for first time in " + delay);
-        dutyCyclingManager.getWorkerThread().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                addNewSensingTask();
-                getSensorEvent().onSensingStarted(SensorUtils.SENSOR_TYPE_MICROPHONE);
-            }
-        }, delay);
 
         logInfo(TAG, !isSensing() ? TAG + " not started: Disabled" : TAG + " started");
         return this;
