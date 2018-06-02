@@ -3,7 +3,7 @@
 The SensorLibrary is a library project for Android application developers. The main goal of the project is to make accessing and polling for Android smartphone sensor data easy, highly configurable, and battery-friendly.
 
 ## Authors & Contributors
-* Jon Baker ([Jonty800](https://github.com/Jonty800)), University of Kent, UK
+* Jon Baker ([Jonty800](https://github.com/Jonty800))
 
 
 ## Setting up permissions
@@ -43,6 +43,7 @@ The SensorLibrary is a library project for Android application developers. The m
 		sensorConfig.AWAKE_WINDOW_SIZE = 60000 + 100;
 		sensorConfig.SLEEP_WINDOW_SIZE = 60000 * 2;
 		sensorConfig.saveToDatabase = false;
+		
 		sensorManager.startSensor(SensorUtils.SENSOR_TYPE_WIFI, sensorConfig);
 		sensorManager.subscribeToSensorListener(this);
 	}
@@ -80,7 +81,7 @@ The SensorLibrary is a library project for Android application developers. The m
     }
 
 ## License
-Copyright (C) Jon Baker, University of Kent
+Copyright (C) Jon Baker
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
